@@ -12,7 +12,7 @@ public class XmlManager {
 	public static string macRoot = @"/Users/margaretsheridan/Desktop";
 	public static string IOSRoot = Application.persistentDataPath;
 
-	public static string dashboardFolderName = "spatial";
+	public static string dashboardFolderName = "yl";
 	
 	//Folder names
 	public static string logFilesFolderName = "log_files";
