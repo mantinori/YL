@@ -1,0 +1,109 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<players>
+  <California>
+    <RegionA>
+      <Region1>
+        <Player name="Davey Jones" device="" />
+        <Player name="Black Beard" device="" />
+        <Player name="William Fly" device="" />
+        <Player name="Benito Bonito" device="" />
+      </Region1>
+    </RegionA>
+    <RegionB>
+      <Region2>
+        <Player name="Ronald Reagan" device="" />
+        <Player name="John Kennedy" device="" />
+        <Player name="Richard Nixon" device="" />
+      </Region2>
+      <Region3>
+        <Player name="Adolf Hitler" device="" />
+        <Player name="Benito Mussolini" device="" />
+        <Player name="Francisco Franco" device="" />
+        <Player name="Emperor Hirohito" device="" />
+      </Region3>
+    </RegionB>
+    <RegionC>
+      <Region4>
+        <Player name="William Clark" device="" />
+        <Player name="Meriwether Lewis" device="" />
+      </Region4>
+      <Region5>
+        <Player name="George Washington" device="" />
+        <Player name="John Adams" device="" />
+        <Player name="Thomas Jefferson" device="" />
+      </Region5>
+    </RegionC>
+  </California>
+  <Massachusetts>
+    <RegionD>
+      <Region6>
+        <Player name="Frodo Baggins" device="" />
+        <Player name="Samwise Gamgee" device="" />
+        <Player name="Gollum" device="" />
+      </Region6>
+      <Region7>
+        <Player name="Eddard Stark" device="" />
+        <Player name="Catelyn Stark" device="" />
+        <Player name="Robb Stark" device="" />
+        <Player name="Sansa Stark" device="" />
+        <Player name="Arya Stark" device="" />
+        <Player name="Bran Stark" device="" />
+        <Player name="Jon Snow" device="" />
+      </Region7>
+    </RegionD>
+    <RegionE>
+      <Region8>
+        <Player name="Abed Nadir" device="" />
+        <Player name="Troy Barnes" device="" />
+      </Region8>
+      <Region9>
+        <Player name="Sterling Archer" device="" />
+        <Player name="Lana Kane" device="" />
+        <Player name="Algernop Krieger" device="" />
+        <Player name="Pam Poovey" device="" />
+      </Region9>
+      <Region10>
+        <Player name="Phillip Fry" device="" />
+        <Player name="Turanga Leela" device="" />
+        <Player name="Bender Rodriguez" device="" />
+      </Region10>
+    </RegionE>
+  </Massachusetts>
+  <Mississippi>
+    <RegionF>
+      <Region11>
+        <Player name="Simon Pegg" device="" />
+        <Player name="Nick Frost" device="" />
+        <Player name="Edgar Wright" device="" />
+      </Region11>
+      <Region12>
+        <Player name="Stephen Colbert" device="" />
+        <Player name="Jon Stewart" device="" />
+      </Region12>
+    </RegionF>
+  </Mississippi>
+  <New_York>
+    <RegionG>
+      <Region13>
+        <Player name="Louie Armstrong" device="" />
+      </Region13>
+    </RegionG>
+    <RegionH>
+      <Region14>
+        <Player name="Amy Poehler" device="" />
+        <Player name="Tina Fey" device="" />
+      </Region14>
+      <Region15>
+        <Player name="Brendan Small" device="" />
+        <Player name="Melissa Robbins" device="" />
+        <Player name="Jason Penopolis" device="" />
+      </Region15>
+    </RegionH>
+    <RegionI>
+      <Region16>
+        <Player name="Jemaine Clement" device="" />
+        <Player name="Bret McKenzie" device="" />
+      </Region16>
+    </RegionI>
+  </New_York>
+</players>
