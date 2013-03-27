@@ -205,50 +205,53 @@ public class MenuController : MonoBehaviour {
 	//Reset PlayerPrefs and shut down
 	private void resetDevice(GameObject o){
 		
-		//Get the players file off of Dropbox
-		XmlDocument xml = new XmlDocument();
+		NeuroLog.Log("Resetting the device");
 		
-		if(File.Exists(XmlManager.PlayerSpecificPath + XmlManager.delim + "players.xml")){
-			Debug.Log("Attempting to read from Dropbox folder");		
-			xml.Load(XmlManager.PlayerSpecificPath + XmlManager.delim + "players.xml");
-		}
-		//Can't find? Use the local bundle one
-		else{
-			Debug.Log("Attempting to read from local build folder");
-			try{
-				TextAsset sessionData = Resources.Load("players") as TextAsset;
-		
-				TextReader reader = new StringReader(sessionData.text);
+		if(PlayerPrefs.GetString("-testing") !="t"){
+			//Get the players file off of Dropbox
+			XmlDocument xml = new XmlDocument();
 			
-				xml.Load(reader);
+			if(File.Exists(XmlManager.PlayerSpecificPath + XmlManager.delim + "players.xml")){
+				Debug.Log("Attempting to read from Dropbox folder");		
+				xml.Load(XmlManager.PlayerSpecificPath + XmlManager.delim + "players.xml");
 			}
-			catch{
-				NeuroLog.Error("Unable to find local task file");
+			//Can't find? Use the local bundle one
+			else{
+				Debug.Log("Attempting to read from local build folder");
+				try{
+					TextAsset sessionData = Resources.Load("players") as TextAsset;
+			
+					TextReader reader = new StringReader(sessionData.text);
 				
-				return;
+					xml.Load(reader);
+				}
+				catch{
+					NeuroLog.Error("Unable to find local task file");
+					
+					return;
+				}
 			}
-		}
-		
-		//Local the current player's node with his/her region info
-		string state = PlayerPrefs.GetString("-state");
-		string region = PlayerPrefs.GetString("-region");
-		string subregion = PlayerPrefs.GetString("-subregion");
-		string player = PlayerPrefs.GetString("-player");
-		
-		XmlNode playersNode = xml.SelectSingleNode("/players/"+state+"/"+ region +"/"+subregion);
-		
-		//Find the child in the subdivision and set his device back to " "
-		foreach(XmlNode n in playersNode.ChildNodes){
-			if(n.Attributes["name"].Value == player){
-				n.Attributes["device"].Value = "";
-				
-				break;
+			
+			//Local the current player's node with his/her region info
+			string state = PlayerPrefs.GetString("-state");
+			string region = PlayerPrefs.GetString("-region");
+			string subregion = PlayerPrefs.GetString("-subregion");
+			string player = PlayerPrefs.GetString("-player");
+			
+			XmlNode playersNode = xml.SelectSingleNode("/players/"+state+"/"+ region +"/"+subregion);
+			
+			//Find the child in the subdivision and set his device back to " "
+			foreach(XmlNode n in playersNode.ChildNodes){
+				if(n.Attributes["name"].Value == player){
+					n.Attributes["device"].Value = "";
+					
+					break;
+				}
 			}
+			
+			//Save the updated file
+			xml.Save(XmlManager.PlayerSpecificPath + XmlManager.delim + "players.xml");
 		}
-		
-		//Save the updated file
-		xml.Save(XmlManager.PlayerSpecificPath + XmlManager.delim + "players.xml");
-		
 		//Delete all saved player prefs
 		PlayerPrefs.DeleteAll();
 		

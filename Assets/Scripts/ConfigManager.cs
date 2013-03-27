@@ -24,6 +24,9 @@ public class ConfigManager : MonoBehaviour {
 	public UILabel buttonText;
 	public UILabel message;
 	
+	//For testing purposes, allow someone to just write in a name
+	public UIInput testInput;
+	
 	//The actual dropdown list
 	GameObject ddL;
 	bool setDDL=false;
@@ -36,6 +39,8 @@ public class ConfigManager : MonoBehaviour {
 	
 	//If the config was properly saved
 	private bool configSaved=false;
+	
+	private string testName="";
 	
 	// Use this for initialization
 	void Start () {
@@ -107,11 +112,18 @@ public class ConfigManager : MonoBehaviour {
 		if(foundFile){
 			string p = PlayerPrefs.GetString("-player");
 			
+			string testing = PlayerPrefs.GetString("-testing");
+			
 			//If there is no player saved in PlayerPrefs, signal that we need to config the device
 			if(p == ""){
 				needConfig = true;
 					
 				NeuroLog.Log("No player set to the device.");
+			}
+			else if(testing=="t"){
+				needConfig = false;
+				
+				NeuroLog.Log("Using Testing Player");
 			}
 			//Otherwise, first make sure the player hasn't been assigned to a different machine in the meantime
 			else{
@@ -198,39 +210,46 @@ public class ConfigManager : MonoBehaviour {
 		}
 		//If the config hasn't been saved
 		else{
-			//Reload the file to make sure there were no changes
-			if(File.Exists(XmlManager.PlayerSpecificPath + XmlManager.delim + playersFile + ".xml")){
-				Debug.Log("Attempting to read from Dropbox folder");		
-				xml.Load(XmlManager.PlayerSpecificPath + XmlManager.delim + playersFile + ".xml");
+			string prevDevice="";
+			XmlNode playerNode=null;
+			
+			if(testName==""){
+				//Reload the file to make sure there were no changes
+				if(File.Exists(XmlManager.PlayerSpecificPath + XmlManager.delim + playersFile + ".xml")){
+					Debug.Log("Attempting to read from Dropbox folder");		
+					xml.Load(XmlManager.PlayerSpecificPath + XmlManager.delim + playersFile + ".xml");
+				}
+				else{
+					Debug.Log("Attempting to read from local build folder");
+					try{
+						TextAsset sessionData = Resources.Load(playersFile) as TextAsset;
+		
+						TextReader reader = new StringReader(sessionData.text);
+			
+						xml.Load(reader);
+					}
+					catch{
+						NeuroLog.Error("Unable to find local task file");
+				
+						return;
+					}
+				}
+			
+				//Get the player's node
+				playerNode = (xml.SelectSingleNode("/players/"+stateSelection.selection+"/"+subDivisionOne.selection+"/"+subDivisionTwo.selection));
+			
+				foreach(XmlNode x in playerNode.ChildNodes){
+					if(x.Attributes["name"].Value == players.selection){
+						playerNode = x;
+						break;
+					}
+				}
+				prevDevice = playerNode.Attributes["device"].Value;
 			}
 			else{
-				Debug.Log("Attempting to read from local build folder");
-				try{
-					TextAsset sessionData = Resources.Load(playersFile) as TextAsset;
-		
-					TextReader reader = new StringReader(sessionData.text);
-			
-					xml.Load(reader);
-				}
-				catch{
-					NeuroLog.Error("Unable to find local task file");
-				
-					return;
-				}
+				NeuroLog.Log("Using testName");
 			}
 			
-			//Get the player's node
-			XmlNode playerNode = (xml.SelectSingleNode("/players/"+stateSelection.selection+"/"+subDivisionOne.selection+"/"+subDivisionTwo.selection));
-			
-			foreach(XmlNode x in playerNode.ChildNodes){
-				if(x.Attributes["name"].Value == players.selection){
-					playerNode = x;
-					break;
-				}
-			}
-			
-			string prevDevice = playerNode.Attributes["device"].Value;
-		
 			//If the player has been previously assigned to a different device, show a warning before saving
 			if(!finalGo && prevDevice!= ""){
 				
@@ -244,11 +263,6 @@ public class ConfigManager : MonoBehaviour {
 			}
 			//If the warning has been shown or the player hasn't been set to a different device
 			else{
-				//Save the player's info
-				PlayerPrefs.SetString("-player", players.selection);
-				PlayerPrefs.SetString("-state", stateSelection.selection);
-				PlayerPrefs.SetString("-region", subDivisionOne.selection);
-				PlayerPrefs.SetString("-subregion", subDivisionTwo.selection);
 				
 				//Set up the task statuses
 				PlayerPrefs.SetString("-t1", "false");
@@ -257,25 +271,43 @@ public class ConfigManager : MonoBehaviour {
 				PlayerPrefs.SetString("-t4", "false");
 				PlayerPrefs.SetString("-t5", "false");
 				PlayerPrefs.SetString("-t6", "false");
-			
-				//Update the players file to say the player is assigned to this device
-				playerNode = (xml.SelectSingleNode("/players/"+stateSelection.selection+"/"+subDivisionOne.selection+"/"+subDivisionTwo.selection));
 				
-				foreach(XmlNode x in playerNode.ChildNodes){
-					if(x.Attributes["name"].Value == players.selection){
-						playerNode = x;
-						break;
+				//Save the player's info
+				if(testName==""){
+					PlayerPrefs.SetString("-player", players.selection);
+					PlayerPrefs.SetString("-testing", "f");
+					PlayerPrefs.SetString("-state", stateSelection.selection);
+					PlayerPrefs.SetString("-region", subDivisionOne.selection);
+					PlayerPrefs.SetString("-subregion", subDivisionTwo.selection);
+				
+			
+					//Update the players file to say the player is assigned to this device
+					playerNode = (xml.SelectSingleNode("/players/"+stateSelection.selection+"/"+subDivisionOne.selection+"/"+subDivisionTwo.selection));
+				
+					foreach(XmlNode x in playerNode.ChildNodes){
+						if(x.Attributes["name"].Value == players.selection){
+							playerNode = x;
+							break;
+						}
 					}
-				}
 			
-				playerNode.Attributes["device"].Value = System.Environment.MachineName;
+					playerNode.Attributes["device"].Value = System.Environment.MachineName;
 				
-				//Save the file
-				xml.Save(XmlManager.PlayerSpecificPath + XmlManager.delim + "players.xml");
-				
+					//Save the file
+					xml.Save(XmlManager.PlayerSpecificPath + XmlManager.delim + "players.xml");
+				}
+				else{
+					PlayerPrefs.SetString("-player", testName);
+					PlayerPrefs.SetString("-testing", "t");
+					PlayerPrefs.SetString("-state", "n/a");
+					PlayerPrefs.SetString("-region", "n/a");
+					PlayerPrefs.SetString("-subregion", "n/a");
+				}
 				message.text = "Config info saved!";
 				
 				buttonText.text = "CLOSE";
+				
+				Debug.Log("testing? " + PlayerPrefs.GetString("-testing"));
 				
 				configSaved = true;
 				//Hide the dropdown menus
@@ -283,6 +315,7 @@ public class ConfigManager : MonoBehaviour {
 				subDivisionOne.gameObject.SetActive(false);
 				subDivisionTwo.gameObject.SetActive(false);
 				players.gameObject.SetActive(false);
+				testInput.gameObject.SetActive(false);
 			}
 		}
 	}
@@ -299,6 +332,14 @@ public class ConfigManager : MonoBehaviour {
 			foreach(XmlNode node in currentNode.ChildNodes){
 				subDivisionOne.items.Add(node.Name);
 			}
+			
+			testName = "";
+			
+			testInput.text="";
+			
+			confirmButton.gameObject.SetActive(false);
+			
+			message.enabled = false;
 		}
 		else{
 			subDivisionOne.items.Add("---");
@@ -391,10 +432,14 @@ public class ConfigManager : MonoBehaviour {
 			
 			message.enabled = true;
 		}
-		else{
-			confirmButton.gameObject.SetActive(false);
+		else{ 
+			if(testInput.text==""){
+				confirmButton.gameObject.SetActive(false);
 			
-			message.enabled = false;
+				message.enabled = false;
+				
+				testName = "";
+			}
 		}
 		
 		int scale=40;
@@ -406,13 +451,26 @@ public class ConfigManager : MonoBehaviour {
 		players.textLabel.transform.localScale = new Vector3(scale,scale,1);
 	}
 	
+	void OnSubmit(){
+		testName = testInput.text;
+		
+		if(testName !=""){
+			stateSelection.selection = stateSelection.items[0];
+			
+			confirmButton.gameObject.SetActive(true);
+		
+			message.text = "Save " + testName + " to this Device?";
+			
+			message.enabled = true;
+		}
+	}
+	
 	//Update will make sure that no dropdown lists will appear outside the screen
 	void Update(){
 		if(players.isOpen && !setDDL){
 			if(ddL == null) ddL = GameObject.Find("Drop-down List");
 			else{			
 				float width =  ddL.transform.FindChild("Sprite").transform.localScale.x;
-				Debug.Log(width);
 				
 				if(width>210){
 	
