@@ -167,6 +167,9 @@ public class MenuController : MonoBehaviour {
 		//Star
 		else if(type=="2")
 			Application.LoadLevel("star");
+		//Implicit
+		else if(type =="3")
+			Application.LoadLevel("implicit");
 	}
 	
 	//Bring up warning message

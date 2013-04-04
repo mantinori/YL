@@ -69,7 +69,7 @@ public class GameManager : MonoBehaviour {
 	protected AudioSource audioSource;
 	
 	//Which gametype is running
-	public enum SessionType{Spatial, Inhibition, Star};
+	public enum SessionType{Spatial, Inhibition, Star, Implicit};
 	protected SessionType sType;
 	public SessionType SType{
 		get{return sType;}
@@ -170,7 +170,7 @@ public class GameManager : MonoBehaviour {
 					
 		yield return new WaitForSeconds(duration);
 		
-		screen.enabled = false;
+		if(title != "Session Over") screen.enabled = false;
 		
 		text.renderer.enabled = false;
 	}

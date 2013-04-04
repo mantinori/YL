@@ -31,6 +31,10 @@ public class TutorialFinger : MonoBehaviour {
 			speed = 4;
 			margin =3;
 		}
+		else if(gm.SType == GameManager.SessionType.Implicit){
+			speed = 1.5f;
+			margin =.75f;
+		}
 		
 		//Move it off the edge
 		transform.position = new Vector3(gm.transform.position.x,5,edgeScreen);

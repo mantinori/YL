@@ -1,252 +1,231 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!--type == Which game type should be loaded for this task. As of 3/22/13 0=Spatial, 1=Inhibition, and 2=Star -->
-<session type="2">
+<session type="3">
 	<!--event:
-			type(int): What type of object should be spawned. Choices include '0' = littleStar, '1' = bigStar, '2' = dot, and '3' = triangle.
-			position(Vector2):Where on the screen should this object be located. Should be two float values separated by a comma. 
-							  The x range is from -170 to 170, and the y range is from 90 to -75.
-			rotation(float): What should be the objects rotation.
+			type(int): Which dot will this event be. Should be between 1-4
 	-->	
     <events>
 		<trial>
-			<event type = "0" position = "112,-44" rotation = "227"/>
-			<event type = "0" position = "-134,-50" rotation = "329"/>
-			<event type = "0" position = "107,25" rotation = "257"/>
-			<event type = "0" position = "-114,86" rotation = "45"/>
-			<event type = "0" position = "53,-12" rotation = "75"/>
-			<event type = "0" position = "-32,-2" rotation = "95"/>
-			<event type = "0" position = "65,46" rotation = "125"/>
-			<event type = "0" position = "-70,31" rotation = "161"/>
-			<event type = "0" position = "98,-41" rotation = "75"/>
-			<event type = "0" position = "-102,-5" rotation = "135"/>
-			<event type = "0" position = "144,54" rotation = "45"/>
-			<event type = "0" position = "-148,44" rotation = "5"/>
-			<event type = "0" position = "36,-20" rotation = "345"/>
-			<event type = "0" position = "-19,65" rotation = "215"/>
-			<event type = "0" position = "-10,1" rotation = "275"/>
-			<event type = "0" position = "12,90" rotation = "45"/>
-			<event type = "0" position = "170,-39" rotation = "185"/>
-			<event type = "0" position = "-165,21" rotation = "90"/>
-			<event type = "0" position = "83,84" rotation = "70"/>
-			<event type = "0" position = "-80,73" rotation = "15"/>
-			<event type = "0" position = "60,-63" rotation = "65"/>
-			<event type = "0" position = "-49,-25" rotation = "125"/>
-			<event type = "0" position = "20,75" rotation = "180"/>
-			<event type = "0" position = "-28,55" rotation = "300"/>
-			<event type = "0" position = "165,12" rotation = "355"/>
-			<event type = "0" position = "-165,56" rotation = "75"/>
-			<event type = "0" position = "166,62" rotation = "25"/>
-			<event type = "0" position = "-166,37" rotation = "105"/>
-			<event type = "0" position = "85,-55" rotation = "155"/>
-			<event type = "0" position = "-86,-65" rotation = "85"/>
-			<event type = "0" position = "63,-1" rotation = "95"/>
-			<event type = "0" position = "-74,88" rotation = "245"/>
-			<event type = "0" position = "133,3" rotation = "175"/>
-			<event type = "0" position = "-129,-3" rotation = "45"/>
-			<event type = "1" position = "-121,42" rotation = "65"/>
-			<event type = "1" position = "84,-17" rotation = "75"/>
-			<event type = "1" position = "91,54" rotation = "95"/>
-			<event type = "1" position = "5,-26" rotation = "125"/>
-			<event type = "1" position = "7,49" rotation = "161"/>
-			<event type = "1" position = "-86,-30" rotation = "345"/>
-			<event type = "1" position = "-17,31" rotation = "145"/>
-			<event type = "1" position = "-112,-34" rotation = "245"/>
-			<event type = "1" position = "-137,72" rotation = "75"/>
-			<event type = "1" position = "135,-30" rotation = "95"/>
-			<event type = "1" position = "117,75" rotation = "125"/>
-			<event type = "1" position = "65,-36" rotation = "35"/>
-			<event type = "1" position = "44,63" rotation = "5"/>
-			<event type = "1" position = "-40,-51" rotation = "0"/>
-			<event type = "1" position = "-34,80" rotation = "15"/>
-			<event type = "1" position = "-155,-3" rotation = "105"/>
-			<event type = "1" position = "-104,63" rotation = "305"/>
-			<event type = "1" position = "155,-13" rotation = "255"/>
-			<event type = "1" position = "135,30" rotation = "205"/>
-			<event type = "1" position = "41,-46" rotation = "135"/>
-			<event type = "1" position = "8,23" rotation = "195"/>
-			<event type = "1" position = "-66,-48" rotation = "205"/>
-			<event type = "1" position = "-50,30" rotation = "315"/>
-			<event type = "1" position = "-155,-65" rotation = "245"/>
-			<event type = "1" position = "-97,25" rotation = "145"/>
-			<event type = "1" position = "129,-65" rotation = "65"/>
-			<event type = "1" position = "-108,-72" rotation = "185"/>
-			<event type = "1" position = "39,12" rotation = "275"/>
-			<event type = "1" position = "81,19" rotation = "225"/>
-			<event type = "1" position = "-24,-29" rotation = "165"/>
-			<event type = "1" position = "-7,-72" rotation = "45"/>
-			<event type = "2" position = "107,-1" rotation = "0"/>
-			<event type = "2" position = "22,-65" rotation = "0"/>
-			<event type = "2" position = "17,-2" rotation = "0"/>
-			<event type = "2" position = "-70,-9" rotation = "0"/>
-			<event type = "2" position = "-56,64" rotation = "0"/>
-			<event type = "2" position = "-140,20" rotation = "0"/>
-			<event type = "3" position = "75,-65" rotation = "116"/>
-			<event type = "3" position = "31,36" rotation = "66"/>
-			<event type = "3" position = "-4,-50" rotation = "10"/>
-			<event type = "3" position = "-80,10" rotation = "150"/>
-			<event type = "3" position = "-140,-25" rotation = "235"/>
-			<event type = "3" position = "-163,78" rotation = "0"/>
-			<event type = "3" position = "108,-28" rotation = "300"/>
+			<event dot = "2"/>
+			<event dot = "3"/>
+			<event dot = "2"/>
+			<event dot = "4"/>
+			<event dot = "1"/>
+			<event dot = "1"/>
+			<event dot = "4"/>
+			<event dot = "2"/>
+			<event dot = "3"/>
+			<event dot = "2"/>
+			<event dot = "4"/>
+			<event dot = "1"/>
+			<event dot = "1"/>
+			<event dot = "4"/>
+			<event dot = "2"/>
+			<event dot = "3"/>
+			<event dot = "2"/>
+			<event dot = "4"/>
+			<event dot = "1"/>
+			<event dot = "1"/>
+			<event dot = "4"/>
+			<event dot = "2"/>
+			<event dot = "3"/>
+			<event dot = "2"/>
+			<event dot = "4"/>
+			<event dot = "1"/>
+			<event dot = "1"/>
+			<event dot = "4"/>
+			<event dot = "2"/>
+			<event dot = "3"/>
+			<event dot = "2"/>
+			<event dot = "4"/>
+			<event dot = "1"/>
+			<event dot = "1"/>
+			<event dot = "4"/>
 		</trial>
 		<trial>
-			<event type = "0" position = "112,-44" rotation = "227"/>
-			<event type = "0" position = "-134,-50" rotation = "329"/>
-			<event type = "0" position = "107,25" rotation = "257"/>
-			<event type = "0" position = "-114,86" rotation = "45"/>
-			<event type = "0" position = "53,-12" rotation = "75"/>
-			<event type = "0" position = "-32,-2" rotation = "95"/>
-			<event type = "0" position = "65,46" rotation = "125"/>
-			<event type = "0" position = "-70,31" rotation = "161"/>
-			<event type = "0" position = "98,-41" rotation = "75"/>
-			<event type = "0" position = "-102,-5" rotation = "135"/>
-			<event type = "0" position = "144,54" rotation = "45"/>
-			<event type = "0" position = "-148,44" rotation = "5"/>
-			<event type = "0" position = "36,-20" rotation = "345"/>
-			<event type = "0" position = "-19,65" rotation = "215"/>
-			<event type = "0" position = "-10,1" rotation = "275"/>
-			<event type = "0" position = "12,90" rotation = "45"/>
-			<event type = "0" position = "170,-39" rotation = "185"/>
-			<event type = "0" position = "-165,21" rotation = "90"/>
-			<event type = "0" position = "83,84" rotation = "70"/>
-			<event type = "0" position = "-80,73" rotation = "15"/>
-			<event type = "0" position = "60,-63" rotation = "65"/>
-			<event type = "0" position = "-49,-25" rotation = "125"/>
-			<event type = "0" position = "20,75" rotation = "180"/>
-			<event type = "0" position = "-28,55" rotation = "300"/>
-			<event type = "0" position = "165,12" rotation = "355"/>
-			<event type = "0" position = "-165,56" rotation = "75"/>
-			<event type = "0" position = "166,62" rotation = "25"/>
-			<event type = "0" position = "-166,37" rotation = "105"/>
-			<event type = "0" position = "85,-55" rotation = "155"/>
-			<event type = "0" position = "-86,-65" rotation = "85"/>
-			<event type = "0" position = "63,-1" rotation = "95"/>
-			<event type = "0" position = "-74,88" rotation = "245"/>
-			<event type = "0" position = "133,3" rotation = "175"/>
-			<event type = "0" position = "-129,-3" rotation = "45"/>
-			<event type = "1" position = "-121,42" rotation = "65"/>
-			<event type = "1" position = "84,-17" rotation = "75"/>
-			<event type = "1" position = "91,54" rotation = "95"/>
-			<event type = "1" position = "5,-26" rotation = "125"/>
-			<event type = "1" position = "7,49" rotation = "161"/>
-			<event type = "1" position = "-86,-30" rotation = "345"/>
-			<event type = "1" position = "-17,31" rotation = "145"/>
-			<event type = "1" position = "-112,-34" rotation = "245"/>
-			<event type = "1" position = "-137,72" rotation = "75"/>
-			<event type = "1" position = "135,-30" rotation = "95"/>
-			<event type = "1" position = "117,75" rotation = "125"/>
-			<event type = "1" position = "65,-36" rotation = "35"/>
-			<event type = "1" position = "44,63" rotation = "5"/>
-			<event type = "1" position = "-40,-51" rotation = "0"/>
-			<event type = "1" position = "-34,80" rotation = "15"/>
-			<event type = "1" position = "-155,-3" rotation = "105"/>
-			<event type = "1" position = "-104,63" rotation = "305"/>
-			<event type = "1" position = "155,-13" rotation = "255"/>
-			<event type = "1" position = "135,30" rotation = "205"/>
-			<event type = "1" position = "41,-46" rotation = "135"/>
-			<event type = "1" position = "8,23" rotation = "195"/>
-			<event type = "1" position = "-66,-48" rotation = "205"/>
-			<event type = "1" position = "-50,30" rotation = "315"/>
-			<event type = "1" position = "-155,-65" rotation = "245"/>
-			<event type = "1" position = "-97,25" rotation = "145"/>
-			<event type = "1" position = "129,-65" rotation = "65"/>
-			<event type = "1" position = "-108,-72" rotation = "185"/>
-			<event type = "1" position = "39,12" rotation = "275"/>
-			<event type = "1" position = "81,19" rotation = "225"/>
-			<event type = "1" position = "-24,-29" rotation = "165"/>
-			<event type = "1" position = "-7,-72" rotation = "45"/>
-			<event type = "2" position = "107,-1" rotation = "0"/>
-			<event type = "2" position = "22,-65" rotation = "0"/>
-			<event type = "2" position = "17,-2" rotation = "0"/>
-			<event type = "2" position = "-70,-9" rotation = "0"/>
-			<event type = "2" position = "-56,64" rotation = "0"/>
-			<event type = "2" position = "-140,20" rotation = "0"/>
-			<event type = "3" position = "75,-65" rotation = "116"/>
-			<event type = "3" position = "31,36" rotation = "66"/>
-			<event type = "3" position = "-4,-50" rotation = "10"/>
-			<event type = "3" position = "-80,10" rotation = "150"/>
-			<event type = "3" position = "-140,-25" rotation = "235"/>
-			<event type = "3" position = "-163,78" rotation = "0"/>
-			<event type = "3" position = "108,-28" rotation = "300"/>
+			<event dot = "2"/>
+			<event dot = "2"/>
+			<event dot = "4"/>
+			<event dot = "1"/>
+			<event dot = "4"/>
+			<event dot = "4"/>
+			<event dot = "2"/>
+			<event dot = "4"/>
+			<event dot = "2"/>
+			<event dot = "2"/>
+			<event dot = "2"/>
+			<event dot = "1"/>
+			<event dot = "4"/>
+			<event dot = "2"/>
+			<event dot = "3"/>
+			<event dot = "1"/>
+			<event dot = "2"/>
+			<event dot = "1"/>
+			<event dot = "4"/>
+			<event dot = "2"/>
+			<event dot = "1"/>
+			<event dot = "2"/>
+			<event dot = "1"/>
+			<event dot = "2"/>
+			<event dot = "2"/>
+			<event dot = "2"/>
+			<event dot = "1"/>
+			<event dot = "1"/>
+			<event dot = "4"/>
+			<event dot = "2"/>
+			<event dot = "4"/>
+			<event dot = "1"/>
+			<event dot = "4"/>
+			<event dot = "4"/>
+			<event dot = "4"/>
 		</trial>
 		<trial>
-			<event type = "0" position = "112,-44" rotation = "227"/>
-			<event type = "0" position = "-134,-50" rotation = "329"/>
-			<event type = "0" position = "107,25" rotation = "257"/>
-			<event type = "0" position = "-114,86" rotation = "45"/>
-			<event type = "0" position = "53,-12" rotation = "75"/>
-			<event type = "0" position = "-32,-2" rotation = "95"/>
-			<event type = "0" position = "65,46" rotation = "125"/>
-			<event type = "0" position = "-70,31" rotation = "161"/>
-			<event type = "0" position = "98,-41" rotation = "75"/>
-			<event type = "0" position = "-102,-5" rotation = "135"/>
-			<event type = "0" position = "144,54" rotation = "45"/>
-			<event type = "0" position = "-148,44" rotation = "5"/>
-			<event type = "0" position = "36,-20" rotation = "345"/>
-			<event type = "0" position = "-19,65" rotation = "215"/>
-			<event type = "0" position = "-10,1" rotation = "275"/>
-			<event type = "0" position = "12,90" rotation = "45"/>
-			<event type = "0" position = "170,-39" rotation = "185"/>
-			<event type = "0" position = "-165,21" rotation = "90"/>
-			<event type = "0" position = "83,84" rotation = "70"/>
-			<event type = "0" position = "-80,73" rotation = "15"/>
-			<event type = "0" position = "60,-63" rotation = "65"/>
-			<event type = "0" position = "-49,-25" rotation = "125"/>
-			<event type = "0" position = "20,75" rotation = "180"/>
-			<event type = "0" position = "-28,55" rotation = "300"/>
-			<event type = "0" position = "165,12" rotation = "355"/>
-			<event type = "0" position = "-165,56" rotation = "75"/>
-			<event type = "0" position = "166,62" rotation = "25"/>
-			<event type = "0" position = "-166,37" rotation = "105"/>
-			<event type = "0" position = "85,-55" rotation = "155"/>
-			<event type = "0" position = "-86,-65" rotation = "85"/>
-			<event type = "0" position = "63,-1" rotation = "95"/>
-			<event type = "0" position = "-74,88" rotation = "245"/>
-			<event type = "0" position = "133,3" rotation = "175"/>
-			<event type = "0" position = "-129,-3" rotation = "45"/>
-			<event type = "1" position = "-121,42" rotation = "65"/>
-			<event type = "1" position = "84,-17" rotation = "75"/>
-			<event type = "1" position = "91,54" rotation = "95"/>
-			<event type = "1" position = "5,-26" rotation = "125"/>
-			<event type = "1" position = "7,49" rotation = "161"/>
-			<event type = "1" position = "-86,-30" rotation = "345"/>
-			<event type = "1" position = "-17,31" rotation = "145"/>
-			<event type = "1" position = "-112,-34" rotation = "245"/>
-			<event type = "1" position = "-137,72" rotation = "75"/>
-			<event type = "1" position = "135,-30" rotation = "95"/>
-			<event type = "1" position = "117,75" rotation = "125"/>
-			<event type = "1" position = "65,-36" rotation = "35"/>
-			<event type = "1" position = "44,63" rotation = "5"/>
-			<event type = "1" position = "-40,-51" rotation = "0"/>
-			<event type = "1" position = "-34,80" rotation = "15"/>
-			<event type = "1" position = "-155,-3" rotation = "105"/>
-			<event type = "1" position = "-104,63" rotation = "305"/>
-			<event type = "1" position = "155,-13" rotation = "255"/>
-			<event type = "1" position = "135,30" rotation = "205"/>
-			<event type = "1" position = "41,-46" rotation = "135"/>
-			<event type = "1" position = "8,23" rotation = "195"/>
-			<event type = "1" position = "-66,-48" rotation = "205"/>
-			<event type = "1" position = "-50,30" rotation = "315"/>
-			<event type = "1" position = "-155,-65" rotation = "245"/>
-			<event type = "1" position = "-97,25" rotation = "145"/>
-			<event type = "1" position = "129,-65" rotation = "65"/>
-			<event type = "1" position = "-108,-72" rotation = "185"/>
-			<event type = "1" position = "39,12" rotation = "275"/>
-			<event type = "1" position = "81,19" rotation = "225"/>
-			<event type = "1" position = "-24,-29" rotation = "165"/>
-			<event type = "1" position = "-7,-72" rotation = "45"/>
-			<event type = "2" position = "107,-1" rotation = "0"/>
-			<event type = "2" position = "22,-65" rotation = "0"/>
-			<event type = "2" position = "17,-2" rotation = "0"/>
-			<event type = "2" position = "-70,-9" rotation = "0"/>
-			<event type = "2" position = "-56,64" rotation = "0"/>
-			<event type = "2" position = "-140,20" rotation = "0"/>
-			<event type = "3" position = "75,-65" rotation = "116"/>
-			<event type = "3" position = "31,36" rotation = "66"/>
-			<event type = "3" position = "-4,-50" rotation = "10"/>
-			<event type = "3" position = "-80,10" rotation = "150"/>
-			<event type = "3" position = "-140,-25" rotation = "235"/>
-			<event type = "3" position = "-163,78" rotation = "0"/>
-			<event type = "3" position = "108,-28" rotation = "300"/>
+			<event dot = "2"/>
+			<event dot = "3"/>
+			<event dot = "2"/>
+			<event dot = "4"/>
+			<event dot = "1"/>
+			<event dot = "1"/>
+			<event dot = "4"/>
+			<event dot = "2"/>
+			<event dot = "3"/>
+			<event dot = "2"/>
+			<event dot = "4"/>
+			<event dot = "1"/>
+			<event dot = "1"/>
+			<event dot = "4"/>
+			<event dot = "2"/>
+			<event dot = "3"/>
+			<event dot = "2"/>
+			<event dot = "4"/>
+			<event dot = "1"/>
+			<event dot = "1"/>
+			<event dot = "4"/>
+			<event dot = "2"/>
+			<event dot = "3"/>
+			<event dot = "2"/>
+			<event dot = "4"/>
+			<event dot = "1"/>
+			<event dot = "1"/>
+			<event dot = "4"/>
+			<event dot = "2"/>
+			<event dot = "3"/>
+			<event dot = "2"/>
+			<event dot = "4"/>
+			<event dot = "1"/>
+			<event dot = "1"/>
+			<event dot = "4"/>
+		</trial>
+		<trial>
+			<event dot = "3"/>
+			<event dot = "4"/>
+			<event dot = "1"/>
+			<event dot = "1"/>
+			<event dot = "3"/>
+			<event dot = "4"/>
+			<event dot = "1"/>
+			<event dot = "4"/>
+			<event dot = "2"/>
+			<event dot = "2"/>
+			<event dot = "2"/>
+			<event dot = "2"/>
+			<event dot = "3"/>
+			<event dot = "4"/>
+			<event dot = "1"/>
+			<event dot = "4"/>
+			<event dot = "3"/>
+			<event dot = "2"/>
+			<event dot = "1"/>
+			<event dot = "2"/>
+			<event dot = "2"/>
+			<event dot = "4"/>
+			<event dot = "2"/>
+			<event dot = "4"/>
+			<event dot = "1"/>
+			<event dot = "4"/>
+			<event dot = "3"/>
+			<event dot = "1"/>
+			<event dot = "4"/>
+			<event dot = "1"/>
+			<event dot = "4"/>
+			<event dot = "2"/>
+			<event dot = "2"/>
+			<event dot = "1"/>
+			<event dot = "2"/>
+		</trial>
+		<trial>
+			<event dot = "2"/>
+			<event dot = "3"/>
+			<event dot = "2"/>
+			<event dot = "4"/>
+			<event dot = "1"/>
+			<event dot = "1"/>
+			<event dot = "4"/>
+			<event dot = "2"/>
+			<event dot = "3"/>
+			<event dot = "2"/>
+			<event dot = "4"/>
+			<event dot = "1"/>
+			<event dot = "1"/>
+			<event dot = "4"/>
+			<event dot = "2"/>
+			<event dot = "3"/>
+			<event dot = "2"/>
+			<event dot = "4"/>
+			<event dot = "1"/>
+			<event dot = "1"/>
+			<event dot = "4"/>
+			<event dot = "2"/>
+			<event dot = "3"/>
+			<event dot = "2"/>
+			<event dot = "4"/>
+			<event dot = "1"/>
+			<event dot = "1"/>
+			<event dot = "4"/>
+			<event dot = "2"/>
+			<event dot = "3"/>
+			<event dot = "2"/>
+			<event dot = "4"/>
+			<event dot = "1"/>
+			<event dot = "1"/>
+			<event dot = "4"/>
+		</trial>
+		<trial>
+			<event dot = "4"/>
+			<event dot = "1"/>
+			<event dot = "4"/>
+			<event dot = "4"/>
+			<event dot = "1"/>
+			<event dot = "4"/>
+			<event dot = "1"/>
+			<event dot = "2"/>
+			<event dot = "3"/>
+			<event dot = "3"/>
+			<event dot = "2"/>
+			<event dot = "4"/>
+			<event dot = "3"/>
+			<event dot = "2"/>
+			<event dot = "1"/>
+			<event dot = "4"/>
+			<event dot = "3"/>
+			<event dot = "1"/>
+			<event dot = "2"/>
+			<event dot = "3"/>
+			<event dot = "4"/>
+			<event dot = "2"/>
+			<event dot = "1"/>
+			<event dot = "2"/>
+			<event dot = "1"/>
+			<event dot = "4"/>
+			<event dot = "1"/>
+			<event dot = "4"/>
+			<event dot = "1"/>
+			<event dot = "4"/>
+			<event dot = "2"/>
+			<event dot = "2"/>
+			<event dot = "1"/>
+			<event dot = "2"/>
+			<event dot = "4"/>
 		</trial>
 	</events>
 </session>

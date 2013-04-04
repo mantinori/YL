@@ -203,7 +203,8 @@ public class XmlManager {
 		
 		if((gameType !="0" && (typeof(SpatialManager) == gm.GetType())) ||
 			(gameType !="1" && (typeof(InhibitionManager) == gm.GetType())) ||
-			(gameType !="2" && (typeof(StarManager) == gm.GetType())) ){
+			(gameType !="2" && (typeof(StarManager) == gm.GetType())) ||
+			(gameType !="3" && (typeof(ImplicitManager) == gm.GetType()))){
 			NeuroLog.Error("Invalid read in file for current scene. File is " + gameType+ " while scene is " + gm.GetType());
 			
 			sessionXML = "randomList";
@@ -217,12 +218,14 @@ public class XmlManager {
 		List<EventStats> eS;
 		
 		//Read in Trials
-		if(typeof(SpatialManager) == gm.GetType())
+		if(gm.SType == GameManager.SessionType.Spatial)
 			eS = ReadSpatialEvents(eventsNode);
-		else if(typeof(InhibitionManager) == gm.GetType())
+		else if(gm.SType == GameManager.SessionType.Inhibition)
 			eS = ReadInhibEvents(eventsNode);
-		else if(typeof(StarManager) == gm.GetType())
+		else if(gm.SType == GameManager.SessionType.Star)
 			eS = ReadStarEvents(eventsNode);
+		else if(gm.SType == GameManager.SessionType.Implicit)
+			eS = ReadImplicitEvents(eventsNode);
 		else
 			return null;
 		
@@ -448,6 +451,44 @@ public class XmlManager {
 		}
 		return starEvents;
 	}
+	//Method used to read in all the trials of the game
+	private List<EventStats> ReadImplicitEvents(XmlNode eventsNode){
+		
+		List<EventStats> implicitEvents = new List<EventStats>();
+		
+		int trialNum =1;
+		
+		//For all the trials
+		foreach(XmlNode trial in eventsNode.ChildNodes){
+			for (int i=0; i<trial.ChildNodes.Count; i++){
+				
+				//Make sure were trying to deal with event
+				if(trial.ChildNodes[i].Name =="event"){
+					
+					int dot = -1;
+					
+					foreach(XmlAttribute attri in trial.ChildNodes[i].Attributes){
+						//Dot
+						if(attri.Name.ToLower() == "dot"){	
+							if(int.TryParse(attri.Value.ToLower(),out dot)){
+								if(dot <1  && dot>4){
+									NeuroLog.Error("Invalid value for 'type' at event #" + (i+1).ToString() + ". Needs to be between 0 and 4.");
+									dot = -1;
+								}
+							}
+							else NeuroLog.Error("Invalid value for 'type' at event #" + (i+1).ToString() + ". Needs to be a int.");
+						}
+						//Other attributes that don't have cases
+						else NeuroLog.Error("Unknown attribute '" + attri.Name + "' at event #" + (i+1).ToString() + ".");
+					}
+					
+					if(dot!=-1) implicitEvents.Add(new ImplicitEvent(dot,trialNum));
+				}	
+			}
+			trialNum++;
+		}
+		return implicitEvents;
+	}
 	
 	//Method used to write out the log file once the game has completed
 	public void WriteOut(){
@@ -470,6 +511,7 @@ public class XmlManager {
 		if(gm.SType == GameManager.SessionType.Spatial) WriteOutSpatial(xml,session);
 		else if(gm.SType == GameManager.SessionType.Inhibition) WriteOutInhibition(xml,session);
 		else if (gm.SType == GameManager.SessionType.Star) WriteOutStar(xml,session);
+		else if (gm.SType == GameManager.SessionType.Implicit) WriteOutImplicit(xml,session);
 		
 		//Save the file in the correct spot
 		xml.Save(LogFilesPath+delim+statsXML);
@@ -836,6 +878,110 @@ public class XmlManager {
 		trials.SetAttribute("AvgDistancePerTarget", avgdist.ToString());
 	
 		session.AppendChild(trials);	
+	}
+	
+	private void WriteOutImplicit(XmlDocument xml, XmlElement session){
+
+		XmlElement practice = xml.CreateElement("practice");
+		float avgTime=0;
+		float avgDist=0;
+		float responseCount=0;
+		
+		//Loop through all the events and write them out
+		foreach(ImplicitEvent eS in gm.Practice){
+			
+			XmlElement trial = xml.CreateElement("event");
+			
+			if(eS.Response==null){
+				trial.SetAttribute("Responded", "false");
+			}
+			else{
+				trial.SetAttribute("Responsed", "true");
+				responseCount++;
+				avgTime += eS.Response.ResponseTime;
+				avgDist += eS.Response.DistanceFromCenter;
+				trial.SetAttribute("ResponseTime", eS.Response.ResponseTime.ToString());
+				trial.SetAttribute("TouchPosition", eS.Response.TouchLocation.ToString());
+				trial.SetAttribute("DistanceFromCenter", eS.Response.DistanceFromCenter.ToString());
+			}
+			
+			practice.AppendChild(trial);
+		}
+			
+		avgTime= avgTime / responseCount;
+		avgDist = avgDist / responseCount;
+		responseCount = responseCount / gm.Practice.Count;
+		
+		practice.SetAttribute("PercentCorrect", responseCount.ToString());
+		practice.SetAttribute("AvgDistanceFromCenter", avgDist.ToString());
+		practice.SetAttribute("AvgResponseTime", avgTime.ToString());
+		
+		session.AppendChild(practice);
+		
+		XmlElement blocks = xml.CreateElement("blocks");
+		
+		List<List<ImplicitEvent>> b = new List<List<ImplicitEvent>>();
+		
+		b.Add(new List<ImplicitEvent>());
+		
+		int blockInt=0;
+		
+		//Shift out the event
+		foreach(ImplicitEvent iE in gm.Events){
+			if(b[blockInt].Count == 0)
+				b[blockInt].Add(iE);
+			else{
+				if(iE.BlockNum != b[blockInt][0].BlockNum){
+					b.Add(new List<ImplicitEvent>());
+					blockInt++;
+				}
+				
+				b[blockInt].Add(iE);
+			}
+		}
+		
+		foreach(List<ImplicitEvent> iEs in b){
+			
+			avgTime=0;
+			avgDist=0;
+			responseCount=0;
+			
+			//Create the trial cluster
+			XmlElement block = xml.CreateElement("block");
+			
+			//Loop through all the events and write them out
+			foreach(ImplicitEvent iE in iEs){
+				
+				XmlElement trial = xml.CreateElement("event");
+			
+				if(iE.Response==null){
+					trial.SetAttribute("Responded", "false");
+				}
+				else{
+					trial.SetAttribute("Responsed", "true");
+					responseCount++;
+					avgTime += iE.Response.ResponseTime;
+					avgDist += iE.Response.DistanceFromCenter;
+					trial.SetAttribute("ResponseTime", iE.Response.ResponseTime.ToString());
+					trial.SetAttribute("TouchPosition", iE.Response.TouchLocation.ToString());
+					trial.SetAttribute("DistanceFromCenter", iE.Response.DistanceFromCenter.ToString());
+				}
+			
+				block.AppendChild(trial);
+			}
+			
+			avgTime= avgTime / responseCount;
+			avgDist = avgDist / responseCount;
+			responseCount = responseCount / iEs.Count;
+			
+			block.SetAttribute("PercentCorrect", responseCount.ToString());
+			block.SetAttribute("AvgDistanceFromCenter", avgDist.ToString());
+			block.SetAttribute("AvgResponseTime", avgTime.ToString());
+			
+			blocks.AppendChild(block);
+		}
+		
+		session.AppendChild(blocks);
 	}
 	
 	//Generates the time the file was written out, and writeout file name
