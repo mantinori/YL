@@ -20,6 +20,9 @@ public class InhibitionManager : GameManager {
 		}
 	}
 	
+	public Material stripesPurple;
+	public Material yellow;
+	
 	// Use this for initialization
 	void Awake () {
 		base.Setup(GameManager.SessionType.Inhibition);
@@ -193,13 +196,13 @@ public class InhibitionManager : GameManager {
 		List<Vector3> tutDots = new List<Vector3>(){new Vector3(-13.25f,-5f,0)};
 		
 		//Click Yellow Left
-		inhibStimulus.renderer.material.color = Color.yellow;
+		inhibStimulus.renderer.material = yellow;
 		
 		inhibStimulus.transform.position = new Vector3(-13.25f,-6f,0);
 		
 		screen.enabled = false;
 		
-		yield return new WaitForSeconds(1f);
+		yield return new WaitForSeconds(.5f);
 		
 		yield return StartCoroutine(tFinger.performAction(tutDots,null));
 		
@@ -216,7 +219,7 @@ public class InhibitionManager : GameManager {
 		
 		screen.enabled = false;
 		
-		yield return new WaitForSeconds(1f);
+		yield return new WaitForSeconds(.5f);
 		
 		yield return StartCoroutine(tFinger.performAction(tutDots,null));
 		
@@ -230,11 +233,11 @@ public class InhibitionManager : GameManager {
 	 	tutDots = new List<Vector3>(){new Vector3(13.25f,-5f,0)};
 		inhibStimulus.transform.position = new Vector3(-13.25f,-6f,0);
 		
-		inhibStimulus.renderer.material.color = new Color(1f,.431f,.804f,1);
+		inhibStimulus.renderer.material = stripesPurple;
 		
 		screen.enabled = false;
 		
-		yield return new WaitForSeconds(1f);
+		yield return new WaitForSeconds(.5f);
 		
 		yield return StartCoroutine(tFinger.performAction(tutDots,null));
 		
@@ -250,7 +253,7 @@ public class InhibitionManager : GameManager {
 		
 		screen.enabled = false;
 		
-		yield return new WaitForSeconds(1f);
+		yield return new WaitForSeconds(.5f);
 		
 		yield return StartCoroutine(tFinger.performAction(tutDots,null));
 		
@@ -275,8 +278,8 @@ public class InhibitionManager : GameManager {
 				
 			//Probe
 			//Set up the ball's color
-			if(CurrentEvent.DotColor =="yellow") inhibStimulus.renderer.material.color = Color.yellow;
-			else inhibStimulus.renderer.material.color = new Color(1f,.431f,.804f,1);
+			if(CurrentEvent.DotColor =="yellow") inhibStimulus.renderer.material = yellow;
+			else inhibStimulus.renderer.material = stripesPurple;
 			
 			//Set up the ball's position
 			if(CurrentEvent.Side =='l') inhibStimulus.transform.position = new Vector3(-13.25f,-6f,0);
