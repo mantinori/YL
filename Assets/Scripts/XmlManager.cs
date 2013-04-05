@@ -893,10 +893,10 @@ public class XmlManager {
 			XmlElement trial = xml.CreateElement("event");
 			
 			if(eS.Response==null){
-				trial.SetAttribute("Responded", "false");
+				trial.SetAttribute("Correct", "false");
 			}
 			else{
-				trial.SetAttribute("Responsed", "true");
+				trial.SetAttribute("Correct", "true");
 				responseCount++;
 				avgTime += eS.Response.ResponseTime;
 				avgDist += eS.Response.DistanceFromCenter;
@@ -955,10 +955,10 @@ public class XmlManager {
 				XmlElement trial = xml.CreateElement("event");
 			
 				if(iE.Response==null){
-					trial.SetAttribute("Responded", "false");
+					trial.SetAttribute("Correct", "false");
 				}
 				else{
-					trial.SetAttribute("Responsed", "true");
+					trial.SetAttribute("Correct", "true");
 					responseCount++;
 					avgTime += iE.Response.ResponseTime;
 					avgDist += iE.Response.DistanceFromCenter;
