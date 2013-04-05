@@ -205,8 +205,6 @@ public class InhibitionManager : GameManager {
 		
 		StartCoroutine(tFinger.exit());	
 		
-		screen.material.color = new Color(.25f,.25f,.25f,0);
-		
 		screen.enabled = true;
 		
 		yield return new WaitForSeconds(.5f);
@@ -303,7 +301,6 @@ public class InhibitionManager : GameManager {
 			
 			//ITI, black screen
 			state = GameState.ITI;
-			screen.material.color = new Color(.25f,.25f,.25f,0);
 			screen.enabled = true;
 			yield return new WaitForSeconds(.5f);
 			

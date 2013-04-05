@@ -187,17 +187,15 @@ public class ImplicitManager : GameManager {
 		
 		screen.enabled = false;
 		
-		yield return new WaitForSeconds(.5f);
+		yield return new WaitForSeconds(.15f);
 		
 		yield return StartCoroutine(tFinger.performAction(tutDots,null));
 		
-		StartCoroutine(tFinger.exit());	
-		
-		screen.material.color = new Color(.25f,.25f,.25f,0);
+		yield return StartCoroutine(tFinger.exit());	
 		
 		screen.enabled = true;
 		
-		yield return new WaitForSeconds(.5f);
+		yield return new WaitForSeconds(.1f);
 		
 		//Click 2nd dot
 		tutDots = new List<Vector3>(){new Vector3(stimPositions[1].x,0,stimPositions[1].y)};
@@ -206,15 +204,15 @@ public class ImplicitManager : GameManager {
 		
 		screen.enabled = false;
 		
-		yield return new WaitForSeconds(.5f);
+		yield return new WaitForSeconds(.15f);
 		
 		yield return StartCoroutine(tFinger.performAction(tutDots,null));
 		
-		StartCoroutine(tFinger.exit());	
+		yield return StartCoroutine(tFinger.exit());	
 		
 		screen.enabled = true;
 		
-		yield return new WaitForSeconds(.5f);
+		yield return new WaitForSeconds(.1f);
 		
 		//Click 3rd dot
 		tutDots = new List<Vector3>(){new Vector3(stimPositions[2].x,0,stimPositions[2].y)};
@@ -223,15 +221,15 @@ public class ImplicitManager : GameManager {
 		
 		screen.enabled = false;
 		
-		yield return new WaitForSeconds(.5f);
+		yield return new WaitForSeconds(.15f);
 		
 		yield return StartCoroutine(tFinger.performAction(tutDots,null));
 		
-		StartCoroutine(tFinger.exit());	
+		yield return StartCoroutine(tFinger.exit());	
 		
 		screen.enabled = true;
 		
-		yield return new WaitForSeconds(.5f);
+		yield return new WaitForSeconds(.1f);
 		
 		//Click 4th dot
 		tutDots = new List<Vector3>(){new Vector3(stimPositions[3].x,0,stimPositions[3].y)};
@@ -240,7 +238,7 @@ public class ImplicitManager : GameManager {
 		
 		screen.enabled = false;
 		
-		yield return new WaitForSeconds(.5f);
+		yield return new WaitForSeconds(.15f);
 		
 		yield return StartCoroutine(tFinger.performAction(tutDots,null));
 		
@@ -248,7 +246,7 @@ public class ImplicitManager : GameManager {
 		
 		screen.enabled = true;
 
-		yield return new WaitForSeconds(.5f);
+		yield return new WaitForSeconds(.1f);
 	}
 	
 	//Main method of the game
@@ -296,9 +294,8 @@ public class ImplicitManager : GameManager {
 			
 			//ITI, black screen
 			state = GameState.ITI;
-			screen.material.color = new Color(.25f,.25f,.25f,0);
 			screen.enabled = true;
-			yield return new WaitForSeconds(.5f);
+			yield return new WaitForSeconds(.1f);
 			
 			//Get the next event
 			nextEvent();
