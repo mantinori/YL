@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<!--type == Which game type should be loaded for this task. As of 3/22/13 0=Spatial, 1=Inhibition, and 2=Star -->
+<!--type == Which game type should be loaded for this task. As of 3/22/13 0=Spatial, 1=Inhibition, 2=Star, 3 = Implicit, 4 = Associate -->
 <session type="2">
 	<!--event:
 			type(int): What type of object should be spawned. Choices include '0' = littleStar, '1' = bigStar, '2' = dot, and '3' = triangle.

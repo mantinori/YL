@@ -153,7 +153,7 @@ public class XmlManager {
 		int tNum = PlayerPrefs.GetInt("-currentTask");
 		
 		//Check to see if the task number is in the correct range of 1-6
-		if(tNum<1 ||tNum>6){
+		if(tNum<1 ||tNum>7){
 			
 			NeuroLog.Error("Invalid task number given: " + tNum.ToString());
 			
@@ -204,7 +204,8 @@ public class XmlManager {
 		if((gameType !="0" && (typeof(SpatialManager) == gm.GetType())) ||
 			(gameType !="1" && (typeof(InhibitionManager) == gm.GetType())) ||
 			(gameType !="2" && (typeof(StarManager) == gm.GetType())) ||
-			(gameType !="3" && (typeof(ImplicitManager) == gm.GetType()))){
+			(gameType !="3" && (typeof(ImplicitManager) == gm.GetType())) ||
+			(gameType !="4" && (typeof(AssociateManager) == gm.GetType()))){
 			NeuroLog.Error("Invalid read in file for current scene. File is " + gameType+ " while scene is " + gm.GetType());
 			
 			sessionXML = "randomList";
@@ -226,6 +227,8 @@ public class XmlManager {
 			eS = ReadStarEvents(eventsNode);
 		else if(gm.SType == GameManager.SessionType.Implicit)
 			eS = ReadImplicitEvents(eventsNode);
+		else if(gm.SType == GameManager.SessionType.Associate)
+			eS = ReadAssociateEvents(eventsNode);
 		else
 			return null;
 		
@@ -395,6 +398,7 @@ public class XmlManager {
 							}
 							else NeuroLog.Error("Invalid value for 'type' at event #" + (i+1).ToString() + ". Needs to be a int.");
 						}
+						//Position
 						else if(attri.Name.ToLower() =="position"){
 							string[] input = attri.Value.Split(',');
 							
@@ -423,7 +427,7 @@ public class XmlManager {
 							
 							pos = new Vector2(x,y);
 						}
-						//Color
+						//Rotation
 						else if(attri.Name.ToLower() == "rotation"){	
 							if(!float.TryParse(attri.Value.ToLower(),out rotation))
 								NeuroLog.Error("Invalid value for 'rotation' at event #" + (i+1).ToString() + ". Needs to be a float.");
@@ -472,11 +476,11 @@ public class XmlManager {
 						if(attri.Name.ToLower() == "dot"){	
 							if(int.TryParse(attri.Value.ToLower(),out dot)){
 								if(dot <1  && dot>4){
-									NeuroLog.Error("Invalid value for 'type' at event #" + (i+1).ToString() + ". Needs to be between 0 and 4.");
+									NeuroLog.Error("Invalid value for 'dot' at event #" + (i+1).ToString() + ". Needs to be between 0 and 4.");
 									dot = -1;
 								}
 							}
-							else NeuroLog.Error("Invalid value for 'type' at event #" + (i+1).ToString() + ". Needs to be a int.");
+							else NeuroLog.Error("Invalid value for 'dot' at event #" + (i+1).ToString() + ". Needs to be a int.");
 						}
 						//Other attributes that don't have cases
 						else NeuroLog.Error("Unknown attribute '" + attri.Name + "' at event #" + (i+1).ToString() + ".");
@@ -488,6 +492,93 @@ public class XmlManager {
 			trialNum++;
 		}
 		return implicitEvents;
+	}
+	
+	//Method used to read in all the trials of the game
+	private List<EventStats> ReadAssociateEvents(XmlNode eventsNode){
+		
+		List<EventStats> associateEvents = new List<EventStats>();
+		
+		//For all the trials
+		for(int i = 0; i< eventsNode.ChildNodes.Count; i++){
+			//Make sure were trying to deal with event
+			if(eventsNode.ChildNodes[i].Name.ToLower() =="event"){
+				int target = -1;
+				List<int> stim = new List<int>();
+				
+				foreach(XmlAttribute attri in eventsNode.ChildNodes[i].Attributes){
+					//Target
+					if(attri.Name.ToLower() == "target"){	
+						if(int.TryParse(attri.Value.ToLower(),out target)){
+							if(target <1  && target>12){
+								NeuroLog.Error("Invalid value for 'target' at event #" + (i+1).ToString() + ". Needs to be between 1 and 12.");
+								target = -1;
+							}
+						}
+						else NeuroLog.Error("Invalid value for 'target' at event #" + (i+1).ToString() + ". Needs to be a int.");
+					}
+					//Stimuli
+					else if(attri.Name.ToLower() =="stimuli"){
+						string[] input = attri.Value.Split(';');
+						
+						int output;
+						
+						//For the first four values
+						for(int s = 0;s<4;s++){
+							if(int.TryParse(input[s], out output)){
+								if(output<1  && output>12)
+									NeuroLog.Error("Invalid value for 'stimuli["+s.ToString()+"]' at event #" + (i+1).ToString() + ". Needs to be between 1 and 12.");
+								else
+									stim.Add(output);
+							}
+							else
+								NeuroLog.Error("Invalid value for stimuli["+s.ToString()+"]' at event #" + (i+1).ToString() + ". Needs to be a int.");
+						}
+					}
+					//Other attributes that don't have cases
+					else NeuroLog.Error("Unknown attribute '" + attri.Name + "' at event #" + (i+1).ToString() + ".");
+				}
+				
+				if(target != -1 && stim.Count==4){
+					
+					int correspondingNum=0;
+					
+					switch(target){
+						case 1: correspondingNum = 12;
+								break;
+		 				case 2: correspondingNum = 9;
+								break;
+		 				case 3: correspondingNum = 11;
+								break;
+		 				case 4: correspondingNum = 7;
+								break;
+		 				case 5: correspondingNum = 8;
+								break;
+						case 6: correspondingNum = 10;
+								break;
+						case 7: correspondingNum = 4;
+								break;
+						case 8: correspondingNum = 5;
+								break;
+						case 9: correspondingNum = 2;
+								break;
+						case 10: correspondingNum = 6;
+								break;
+						case 11: correspondingNum = 3;
+								break;
+						case 12: correspondingNum = 1;
+								break;
+					}
+					
+					if(stim.Contains(correspondingNum))
+						associateEvents.Add(new AssociateEvent(target,stim));
+					else
+						NeuroLog.Error("Invalid trial. One stimuli value must be '"+ correspondingNum + "' to match the target value of '" + target + "'.");		
+				}
+			}
+		}
+		
+		return associateEvents;
 	}
 	
 	//Method used to write out the log file once the game has completed
@@ -512,6 +603,7 @@ public class XmlManager {
 		else if(gm.SType == GameManager.SessionType.Inhibition) WriteOutInhibition(xml,session);
 		else if (gm.SType == GameManager.SessionType.Star) WriteOutStar(xml,session);
 		else if (gm.SType == GameManager.SessionType.Implicit) WriteOutImplicit(xml,session);
+		else if (gm.SType == GameManager.SessionType.Associate) WriteOutAssociate(xml,session);
 		
 		//Save the file in the correct spot
 		xml.Save(LogFilesPath+delim+statsXML);
@@ -982,6 +1074,71 @@ public class XmlManager {
 		}
 		
 		session.AppendChild(blocks);
+	}
+	
+	private void WriteOutAssociate(XmlDocument xml, XmlElement session){
+		XmlElement practice = xml.CreateElement("practice");
+		
+		//Loop through all the practice trials
+		foreach(AssociateEvent eS in gm.Practice){
+			XmlElement trial = xml.CreateElement("trial");
+				trial.SetAttribute("NumBadTouches",(eS.Responses.Count-1).ToString());
+				
+				int score = 0;	
+				if(eS.Responses.Count>1){
+					int target = eS.TargetImage;
+					
+					if(target<7){
+						if(eS.Responses[0].DotPressed>=7) score =1;
+						else score =2;
+					}
+					else{
+						if(eS.Responses[0].DotPressed>=7) score =2;
+						else score =1;
+					}
+				}
+			
+				trial.SetAttribute("Score",score.ToString());
+			practice.AppendChild(trial);
+		}
+		
+		session.AppendChild(practice);
+		
+		//Create the trial cluster
+		XmlElement trials = xml.CreateElement("trials");
+		
+		float avgBadTouch =0;
+		
+		//Loop through all the events and write them out
+		foreach(AssociateEvent eS in gm.Events){
+			XmlElement trial = xml.CreateElement("trial");
+				trial.SetAttribute("NumBadTouches",(eS.Responses.Count-1).ToString());
+			
+				avgBadTouch +=(eS.Responses.Count-1);
+				
+				int score = 0;	
+				if(eS.Responses.Count>1){
+					int target = eS.TargetImage;
+					
+					if(target<7){
+						if(eS.Responses[0].DotPressed>=7) score =1;
+						else score =2;
+					}
+					else{
+						if(eS.Responses[0].DotPressed>=7) score =2;
+						else score =1;
+					}
+				}
+			
+				trial.SetAttribute("Score",score.ToString());
+			trials.AppendChild(trial);
+		}
+		
+		avgBadTouch = avgBadTouch/(float)gm.Events.Count;
+		
+		trials.SetAttribute("AvgNumBadTouch", avgBadTouch.ToString());
+	
+		session.AppendChild(trials);
 	}
 	
 	//Generates the time the file was written out, and writeout file name

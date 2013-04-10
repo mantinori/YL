@@ -170,6 +170,9 @@ public class MenuController : MonoBehaviour {
 		//Implicit
 		else if(type =="3")
 			Application.LoadLevel("implicit");
+		//Associate
+		else if(type =="4")
+			Application.LoadLevel("associate");
 	}
 	
 	//Bring up warning message

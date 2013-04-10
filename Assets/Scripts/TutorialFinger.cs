@@ -95,6 +95,39 @@ public class TutorialFinger : MonoBehaviour {
 		}
 	}
 	
+	//Have the finger move to and tap different spots on the screen
+	//locationsToPress(List<Vector3>): A ordered list of positions on the screen where the finger will move to
+	//objsAffected(GameObject[]): An array of gameobjects that will be affected when the finger clicks on it. (For Star)
+	public IEnumerator moveTo(List<Vector3> locationsToMove){
+		
+		finger.renderer.enabled = true;
+		
+		int currentTarget=0;
+		
+		//Continue moving until it goes to all the points
+		while(currentTarget<locationsToMove.Count){
+			
+			//Get the Vector to the next spot
+			Vector3 toSpot = locationsToMove[currentTarget] - transform.position;
+			
+			toSpot.y = 0;
+			
+			//If the finger is in the margin of error, click the screen
+			if(toSpot.magnitude<=margin){
+				//Next target
+				currentTarget++;
+			}
+			//Otherwise move towards the point
+			else{
+				toSpot.Normalize();
+			
+				transform.Translate(toSpot* speed);
+			}
+		
+			yield return new WaitForFixedUpdate();
+		}
+	}
+	
 	
 	//Method used to make the finger "tap the screen"
 	//gO(Gameobject) - The gameObject that will be affect by this tap. Can be null. Currently used for Star
@@ -107,8 +140,9 @@ public class TutorialFinger : MonoBehaviour {
 			yield return new WaitForFixedUpdate();
 		}
 		
-		//Start the fading fingerprint routine
-		StartCoroutine(gm.spot.fadeFinger(new Vector2(transform.position.x,transform.position.z),-1));
+		//Start fading fingerprint if were not in associate
+		if(GameManager.main.SType != GameManager.SessionType.Associate)
+			StartCoroutine(gm.spot.fadeFinger(new Vector2(transform.position.x,transform.position.z),-1));
 		
 		//If there is an object
 		if(gO!=null){

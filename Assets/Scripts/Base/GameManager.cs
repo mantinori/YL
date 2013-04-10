@@ -69,7 +69,7 @@ public class GameManager : MonoBehaviour {
 	protected AudioSource audioSource;
 	
 	//Which gametype is running
-	public enum SessionType{Spatial, Inhibition, Star, Implicit};
+	public enum SessionType{Spatial, Inhibition, Star, Implicit, Associate};
 	protected SessionType sType;
 	public SessionType SType{
 		get{return sType;}

@@ -102,7 +102,7 @@ public class Response{
 		distanceFromCenter = Vector2.Distance(tL,center);
 	}
 	
-	//2nd Constructor for implicit
+	//Constructor for implicit
 	//objPos(Vector2): the position of the gameobject
 	//rTime(float): The Response Time of the action
 	//tL(Vector2): Where did the player touch on the screen
@@ -118,5 +118,18 @@ public class Response{
 		dotPressed = pos;
 		
 		distanceFromCenter = Vector2.Distance(objPos,tL);
+	}
+	
+	//Constructor for associate
+	//dot(int): the number of the stimulus the player pressed
+	//rTime(float): The Response Time of the action
+	//tL(Vector2): Where did the player touch on the screen
+	public Response(int stim, float rTime, Vector2 tL){
+		responseTime = rTime;
+		touchLocation = tL;
+		
+		dotPressed = stim;
+		
+		distanceFromCenter = 0;
 	}
 }
