@@ -249,7 +249,7 @@ public class AssociateManager : GameManager {
 		newPractice.Add(new AssociateEvent(-1,new List<int>(){2,5,-2,7}));
 		newPractice.Add(new AssociateEvent(-4,new List<int>(){11,-3,6,4}));
 		newPractice.Add(new AssociateEvent(-2,new List<int>(){1,9,3,-1}));
-		newPractice.Add(new AssociateEvent(-3,new List<int>(){-4,8,10,12}));
+		newPractice.Add(new AssociateEvent(-3,new List<int>(){-4,8,4,2}));
 		
 		System.Random rand = new System.Random();
 		
@@ -388,8 +388,8 @@ public class AssociateManager : GameManager {
 		tutDots = new List<Vector3>(){new Vector3(0f,-5f,0f)};
 		target.renderer.material.mainTexture = pracImages[3];
 		stimuli[0].renderer.material.mainTexture = pracImages[2];
-		stimuli[1].renderer.material.mainTexture = images[9];
-		stimuli[2].renderer.material.mainTexture = images[7];
+		stimuli[1].renderer.material.mainTexture = images[4];
+		stimuli[2].renderer.material.mainTexture = images[2];
 		stimuli[3].renderer.material.mainTexture = images[11];
 		
 		yield return StartCoroutine(startEvent());

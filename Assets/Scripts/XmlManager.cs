@@ -1109,13 +1109,26 @@ public class XmlManager {
 		
 		float avgBadTouch =0;
 		
+		int indexOfLastSpike=0;
+		
+		int index = 0;
+		
+		int countOfRightCategory=0;
+		
+		int indexOfFiftyPercent=-1;
+		
+		float probabilityCorrectTouch = 0;
+		
 		//Loop through all the events and write them out
 		foreach(AssociateEvent eS in gm.Events){
 			XmlElement trial = xml.CreateElement("trial");
 				trial.SetAttribute("NumBadTouches",(eS.Responses.Count-1).ToString());
 			
 				avgBadTouch +=(eS.Responses.Count-1);
-				
+			
+				if(index>=1)
+					if(((AssociateEvent)gm.Events[index-1]).Responses.Count<eS.Responses.Count) indexOfLastSpike = index;
+			
 				int score = 0;	
 				if(eS.Responses.Count>1){
 					int target = eS.TargetImage;
@@ -1131,12 +1144,28 @@ public class XmlManager {
 				}
 			
 				trial.SetAttribute("Score",score.ToString());
+			
+				if(score<2){
+					countOfRightCategory++;
+				}
+			
+				probabilityCorrectTouch = ((float)countOfRightCategory)/((float)(index+1));
+			
+				if(probabilityCorrectTouch<.5 &&indexOfFiftyPercent !=-1)
+					indexOfFiftyPercent = -1;
+				else if(probabilityCorrectTouch>=.5 &&indexOfFiftyPercent ==-1)
+					indexOfFiftyPercent = index;
+			
 			trials.AppendChild(trial);
+			index++;
 		}
 		
 		avgBadTouch = avgBadTouch/(float)gm.Events.Count;
 		
 		trials.SetAttribute("AvgNumBadTouch", avgBadTouch.ToString());
+		trials.SetAttribute("LearningRateItems", (indexOfLastSpike+1).ToString());
+		trials.SetAttribute("AvgProbabilityCorrectCategory", Mathf.Round(probabilityCorrectTouch *100).ToString() +"%");
+		trials.SetAttribute("LearningRateCategory", indexOfFiftyPercent==-1 ? "NaN" : (indexOfFiftyPercent+1).ToString());
 	
 		session.AppendChild(trials);
 	}
