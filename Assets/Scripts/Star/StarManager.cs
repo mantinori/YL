@@ -57,7 +57,7 @@ public class StarManager : GameManager {
 			
 			NeuroLog.Log("Generating Random events");
 			
-			numTrials = 3;
+			numTrials = 2;
 			
 			for(int i =0;i<numTrials;i++){
 				StarEvent eS = new StarEvent();

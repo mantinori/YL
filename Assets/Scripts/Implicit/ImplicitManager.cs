@@ -33,6 +33,8 @@ public class ImplicitManager : GameManager {
 		
 		implicitStimulus = GameObject.Find("Stimulus");
 		
+		implicitStimulus.renderer.material.color = Color.blue;
+		
 		stimPositions = new Vector2[4]{new Vector2(-15,10), new Vector2(5,5), new Vector2(15,-10), new Vector2(-10,-5)};
 		
 		//Preform the read in to get the events
@@ -61,7 +63,7 @@ public class ImplicitManager : GameManager {
 		
 		int i=0;
 		
-		//Generate yellow dots
+		//Generate events
 		for(i=0;i<210;i++){
 			
 			ImplicitEvent e=null;
