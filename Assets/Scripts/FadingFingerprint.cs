@@ -61,6 +61,9 @@ public class FadingFingerprint : MonoBehaviour {
 			else if(GameManager.main.SType == GameManager.SessionType.Associate){
 				if(dot ==0) p =.75f;
 				else p=1.25f;
+			}else if(GameManager.main.SType ==  GameManager.SessionType.Stopping){
+				if(dot ==0) p =.75f;
+				else p=1f;
 			}
 			//Have the game manager play the pitch altered sound
 			GameManager.main.playSound(p);

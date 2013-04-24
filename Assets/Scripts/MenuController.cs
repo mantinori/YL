@@ -73,7 +73,10 @@ public class MenuController : MonoBehaviour {
 						latestTask++;
 						if(PlayerPrefs.GetString("-t5")=="true"){
 							latestTask++;
-							if(PlayerPrefs.GetString("-t6")=="true")latestTask++;
+							if(PlayerPrefs.GetString("-t6")=="true"){
+								latestTask++;
+								if(PlayerPrefs.GetString("-t7")=="true")latestTask++;
+							}
 						}
 					}
 				}
@@ -81,7 +84,7 @@ public class MenuController : MonoBehaviour {
 		}
 		
 		//Update the list of task buttons
-		for(int i =0; i<6;i++){
+		for(int i =0; i<7;i++){
 			//If the player's latest task is greater than i, mark it as complete by turning it green but still keeping it active
 			if(i<latestTask){
 				taskButtons[i].transform.GetComponentInChildren<UILabel>().color = Color.white;
@@ -173,6 +176,9 @@ public class MenuController : MonoBehaviour {
 		//Associate
 		else if(type =="4")
 			Application.LoadLevel("associate");
+		//Stopping
+		else if(type =="5")
+			Application.LoadLevel("stopping");
 	}
 	
 	//Bring up warning message

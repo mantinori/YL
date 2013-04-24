@@ -152,7 +152,7 @@ public class XmlManager {
 	{
 		int tNum = PlayerPrefs.GetInt("-currentTask");
 		
-		//Check to see if the task number is in the correct range of 1-6
+		//Check to see if the task number is in the correct range of 1-7
 		if(tNum<1 ||tNum>7){
 			
 			NeuroLog.Error("Invalid task number given: " + tNum.ToString());
@@ -205,7 +205,8 @@ public class XmlManager {
 			(gameType !="1" && (typeof(InhibitionManager) == gm.GetType())) ||
 			(gameType !="2" && (typeof(StarManager) == gm.GetType())) ||
 			(gameType !="3" && (typeof(ImplicitManager) == gm.GetType())) ||
-			(gameType !="4" && (typeof(AssociateManager) == gm.GetType()))){
+			(gameType !="4" && (typeof(AssociateManager) == gm.GetType())) ||
+			(gameType !="5" && (typeof(StoppingManager) == gm.GetType()))){
 			NeuroLog.Error("Invalid read in file for current scene. File is " + gameType+ " while scene is " + gm.GetType());
 			
 			sessionXML = "randomList";
@@ -229,6 +230,8 @@ public class XmlManager {
 			eS = ReadImplicitEvents(eventsNode);
 		else if(gm.SType == GameManager.SessionType.Associate)
 			eS = ReadAssociateEvents(eventsNode);
+		else if(gm.SType == GameManager.SessionType.Stopping)
+			eS = ReadStoppingEvents(eventsNode);
 		else
 			return null;
 		
@@ -495,6 +498,48 @@ public class XmlManager {
 	}
 	
 	//Method used to read in all the trials of the game
+	private List<EventStats> ReadStoppingEvents(XmlNode eventsNode){
+		
+		List<EventStats> stoppingEvents = new List<EventStats>();
+		
+		//For all the trials
+		for (int i=0; i<eventsNode.ChildNodes.Count; i++){
+			
+			int dot=-1;
+			bool go =true;
+			
+			//Make sure were trying to deal with event
+			if(eventsNode.ChildNodes[i].Name =="event"){
+				foreach(XmlAttribute attri in eventsNode.ChildNodes[i].Attributes){
+					//Side
+					if(attri.Name.ToLower() == "dot"){	
+						if(int.TryParse(attri.Value.ToLower(),out dot)){
+							if(dot>4 || dot<1){
+								NeuroLog.Error("Invalid value for 'dot' at event #" + (i+1).ToString() + ". Needs to be between 1 and 4.");
+								dot = 1;
+							}
+						}
+						else 
+							NeuroLog.Error("Invalid value for 'dot' at event #" + (i+1).ToString() + ". Needs to be an int.");
+					}
+					//Color
+					else if(attri.Name.ToLower() == "go"){	
+						if(!bool.TryParse(attri.Value.ToLower(),out go))
+							NeuroLog.Error("Invalid value for 'go' at event #" + (i+1).ToString() + ". Needs to be an bool.");
+					}
+					//Other attributes that don't have cases
+					else NeuroLog.Error("Unknown attribute '" + attri.Name + "' at event #" + (i+1).ToString() + ".");
+				}
+				
+				StoppingEvent sE = new StoppingEvent(dot,go);
+				
+				stoppingEvents.Add(sE);
+			}	
+		}
+		return stoppingEvents;
+	}
+	
+	//Method used to read in all the trials of the game
 	private List<EventStats> ReadAssociateEvents(XmlNode eventsNode){
 		
 		List<EventStats> associateEvents = new List<EventStats>();
@@ -604,6 +649,7 @@ public class XmlManager {
 		else if (gm.SType == GameManager.SessionType.Star) WriteOutStar(xml,session);
 		else if (gm.SType == GameManager.SessionType.Implicit) WriteOutImplicit(xml,session);
 		else if (gm.SType == GameManager.SessionType.Associate) WriteOutAssociate(xml,session);
+		else if (gm.SType == GameManager.SessionType.Stopping) WriteOutStopping(xml,session);
 		
 		//Save the file in the correct spot
 		xml.Save(LogFilesPath+delim+statsXML);
@@ -1074,6 +1120,120 @@ public class XmlManager {
 		}
 		
 		session.AppendChild(blocks);
+	}
+	
+	private void WriteOutStopping(XmlDocument xml, XmlElement session){
+
+		XmlElement practice = xml.CreateElement("practice");
+		float avgTime=0;
+		float avgDist=0;
+		float responseCount=0;
+		float blueCount=0;
+		float avgCorrectBlue=0;
+		float orangeCount=0;
+		float avgCorrectOrange=0;
+		float avgTurningTime=0;
+		
+		//Loop through all the events and write them out
+		foreach(StoppingEvent eS in gm.Practice){
+			
+			XmlElement trial = xml.CreateElement("event");
+			
+			trial.SetAttribute("TurnedOrange", (!eS.Go).ToString());
+			trial.SetAttribute("TurningTime", eS.TurningTime.ToString());
+			
+			if(eS.Go) blueCount++;
+			else orangeCount++;
+			
+			avgTurningTime += eS.TurningTime;
+			
+			if((eS.Response==null && !eS.Go) || (eS.Response!=null && eS.Go)){
+				trial.SetAttribute("Correct", "true");
+				if(eS.Go)
+					avgCorrectBlue++;
+				else{
+					avgCorrectOrange++;
+				}
+			}
+			else trial.SetAttribute("Correct", "false");
+			
+			if(eS.Response!=null ){
+				if(eS.Go){
+					responseCount++;
+					avgTime += eS.Response.ResponseTime;
+					avgDist += eS.Response.DistanceFromCenter;
+				}
+				trial.SetAttribute("ResponseTime", eS.Response.ResponseTime.ToString());
+				trial.SetAttribute("TouchPosition", eS.Response.TouchLocation.ToString());
+				trial.SetAttribute("DistanceFromCenter", eS.Response.DistanceFromCenter.ToString());
+			}
+			
+			practice.AppendChild(trial);
+		}
+		
+		practice.SetAttribute("GoPercentCorrect", (avgCorrectBlue/blueCount).ToString());
+		practice.SetAttribute("AvgDistanceFromCenter", (avgDist / responseCount).ToString());
+		practice.SetAttribute("AvgResponseTime", (avgTime / responseCount).ToString());
+		practice.SetAttribute("StopPercentCorrect", (avgCorrectOrange/orangeCount).ToString());
+		practice.SetAttribute("AvgTurningTime", (avgTurningTime/orangeCount).ToString());
+		
+		session.AppendChild(practice);
+		
+		//Create the trial cluster
+		XmlElement trials = xml.CreateElement("trials");
+		
+		avgTime=0;
+		avgDist=0;
+		responseCount=0;
+		blueCount=0;
+		avgCorrectBlue=0;
+		orangeCount=0;
+		avgCorrectOrange=0;
+		avgTurningTime=0;
+		
+		//Loop through all the events and write them out
+		foreach(StoppingEvent eS in gm.Events){
+			
+			XmlElement trial = xml.CreateElement("event");
+			
+			trial.SetAttribute("TurnedOrange", (!eS.Go).ToString());
+			trial.SetAttribute("TurningTime", eS.TurningTime.ToString());
+			
+			if(eS.Go) blueCount++;
+			else orangeCount++;
+			
+			avgTurningTime += eS.TurningTime;
+			
+			if((eS.Response==null && !eS.Go) || (eS.Response!=null && eS.Go)){
+				trial.SetAttribute("Correct", "true");
+				if(eS.Go)
+					avgCorrectBlue++;
+				else{
+					avgCorrectOrange++;
+				}
+			}
+			else trial.SetAttribute("Correct", "false");
+			
+			if(eS.Response!=null ){
+				if(eS.Go){
+					responseCount++;
+					avgTime += eS.Response.ResponseTime;
+					avgDist += eS.Response.DistanceFromCenter;
+				}
+				trial.SetAttribute("ResponseTime", eS.Response.ResponseTime.ToString());
+				trial.SetAttribute("TouchPosition", eS.Response.TouchLocation.ToString());
+				trial.SetAttribute("DistanceFromCenter", eS.Response.DistanceFromCenter.ToString());
+			}
+			
+			trials.AppendChild(trial);
+		}
+		
+		trials.SetAttribute("GoPercentCorrect", (avgCorrectBlue/blueCount).ToString());
+		trials.SetAttribute("AvgDistanceFromCenter", (avgDist / responseCount).ToString());
+		trials.SetAttribute("AvgResponseTime", (avgTime / responseCount).ToString());
+		trials.SetAttribute("StopPercentCorrect", (avgCorrectOrange/orangeCount).ToString());
+		trials.SetAttribute("AvgTurningTime", (avgTurningTime/orangeCount).ToString());
+		session.AppendChild(trials);	
 	}
 	
 	private void WriteOutAssociate(XmlDocument xml, XmlElement session){

@@ -265,12 +265,13 @@ public class ConfigManager : MonoBehaviour {
 			else{
 				
 				//Set up the task statuses
-				PlayerPrefs.SetString("-t1", "false");
-				PlayerPrefs.SetString("-t2", "false");
-				PlayerPrefs.SetString("-t3", "false");
-				PlayerPrefs.SetString("-t4", "false");
-				PlayerPrefs.SetString("-t5", "false");
-				PlayerPrefs.SetString("-t6", "false");
+				PlayerPrefs.SetString("-t1", "true");
+				PlayerPrefs.SetString("-t2", "true");
+				PlayerPrefs.SetString("-t3", "true");
+				PlayerPrefs.SetString("-t4", "true");
+				PlayerPrefs.SetString("-t5", "true");
+				PlayerPrefs.SetString("-t6", "true");
+				PlayerPrefs.SetString("-t7", "true");
 				
 				//Save the player's info
 				if(testName==""){
@@ -306,8 +307,6 @@ public class ConfigManager : MonoBehaviour {
 				message.text = "Config info saved!";
 				
 				buttonText.text = "CLOSE";
-				
-				Debug.Log("testing? " + PlayerPrefs.GetString("-testing"));
 				
 				configSaved = true;
 				//Hide the dropdown menus
