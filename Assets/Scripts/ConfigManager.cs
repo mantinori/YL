@@ -18,6 +18,9 @@ public class ConfigManager : MonoBehaviour {
 	public UIPopupList subDivisionTwo;
 	public UIPopupList players;
 	
+	//Only need the english checkbox
+	public UICheckbox english;
+	
 	//Other elements on the screen
 	public UITexture background;
 	public UIButton confirmButton;
@@ -41,6 +44,8 @@ public class ConfigManager : MonoBehaviour {
 	private bool configSaved=false;
 	
 	private string testName="";
+	
+	public TextAsset test;
 	
 	// Use this for initialization
 	void Start () {
@@ -172,6 +177,9 @@ public class ConfigManager : MonoBehaviour {
 			}
 			//If the program doesn't need to be configured just go to the next scene
 			else{
+				if(!PlayerPrefs.HasKey("-language"))
+					PlayerPrefs.SetString("-language", "english");
+				
 				Application.LoadLevel("menu");
 			}
 		}
@@ -272,6 +280,13 @@ public class ConfigManager : MonoBehaviour {
 				PlayerPrefs.SetString("-t5", "true");
 				PlayerPrefs.SetString("-t6", "true");
 				PlayerPrefs.SetString("-t7", "true");
+				
+				if(english.isChecked){
+					PlayerPrefs.SetString("-language", "english");
+				}
+				else{
+					PlayerPrefs.SetString("-language", "spanish");
+				}
 				
 				//Save the player's info
 				if(testName==""){

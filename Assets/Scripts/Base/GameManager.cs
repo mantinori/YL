@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -54,6 +54,9 @@ public class GameManager : MonoBehaviour {
 	
 	//The current practice number
 	protected int currentPractice;
+	
+	//What language the game should be presented in
+	private string language = "english";
 	
 	//Increments either the event or practice number
 	public void nextEvent(){
@@ -113,6 +116,10 @@ public class GameManager : MonoBehaviour {
 		
 		dragPoints = new List<Vector3>();
 		
+		if(PlayerPrefs.HasKey("-language")){
+			language = PlayerPrefs.GetString("-language");
+		}
+		
 		sType = s;
 		
 		activeSlope =0;
@@ -169,11 +176,20 @@ public class GameManager : MonoBehaviour {
 	}
 	
 	//Show the title card before a new section
-	public IEnumerator showTitle(string title, float duration){
+	public IEnumerator showTitle(string t, float duration){
+		
+		string title = t;
 		
 		state = GameManager.GameState.Title;
 		
 		screen.material.color = new Color(0f,0f,0f,0);
+		
+		if(language == "spanish"){
+			if(title == "Tutorial") title = "Instrucciones";
+			else if(title == "Practice") title ="Práctica";
+			else if(title == "Test") title = "Juego";
+			else if(title == "Session Over") title = "Sesión Completa";
+		}
 		
 		text.text = title;
 		

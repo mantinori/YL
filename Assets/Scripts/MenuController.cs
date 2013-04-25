@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -23,15 +23,30 @@ public class MenuController : MonoBehaviour {
 	//Name of the current player
 	public UILabel userName;
 	
+	//What language should be shown
+	private string language ="english";
+	
 	// Use this for initialization
 	void Start () {
+		
+		if(PlayerPrefs.HasKey("-language"))
+			language = PlayerPrefs.GetString("-language");
 		
 		//Set the response for all the buttons to methods in this class
 		foreach(UIButton b in taskButtons){
 			b.GetComponent<ButtonResponder>().response = beginTask;
+			if(language == "spanish")
+				b.GetComponentInChildren<UILabel>().text = b.GetComponentInChildren<UILabel>().text.Replace("Task", "Tarea"); 
 		}
 		quitButton.response = quitbuttonPressed;
 		abortButton.response = displayWarning;
+		
+		if(language == "spanish"){
+			abortButton.GetComponentInChildren<UILabel>().text = "Dejar"; 
+			quitButton.GetComponentInChildren<UILabel>().text = "Salir"; 
+			yesButton.GetComponentInChildren<UILabel>().text = "Sí";
+			warning.text = "¡Advertencia!\nSe eliminará su condición actual.\n¿Continuar?";
+		}
 		
 		yesButton.response = resetDevice;
 		yesButton.gameObject.SetActive(false);

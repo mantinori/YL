@@ -894,6 +894,15 @@ public class XmlManager {
 				
 					foreach(Response r in eS.Responses){
 						XmlElement response = xml.CreateElement("response");
+						string t ="";
+						if(r.ResponseType==0)
+							t="GOOD";
+						else if(r.ResponseType==1)
+							t="BAD";
+						else if(r.ResponseType==2)
+							t="REPEAT";
+					
+						response.SetAttribute("ResponseType", t);
 						response.SetAttribute("ResponseTime", r.ResponseTime.ToString());
 						response.SetAttribute("TouchPosition", r.TouchLocation.ToString());
 						trial.AppendChild(response);
