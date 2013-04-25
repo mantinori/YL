@@ -552,7 +552,7 @@ public class AssociateManager : GameManager {
 		}
 		
 		//Writeout 
-		xml.WriteOut();
+		xml.WriteOut(true);
 		
 		//SessionTitle screen
 		yield return StartCoroutine(showTitle("Session Over",3));

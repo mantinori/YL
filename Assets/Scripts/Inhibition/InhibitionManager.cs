@@ -346,7 +346,7 @@ public class InhibitionManager : GameManager {
 		}
 		
 		//Writeout 
-		xml.WriteOut();
+		xml.WriteOut(true);
 		
 		//SessionTitle screen
 		yield return StartCoroutine(showTitle("Session Over",3));
@@ -360,42 +360,41 @@ public class InhibitionManager : GameManager {
 	// Constantly check for player input
 	void Update () {	
 		
-		//If were in the probe mode
-		if(state == GameState.Probe){
+		bool currentTouch;
+		
+		//Get the touch location based on the platform
+		if(Application.platform == RuntimePlatform.IPhonePlayer){
+			if(Input.touchCount>0){
+				touchPos = Input.touches[0].position;
 			
-			bool currentTouch;
-			
-			//Get the touch location based on the platform
-			if(Application.platform == RuntimePlatform.IPhonePlayer){
-				if(Input.touchCount>0){
-					touchPos = Input.touches[0].position;
-				
-					currentTouch = true;
-				}
-				else currentTouch =false;		
+				currentTouch = true;
 			}
-			else{
-				if(Input.GetMouseButton(0)){
-					touchPos = Input.mousePosition;
-				
-					currentTouch = true;
-				}
-				else currentTouch =false;
-			}
+			else currentTouch =false;		
+		}
+		else{
+			if(Input.GetMouseButton(0)){
+				touchPos = Input.mousePosition;
 			
-			//Not Touching
-			if(!currentTouch)
-				touching = false;
-			//If a player has touched the screen, not holding
-			else if(!touching && currentTouch){	
+				currentTouch = true;
+			}
+			else currentTouch =false;
+		}
+		
+		//Not Touching
+		if(!currentTouch)
+			touching = false;
+		//If a player has touched the screen, not holding
+		else if(!touching && currentTouch){	
+		
+			touching = true;
+			
+			//If were in the probe mode
+			if(state == GameState.Probe){
+				//Calculate the response time
+				float time = Time.time - startTime;
 				
 				//Reverts the y orientation
 				touchPos.y = Screen.height - touchPos.y;
-				
-				touching = true;
-				
-				//Calculate the response time
-				float time = Time.time - startTime;
 				
 				//Create the respones
 				Response r = new Response(sType, time,new Vector2(touchPos.x,touchPos.y), 0);

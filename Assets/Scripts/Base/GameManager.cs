@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -56,10 +57,14 @@ public class GameManager : MonoBehaviour {
 	
 	//Increments either the event or practice number
 	public void nextEvent(){
-		if(!practicing)
+		if(!practicing){
+			events[currentEventNum].Completed = true;
 			currentEventNum++; 
-		else 
+		}
+		else{
+			practice[currentPractice].Completed = true;
 			currentPractice++;
+		}
 	}
 	
 	//List of materials to be used in the scene
@@ -68,6 +73,8 @@ public class GameManager : MonoBehaviour {
 	//AudioSource to play sounds
 	protected AudioSource audioSource;
 	
+	private List<Vector3> dragPoints;
+
 	//Which gametype is running
 	public enum SessionType{Spatial, Inhibition, Star, Implicit, Associate, Stopping};
 	protected SessionType sType;
@@ -98,11 +105,17 @@ public class GameManager : MonoBehaviour {
 	//Where did the player touch the screen
 	protected Vector3 touchPos = Vector3.zero;	
 	
+	private float activeSlope;
+	
 	// Use this for initialization
 	protected void Setup (SessionType s) {
 		main = this;
 		
+		dragPoints = new List<Vector3>();
+		
 		sType = s;
+		
+		activeSlope =0;
 		
 		xml = new XmlManager();
 		
@@ -173,5 +186,105 @@ public class GameManager : MonoBehaviour {
 		if(title != "Session Over") screen.enabled = false;
 		
 		text.renderer.enabled = false;
+	}
+	
+	//Used to read in
+	void LateUpdate () {	
+		if(touching){
+			if(dragPoints.Count == 0){
+				dragPoints.Add(touchPos);
+			}
+			else{
+				if(Vector3.Distance(dragPoints[dragPoints.Count-1], touchPos)>50){
+					
+					if(dragPoints.Count==1){
+						dragPoints.Add(touchPos);
+						activeSlope =  Vector3.Angle(new Vector3(1,0,0),
+													new Vector3((dragPoints[dragPoints.Count-1].x - dragPoints[dragPoints.Count-2].x),
+													(dragPoints[dragPoints.Count-1].y - dragPoints[dragPoints.Count-2].y),0));
+					}
+					else{
+						float newAngle = Vector3.Angle(new Vector3(1,0,0), new Vector3( (touchPos.x-dragPoints[dragPoints.Count-1].x), (touchPos.y-dragPoints[dragPoints.Count-1].y),0));
+					
+						if(Mathf.Abs(activeSlope - newAngle)<60f){
+							if(dragPoints.Count==4){
+								if(Vector3.Distance(dragPoints[2], dragPoints[3])<(Vector3.Distance(dragPoints[0], dragPoints[1])+50))
+									dragPoints[3] = touchPos;
+							}
+							else
+								dragPoints[dragPoints.Count-1] = touchPos;
+						}
+						else{
+							if(dragPoints.Count<4){
+								dragPoints.Add(touchPos);
+							
+								activeSlope = Vector3.Angle(new Vector3(1,0,0),
+														new Vector3((dragPoints[dragPoints.Count-1].x - dragPoints[dragPoints.Count-2].x),
+														(dragPoints[dragPoints.Count-1].y - dragPoints[dragPoints.Count-2].y),0));
+							}
+						}
+						
+						//If there are 4 points
+						if(dragPoints.Count==4){
+							//Make sure the first and last line have about the same length (Margin of 100 pixels)
+							if(Mathf.Abs(Vector3.Distance(dragPoints[0], dragPoints[1]) - Vector3.Distance(dragPoints[2], dragPoints[3]))<=100){
+								
+								//The 1st line of the Z (first drawn)
+								float angOne = Vector3.Angle(new Vector3(1,0,0), new Vector3((dragPoints[1].x - dragPoints[0].x),(dragPoints[1].y - dragPoints[0].y),0));
+								if((dragPoints[1].y - dragPoints[0].y)/(dragPoints[1].x - dragPoints[0].x) <0)
+									angOne *= -1;
+								//The 3rd line of the Z (last drawn)
+								float angTwo = Vector3.Angle(new Vector3(1,0,0), new Vector3((dragPoints[3].x - dragPoints[2].x),(dragPoints[3].y - dragPoints[2].y),0));
+								if((dragPoints[3].y - dragPoints[2].y)/(dragPoints[3].x - dragPoints[2].x) <0)
+									angTwo *= -1;
+								//The middle line of the Z
+								float angSlash = Vector3.Angle(new Vector3(1,0,0), new Vector3((dragPoints[1].x - dragPoints[2].x),(dragPoints[1].y - dragPoints[2].y),0));
+								if((dragPoints[1].y - dragPoints[2].y)/(dragPoints[1].x - dragPoints[2].x) <0)
+									angSlash *= -1;
+								
+								//Make sure the first and last line are draw at about the same angle(margin of 30'),
+								//and if the first and middle line are not given the sameish angle(margin of 10'), then its a Z
+								if(Mathf.Abs(angOne - angTwo)<30 && Mathf.Abs(angOne - angSlash)>10){
+									//Delete the current task
+									PlayerPrefs.DeleteKey("-currentTask");
+									
+									NeuroLog.Debug("READ 'Z' SWIPE, HALTING TASK");
+									
+									//Write out the incompleted xml
+									xml.WriteOut(false);
+									
+									//Go back to the menu
+									Application.LoadLevel("menu");
+								}
+							}
+						}
+					}
+				}
+				
+				//For debuging, will show swipe in scene screen
+				/*
+				Color c = Color.white;
+				for(int i=0;i<dragPoints.Count;i++){
+					if(i==1) c = Color.red;
+					else if(i==2) c = Color.green;
+					else if (i == 3) c = Color.blue;
+					
+					if(i+ 1 == dragPoints.Count){
+						Debug.DrawLine(new Vector3(((dragPoints[i].x/Screen.width)*53 - 26.5f), 8,((dragPoints[i].y/Screen.height)*30 - 15f)),
+										new Vector3(((touchPos.x/Screen.width)*53 - 26.5f), 8,((touchPos.y/Screen.height)*30 - 15f)), c);
+					}
+					else{
+						Debug.DrawLine(new Vector3(((dragPoints[i].x/Screen.width)*53 - 26.5f), 8,((dragPoints[i].y/Screen.height)*30 - 15f)),
+										new Vector3(((dragPoints[i+1].x/Screen.width)*53 - 26.5f), 8,((dragPoints[i+1].y/Screen.height)*30 - 15f)), c);
+					}
+				}
+				*/
+			}
+		}
+		//If the player isn't touching the screen, reset the dragPoints
+		else if( dragPoints.Count>0){
+			dragPoints = new List<Vector3>();
+			activeSlope = 0;
+		}
 	}
 }

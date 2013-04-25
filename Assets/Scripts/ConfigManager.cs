@@ -89,7 +89,7 @@ public class ConfigManager : MonoBehaviour {
 		try{
 			//Try on Dropbox
 			Debug.Log("Attempting to read from Dropbox folder");
-			xml.Load(XmlManager.PlayerSpecificPath + XmlManager.delim + playersFile+".xml");
+			xml.Load(Path.Combine(XmlManager.PlayerSpecificPath, playersFile+".xml"));
 		}
 		catch{
 			NeuroLog.Error("Unable to find dropbox player file.");
@@ -215,9 +215,9 @@ public class ConfigManager : MonoBehaviour {
 			
 			if(testName==""){
 				//Reload the file to make sure there were no changes
-				if(File.Exists(XmlManager.PlayerSpecificPath + XmlManager.delim + playersFile + ".xml")){
+				if(File.Exists(Path.Combine(XmlManager.PlayerSpecificPath,playersFile + ".xml"))){
 					Debug.Log("Attempting to read from Dropbox folder");		
-					xml.Load(XmlManager.PlayerSpecificPath + XmlManager.delim + playersFile + ".xml");
+					xml.Load(Path.Combine(XmlManager.PlayerSpecificPath,playersFile + ".xml"));
 				}
 				else{
 					Debug.Log("Attempting to read from local build folder");
@@ -295,7 +295,7 @@ public class ConfigManager : MonoBehaviour {
 					playerNode.Attributes["device"].Value = System.Environment.MachineName;
 				
 					//Save the file
-					xml.Save(XmlManager.PlayerSpecificPath + XmlManager.delim + "players.xml");
+					xml.Save(Path.Combine(XmlManager.PlayerSpecificPath, "players.xml"));
 				}
 				else{
 					PlayerPrefs.SetString("-player", testName);

@@ -338,7 +338,7 @@ public class ImplicitManager : GameManager {
 		}
 		
 		//Writeout 
-		xml.WriteOut();
+		xml.WriteOut(true);
 		
 		//SessionTitle screen
 		yield return StartCoroutine(showTitle("Session Over",3));
@@ -351,71 +351,68 @@ public class ImplicitManager : GameManager {
 	
 	// Constantly check for player input
 	void Update () {	
+			
+		bool currentTouch;
 		
-		//If were in the probe mode
-		if(state == GameState.Probe){
+		//Get the touch location based on the platform
+		if(Application.platform == RuntimePlatform.IPhonePlayer){
+			if(Input.touchCount>0){
+				touchPos = Input.touches[0].position;
 			
-			bool currentTouch;
-			
-			//Get the touch location based on the platform
-			if(Application.platform == RuntimePlatform.IPhonePlayer){
-				if(Input.touchCount>0){
-					touchPos = Input.touches[0].position;
-				
-					currentTouch = true;
-				}
-				else currentTouch =false;		
+				currentTouch = true;
 			}
-			else{
-				if(Input.GetMouseButton(0)){
-					touchPos = Input.mousePosition;
-				
-					currentTouch = true;
-				}
-				else currentTouch =false;
-			}
+			else currentTouch =false;		
+		}
+		else{
+			if(Input.GetMouseButton(0)){
+				touchPos = Input.mousePosition;
 			
-			//Not Touching
-			if(!currentTouch)
-				touching = false;
-			//If a player has touched the screen, not holding
-			else if(!touching && currentTouch){	
-				if(State == GameManager.GameState.Probe){
-					Ray ray = camera.ScreenPointToRay(touchPos);
-					RaycastHit hit = new RaycastHit();
-					//If the raycast of the touch hit something
-					if(Physics.Raycast(ray, out hit)) {
-						//Hit the Stimulus
-						if(hit.collider.name == "Stimulus"){
-					
-							//Reverts the y orientation
-							touchPos.y = Screen.height - touchPos.y;
-							
-							touching = true;
-							
-							//Calculate the response time
-							float time = Time.time - startTime;
-							
-							float x = ((implicitStimulus.transform.position.x + 26.5f)/53f) * Screen.width;
-							
-							float y = ((implicitStimulus.transform.position.z - 15f)/-30f) * Screen.height;
-							
-							Vector2 targPos = new Vector2(x,y);
-							
-							//Create the respones
-							Response r = new Response(targPos, time,new Vector2(touchPos.x,touchPos.y));
-									
-							Vector2 screenPos = Vector2.zero;
-							
-							screenPos.x = ((touchPos.x/Screen.width) * 53) - 26.5f;
-							screenPos.y = ((touchPos.y/Screen.height) * -30) +15;
-							
-							//Start the fade spot
-							StartCoroutine(spot.fadeFinger(screenPos, -1));
-							
-							//Add the response
-							CurrentEvent.Response =r;
-						}
+				currentTouch = true;
+			}
+			else currentTouch =false;
+		}
+		
+		//Not Touching
+		if(!currentTouch)
+			touching = false;
+		//If a player has touched the screen, not holding
+		else if(!touching && currentTouch){	
+			
+			touching = true;
+			
+			if(State == GameManager.GameState.Probe){
+				Ray ray = camera.ScreenPointToRay(touchPos);
+				RaycastHit hit = new RaycastHit();
+				//If the raycast of the touch hit something
+				if(Physics.Raycast(ray, out hit)) {
+					//Hit the Stimulus
+					if(hit.collider.name == "Stimulus"){
+				
+						//Reverts the y orientation
+						touchPos.y = Screen.height - touchPos.y;
+						
+						//Calculate the response time
+						float time = Time.time - startTime;
+						
+						float x = ((implicitStimulus.transform.position.x + 26.5f)/53f) * Screen.width;
+						
+						float y = ((implicitStimulus.transform.position.z - 15f)/-30f) * Screen.height;
+						
+						Vector2 targPos = new Vector2(x,y);
+						
+						//Create the respones
+						Response r = new Response(targPos, time,new Vector2(touchPos.x,touchPos.y));
+								
+						Vector2 screenPos = Vector2.zero;
+						
+						screenPos.x = ((touchPos.x/Screen.width) * 53) - 26.5f;
+						screenPos.y = ((touchPos.y/Screen.height) * -30) +15;
+						
+						//Start the fade spot
+						StartCoroutine(spot.fadeFinger(screenPos, -1));
+						
+						//Add the response
+						CurrentEvent.Response =r;
 					}
 				}
 			}

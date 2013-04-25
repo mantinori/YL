@@ -102,7 +102,7 @@ public class Response{
 		distanceFromCenter = Vector2.Distance(tL,center);
 	}
 	
-	//Constructor for implicit
+	//Constructor for implicit and stopping
 	//objPos(Vector2): the position of the gameobject
 	//rTime(float): The Response Time of the action
 	//tL(Vector2): Where did the player touch on the screen

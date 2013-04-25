@@ -129,9 +129,9 @@ public class MenuController : MonoBehaviour {
 		XmlDocument xml = new XmlDocument();
 		
 		//Check to see if the file exists in Dropbox
-		if(File.Exists(XmlManager.SessionFilesPath + XmlManager.delim + fileName)){
+		if(File.Exists(Path.Combine(XmlManager.SessionFilesPath, fileName))){
 			Debug.Log("Attempting to read from Dropbox folder");
-			xml.Load(XmlManager.SessionFilesPath + XmlManager.delim + fileName);
+			xml.Load(Path.Combine(XmlManager.SessionFilesPath, fileName));
 		}
 		//If not, try the local bundle
 		else{
@@ -223,9 +223,9 @@ public class MenuController : MonoBehaviour {
 			//Get the players file off of Dropbox
 			XmlDocument xml = new XmlDocument();
 			
-			if(File.Exists(XmlManager.PlayerSpecificPath + XmlManager.delim + "players.xml")){
+			if(File.Exists(Path.Combine(XmlManager.PlayerSpecificPath,"players.xml"))){
 				Debug.Log("Attempting to read from Dropbox folder");		
-				xml.Load(XmlManager.PlayerSpecificPath + XmlManager.delim + "players.xml");
+				xml.Load(Path.Combine(XmlManager.PlayerSpecificPath,"players.xml"));
 			}
 			//Can't find? Use the local bundle one
 			else{
@@ -262,7 +262,7 @@ public class MenuController : MonoBehaviour {
 			}
 			
 			//Save the updated file
-			xml.Save(XmlManager.PlayerSpecificPath + XmlManager.delim + "players.xml");
+			xml.Save(Path.Combine(XmlManager.PlayerSpecificPath,"players.xml"));
 		}
 		//Delete all saved player prefs
 		PlayerPrefs.DeleteAll();

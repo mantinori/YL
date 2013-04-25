@@ -681,7 +681,7 @@ public class StarManager : GameManager {
 			//Loop until the skip arrow is pressed, the player gets all the stars, or the time limit is reached
 			while(Time.time - startTime<endTime && skipTrial==false && CurrentEvent.NumGoodTouches< CurrentEvent.NumLittleStars){
 				yield return new WaitForFixedUpdate();
-				if(!practicing && Time.time - startTime> endTime/2 && !arrow.activeSelf) arrow.SetActive(true);
+				if(!practicing && Time.time - startTime> 30 && !arrow.activeSelf) arrow.SetActive(true);
 			}
 			
 			state = GameState.Delay;
@@ -766,7 +766,7 @@ public class StarManager : GameManager {
 		}
 		
 		//Write out the Log file
-		xml.WriteOut();
+		xml.WriteOut(true);
 		
 		yield return StartCoroutine(showTitle("Session Over",3));
 		

@@ -434,7 +434,7 @@ public class SpatialManager : GameManager {
 		}
 		
 		//Writeout the log file
-		xml.WriteOut();
+		xml.WriteOut(true);
 		
 		yield return StartCoroutine(showTitle("Session Over",3));
 		
@@ -446,41 +446,41 @@ public class SpatialManager : GameManager {
 	
 	// Update is called once per frame
 	void Update () {	
+			
+		bool currentTouch;
 		
-		//If the game state is either Probe or delay
-		if(state == GameState.Probe || state == GameState.Delay){
+		//Get the touch location based on the platform
+		if(Application.platform == RuntimePlatform.IPhonePlayer){
+			if(Input.touchCount>0){
+				touchPos = Input.touches[0].position;
 			
-			bool currentTouch;
-			
-			//Get the touch location based on the platform
-			if(Application.platform == RuntimePlatform.IPhonePlayer){
-				if(Input.touchCount>0){
-					touchPos = Input.touches[0].position;
-				
-					currentTouch = true;
-				}
-				else currentTouch =false;		
+				currentTouch = true;
 			}
-			else{
-				if(Input.GetMouseButton(0)){
-					touchPos = Input.mousePosition;
-				
-					currentTouch = true;
-				}
-				else currentTouch =false;
-			}
+			else currentTouch =false;		
+		}
+		else{
+			if(Input.GetMouseButton(0)){
+				touchPos = Input.mousePosition;
 			
-			//Not touching
-			if(!currentTouch)
-				touching = false;
-			//Touching the screen, not holding
-			else if(!touching && currentTouch){	
-				
+				currentTouch = true;
+			}
+			else currentTouch =false;
+		}
+		
+		//Not touching
+		if(!currentTouch)
+			touching = false;
+		//Touching the screen, not holding
+		else if(!touching && currentTouch){	
+			
+			touching = true;
+			
+			//If the game state is either Probe or delay
+			if(state == GameState.Probe || state == GameState.Delay){
+
 				//Inverse the y
 				touchPos.y = Screen.height - touchPos.y;
-				
-				touching = true;
-				
+						
 				float time = Time.time - startTime;
 				
 				//Good Response

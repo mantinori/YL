@@ -24,7 +24,7 @@ public class XmlManager {
 	public static string unfinishedSessionFolderName = "unfinished_files";
 	
 	//The delimiter used for Path
-	public static char delim = Path.DirectorySeparatorChar;
+	//public static char delim = Path.DirectorySeparatorChar;
 	
 	//The game manager class
 	private GameManager gm;
@@ -55,35 +55,35 @@ public class XmlManager {
 
 	//Methods that return the path to specific folder names
 	public static string DashboardPath{
-		get { return DropboxPath + delim + dashboardFolderName; }
+		get { return Path.Combine(DropboxPath,dashboardFolderName); }
 	}
 
 	public static string LogFilesPath{
-		get { return DropboxPath + delim + dashboardFolderName + delim + logFilesFolderName; }
+		get { return Path.Combine(Path.Combine(DropboxPath,dashboardFolderName), logFilesFolderName); }
 	}
 
 	public static string TraceFilesPath{
-		get { return DropboxPath + delim + dashboardFolderName + delim + traceFilesFolderName; }
+		get { return Path.Combine(Path.Combine(DropboxPath, dashboardFolderName), traceFilesFolderName); }
 	}
 
 	public static string PlayerSpecificPath{
-		get { return DropboxPath + delim + dashboardFolderName + delim + playerSpecificFolderName; }
+		get { return Path.Combine(Path.Combine(DropboxPath, dashboardFolderName), playerSpecificFolderName); }
 	}
 	
 	public static string PitchFilesPath{
-		get { return DropboxPath + delim + dashboardFolderName + delim + pitchFilesName; }
+		get { return Path.Combine(Path.Combine(DropboxPath, dashboardFolderName), pitchFilesName); }
 	}
 	
 	public static string SessionFilesPath{
-		get { return DropboxPath + delim + dashboardFolderName + delim + sessionFilesName; }
+		get { return Path.Combine(Path.Combine(DropboxPath, dashboardFolderName), sessionFilesName); }
 	}
 
 	public static string PlayerMeasuresPath{
-		get { return DropboxPath + delim + dashboardFolderName + delim + playermeasuresName; }
+		get { return Path.Combine(Path.Combine( DropboxPath, dashboardFolderName), playermeasuresName); }
 	}
 
 	public static string UnfinishedSessionPath{
-		get { return DropboxPath + delim + dashboardFolderName + delim + unfinishedSessionFolderName; }
+		get { return Path.Combine(Path.Combine(DropboxPath, dashboardFolderName), unfinishedSessionFolderName); }
 	}
 
 	// Write out exit code file to let know the dashboard if we exited well or not
@@ -91,7 +91,7 @@ public class XmlManager {
 	public static void WriteExitCode(string module, int code){
 		NeuroLog.Debug("writing exit code " + code + " for module " + module);
 		string fn = System.Environment.MachineName + "_" + module + "_exit_code.txt";
-		using (StreamWriter sw = new StreamWriter(TraceFilesPath + delim + fn)) {
+		using (StreamWriter sw = new StreamWriter(Path.Combine(TraceFilesPath, fn))) {
 			sw.WriteLine(code);
 		}
 	}
@@ -175,9 +175,9 @@ public class XmlManager {
 		
 		//Try to load the file. If it fails, exit out
 		try{
-			if(File.Exists(XmlManager.SessionFilesPath + XmlManager.delim + fn)){
-				Debug.Log("Attempting to Load " + XmlManager.SessionFilesPath + XmlManager.delim + fn);
-				xml.Load(XmlManager.SessionFilesPath + XmlManager.delim + fn);
+			if(File.Exists(Path.Combine(XmlManager.SessionFilesPath, fn))){
+				Debug.Log("Attempting to Load " + Path.Combine(XmlManager.SessionFilesPath, fn));
+				xml.Load(Path.Combine(XmlManager.SessionFilesPath, fn));
 			}
 			else{
 				NeuroLog.Error("Attempting to read from local Resources");
@@ -627,7 +627,8 @@ public class XmlManager {
 	}
 	
 	//Method used to write out the log file once the game has completed
-	public void WriteOut(){
+	//takes  bool that indicates whether the session was properly completed
+	public void WriteOut(bool completed){
 		
 		//Generate the file name
 		GenerateNewTimestamp();
@@ -652,7 +653,14 @@ public class XmlManager {
 		else if (gm.SType == GameManager.SessionType.Stopping) WriteOutStopping(xml,session);
 		
 		//Save the file in the correct spot
-		xml.Save(LogFilesPath+delim+statsXML);
+		if(completed){
+			NeuroLog.Debug("Saving log file: "+ Path.Combine(LogFilesPath, statsXML));
+			xml.Save(Path.Combine(LogFilesPath, statsXML));
+		}
+		else{
+			NeuroLog.Debug("Saving unfinished log file: "+ Path.Combine(UnfinishedSessionPath, statsXML));
+			xml.Save(Path.Combine(UnfinishedSessionPath,statsXML));
+		}
 	}
 	
 	private void WriteOutSpatial(XmlDocument xml, XmlElement session){
@@ -684,36 +692,38 @@ public class XmlManager {
 		
 		//Loop through all the events and write them out
 		foreach(SpatialEvent eS in gm.Practice){
-			XmlElement trial = xml.CreateElement("trial");
-			
-				trial.SetAttribute("Dot1", eS.Dots[0].ToString());
-				if(eS.Dots.Count>1)
-					trial.SetAttribute("Dot2", eS.Dots[1].ToString());
-				if(eS.Dots.Count>2)
-					trial.SetAttribute("Dot3", eS.Dots[2].ToString());
-			
-				trial.SetAttribute("Delay", eS.Delay.ToString());
-			
-				trial.SetAttribute("TimedOut", eS.TimedOut.ToString());
-			
-				foreach(Response r in eS.BadResponses){
-					XmlElement falseresponse = xml.CreateElement("falseresponse");
-					falseresponse.SetAttribute("DotPressed",r.DotPressed.ToString());
-					falseresponse.SetAttribute("ResponseTime", r.ResponseTime.ToString());
-					falseresponse.SetAttribute("TouchPosition", r.TouchLocation.ToString());
-					falseresponse.SetAttribute("DistanceFromCenter",r.DistanceFromCenter.ToString());
-					trial.AppendChild(falseresponse);
-				}
-			
-				foreach(Response r in eS.Responses){
-					XmlElement response = xml.CreateElement("response");
-					response.SetAttribute("DotPressed",r.DotPressed.ToString());
-					response.SetAttribute("ResponseTime", r.ResponseTime.ToString());
-					response.SetAttribute("TouchPosition", r.TouchLocation.ToString());
-					response.SetAttribute("DistanceFromCenter",r.DistanceFromCenter.ToString());
-					trial.AppendChild(response);
-				}
-			practice.AppendChild(trial);
+			if(eS.Completed){
+				XmlElement trial = xml.CreateElement("trial");
+				
+					trial.SetAttribute("Dot1", eS.Dots[0].ToString());
+					if(eS.Dots.Count>1)
+						trial.SetAttribute("Dot2", eS.Dots[1].ToString());
+					if(eS.Dots.Count>2)
+						trial.SetAttribute("Dot3", eS.Dots[2].ToString());
+				
+					trial.SetAttribute("Delay", eS.Delay.ToString());
+				
+					trial.SetAttribute("TimedOut", eS.TimedOut.ToString());
+				
+					foreach(Response r in eS.BadResponses){
+						XmlElement falseresponse = xml.CreateElement("falseresponse");
+						falseresponse.SetAttribute("DotPressed",r.DotPressed.ToString());
+						falseresponse.SetAttribute("ResponseTime", r.ResponseTime.ToString());
+						falseresponse.SetAttribute("TouchPosition", r.TouchLocation.ToString());
+						falseresponse.SetAttribute("DistanceFromCenter",r.DistanceFromCenter.ToString());
+						trial.AppendChild(falseresponse);
+					}
+				
+					foreach(Response r in eS.Responses){
+						XmlElement response = xml.CreateElement("response");
+						response.SetAttribute("DotPressed",r.DotPressed.ToString());
+						response.SetAttribute("ResponseTime", r.ResponseTime.ToString());
+						response.SetAttribute("TouchPosition", r.TouchLocation.ToString());
+						response.SetAttribute("DistanceFromCenter",r.DistanceFromCenter.ToString());
+						trial.AppendChild(response);
+					}
+				practice.AppendChild(trial);
+			}
 		}
 		
 		session.AppendChild(practice);
@@ -723,36 +733,38 @@ public class XmlManager {
 		
 		//Loop through all the events and write them out
 		foreach(SpatialEvent eS in gm.Events){
-			XmlElement trial = xml.CreateElement("trial");
-			
-				trial.SetAttribute("Dot1", eS.Dots[0].ToString());
-				if(eS.Dots.Count>1)
-					trial.SetAttribute("Dot2", eS.Dots[1].ToString());
-				if(eS.Dots.Count>2)
-					trial.SetAttribute("Dot3", eS.Dots[2].ToString());
-			
-				trial.SetAttribute("Delay", eS.Delay.ToString());
-			
-				trial.SetAttribute("TimedOut", eS.TimedOut.ToString());
-			
-				foreach(Response r in eS.BadResponses){
-					XmlElement falseresponse = xml.CreateElement("falseresponse");
-					falseresponse.SetAttribute("DotPressed",r.DotPressed.ToString());
-					falseresponse.SetAttribute("ResponseTime", r.ResponseTime.ToString());
-					falseresponse.SetAttribute("TouchPosition", r.TouchLocation.ToString());
-					falseresponse.SetAttribute("DistanceFromCenter",r.DistanceFromCenter.ToString());
-					trial.AppendChild(falseresponse);
-				}
-			
-				foreach(Response r in eS.Responses){
-					XmlElement response = xml.CreateElement("response");
-					response.SetAttribute("DotPressed",r.DotPressed.ToString());
-					response.SetAttribute("ResponseTime", r.ResponseTime.ToString());
-					response.SetAttribute("TouchPosition", r.TouchLocation.ToString());
-					response.SetAttribute("DistanceFromCenter",r.DistanceFromCenter.ToString());
-					trial.AppendChild(response);
-				}
-			trials.AppendChild(trial);
+			if(eS.Completed){
+				XmlElement trial = xml.CreateElement("trial");
+				
+					trial.SetAttribute("Dot1", eS.Dots[0].ToString());
+					if(eS.Dots.Count>1)
+						trial.SetAttribute("Dot2", eS.Dots[1].ToString());
+					if(eS.Dots.Count>2)
+						trial.SetAttribute("Dot3", eS.Dots[2].ToString());
+				
+					trial.SetAttribute("Delay", eS.Delay.ToString());
+				
+					trial.SetAttribute("TimedOut", eS.TimedOut.ToString());
+				
+					foreach(Response r in eS.BadResponses){
+						XmlElement falseresponse = xml.CreateElement("falseresponse");
+						falseresponse.SetAttribute("DotPressed",r.DotPressed.ToString());
+						falseresponse.SetAttribute("ResponseTime", r.ResponseTime.ToString());
+						falseresponse.SetAttribute("TouchPosition", r.TouchLocation.ToString());
+						falseresponse.SetAttribute("DistanceFromCenter",r.DistanceFromCenter.ToString());
+						trial.AppendChild(falseresponse);
+					}
+				
+					foreach(Response r in eS.Responses){
+						XmlElement response = xml.CreateElement("response");
+						response.SetAttribute("DotPressed",r.DotPressed.ToString());
+						response.SetAttribute("ResponseTime", r.ResponseTime.ToString());
+						response.SetAttribute("TouchPosition", r.TouchLocation.ToString());
+						response.SetAttribute("DistanceFromCenter",r.DistanceFromCenter.ToString());
+						trial.AppendChild(response);
+					}
+				trials.AppendChild(trial);
+			}
 		}
 	
 		session.AppendChild(trials);
@@ -781,31 +793,33 @@ public class XmlManager {
 		
 		//Loop through all the events and write them out
 		foreach(InhibitionEvent eS in gm.Practice){
-			XmlElement trial = xml.CreateElement("trial");
-				
-				if(eS.DotColor =="yellow")
-					trial.SetAttribute("TargetSide", "same");
-				else
-					trial.SetAttribute("TargetSide", "opposite");
-			
-				trial.SetAttribute("TimedOut", eS.TimedOut.ToString());
-				
-				if(eS.PlayerResponse!=null){
-					trial.SetAttribute("ResponseTime", eS.PlayerResponse.ResponseTime.ToString());
-					trial.SetAttribute("TouchPosition", eS.PlayerResponse.TouchLocation.ToString());
-					trial.SetAttribute("DistanceFromCenter",eS.PlayerResponse.DistanceFromCenter.ToString());
-			
-					if(eS.PlayerResponse.DotPressed ==1)
-						trial.SetAttribute("PressedSide","right");
+			if(eS.Completed){
+				XmlElement trial = xml.CreateElement("trial");
+					
+					if(eS.DotColor =="yellow")
+						trial.SetAttribute("TargetSide", "same");
 					else
-						trial.SetAttribute("PressedSide","left");
-				}
+						trial.SetAttribute("TargetSide", "opposite");
 				
-				if(eS.respondedCorrectly())
-					trial.SetAttribute("Correct","1");
-				else
-					trial.SetAttribute("Correct","0");
-			practice.AppendChild(trial);
+					trial.SetAttribute("TimedOut", eS.TimedOut.ToString());
+					
+					if(eS.PlayerResponse!=null){
+						trial.SetAttribute("ResponseTime", eS.PlayerResponse.ResponseTime.ToString());
+						trial.SetAttribute("TouchPosition", eS.PlayerResponse.TouchLocation.ToString());
+						trial.SetAttribute("DistanceFromCenter",eS.PlayerResponse.DistanceFromCenter.ToString());
+				
+						if(eS.PlayerResponse.DotPressed ==1)
+							trial.SetAttribute("PressedSide","right");
+						else
+							trial.SetAttribute("PressedSide","left");
+					}
+					
+					if(eS.respondedCorrectly())
+						trial.SetAttribute("Correct","1");
+					else
+						trial.SetAttribute("Correct","0");
+				practice.AppendChild(trial);
+			}
 		}
 		
 		session.AppendChild(practice);
@@ -815,26 +829,28 @@ public class XmlManager {
 		
 		//Loop through all the events and write them out
 		foreach(InhibitionEvent eS in gm.Events){
-			XmlElement trial = xml.CreateElement("trial");
-			
-				if(eS.DotColor =="yellow") trial.SetAttribute("TargetSide", "same");
-				else trial.SetAttribute("TargetSide", "opposite");
-			
-				trial.SetAttribute("TimedOut", eS.TimedOut.ToString());
+			if(eS.Completed){
+				XmlElement trial = xml.CreateElement("trial");
 				
-				if(eS.PlayerResponse!=null){
-					trial.SetAttribute("ResponseTime", eS.PlayerResponse.ResponseTime.ToString());
-					trial.SetAttribute("TouchPosition", eS.PlayerResponse.TouchLocation.ToString());
-					trial.SetAttribute("DistanceFromCenter",eS.PlayerResponse.DistanceFromCenter.ToString());
+					if(eS.DotColor =="yellow") trial.SetAttribute("TargetSide", "same");
+					else trial.SetAttribute("TargetSide", "opposite");
 				
-					if(eS.PlayerResponse.DotPressed ==1) trial.SetAttribute("PressedSide","right");
-					else trial.SetAttribute("PressedSide","left");
-				}
+					trial.SetAttribute("TimedOut", eS.TimedOut.ToString());
+					
+					if(eS.PlayerResponse!=null){
+						trial.SetAttribute("ResponseTime", eS.PlayerResponse.ResponseTime.ToString());
+						trial.SetAttribute("TouchPosition", eS.PlayerResponse.TouchLocation.ToString());
+						trial.SetAttribute("DistanceFromCenter",eS.PlayerResponse.DistanceFromCenter.ToString());
+					
+						if(eS.PlayerResponse.DotPressed ==1) trial.SetAttribute("PressedSide","right");
+						else trial.SetAttribute("PressedSide","left");
+					}
+					
+					if(eS.respondedCorrectly()) trial.SetAttribute("Correct","1");
+					else trial.SetAttribute("Correct","0");
 				
-				if(eS.respondedCorrectly()) trial.SetAttribute("Correct","1");
-				else trial.SetAttribute("Correct","0");
-			
-			trials.AppendChild(trial);
+				trials.AppendChild(trial);
+			}
 		}
 		session.AppendChild(trials);	
 	}
@@ -846,42 +862,44 @@ public class XmlManager {
 		//Loop through all the events and write them out
 		
 		foreach(StarEvent eS in gm.Practice){
-			XmlElement trial = xml.CreateElement("trial");
+			if(eS.Completed){
+				XmlElement trial = xml.CreateElement("trial");
+					
+					trial.SetAttribute("EndCondition", eS.EndCondition);
+					trial.SetAttribute("Duration",eS.Duration.ToString());
 				
-				trial.SetAttribute("EndCondition", eS.EndCondition);
-				trial.SetAttribute("Duration",eS.Duration.ToString());
-			
-				trial.SetAttribute("NumGoodTouches", eS.NumGoodTouches.ToString());
-				trial.SetAttribute("NumBadTouches", eS.NumBadTouches.ToString());
-				trial.SetAttribute("NumRepeats", eS.RepeatTouches.ToString());
-			
-				trial.SetAttribute("AvgTimePerTarget", eS.AvgTimePerTarget().ToString());
-				trial.SetAttribute("StandardDeviation", eS.StD().ToString());
-				trial.SetAttribute("AvgTimePerAction", eS.AvgTimePerAction().ToString());
-			
-				List<int> perArea = eS.correctPerArea();
-				string pArea="(";
-				for(int i =0;i<perArea.Count;i++){
-					pArea += perArea[i];
-					if(i<perArea.Count-1) pArea+=",";
-					else pArea+=")";
-				}
-			
-				trial.SetAttribute("TargetsPerArea", pArea);
-				trial.SetAttribute("AvgLocation", eS.AvgDistanceofTargets().ToString());
-			
-			
-				trial.SetAttribute("AvgFirstTen", eS.AvgTimeStart().ToString());
-				trial.SetAttribute("AvgLastTen", eS.AvgTimeLast().ToString());
-				trial.SetAttribute("AvgDistancePerTarget", eS.AvgDistance().ToString());
-			
-				foreach(Response r in eS.Responses){
-					XmlElement response = xml.CreateElement("response");
-					response.SetAttribute("ResponseTime", r.ResponseTime.ToString());
-					response.SetAttribute("TouchPosition", r.TouchLocation.ToString());
-					trial.AppendChild(response);
-				}
-			practice.AppendChild(trial);
+					trial.SetAttribute("NumGoodTouches", eS.NumGoodTouches.ToString());
+					trial.SetAttribute("NumBadTouches", eS.NumBadTouches.ToString());
+					trial.SetAttribute("NumRepeats", eS.RepeatTouches.ToString());
+				
+					trial.SetAttribute("AvgTimePerTarget", eS.AvgTimePerTarget().ToString());
+					trial.SetAttribute("StandardDeviation", eS.StD().ToString());
+					trial.SetAttribute("AvgTimePerAction", eS.AvgTimePerAction().ToString());
+				
+					List<int> perArea = eS.correctPerArea();
+					string pArea="(";
+					for(int i =0;i<perArea.Count;i++){
+						pArea += perArea[i];
+						if(i<perArea.Count-1) pArea+=",";
+						else pArea+=")";
+					}
+				
+					trial.SetAttribute("TargetsPerArea", pArea);
+					trial.SetAttribute("AvgLocation", eS.AvgDistanceofTargets().ToString());
+				
+				
+					trial.SetAttribute("AvgFirstTen", eS.AvgTimeStart().ToString());
+					trial.SetAttribute("AvgLastTen", eS.AvgTimeLast().ToString());
+					trial.SetAttribute("AvgDistancePerTarget", eS.AvgDistance().ToString());
+				
+					foreach(Response r in eS.Responses){
+						XmlElement response = xml.CreateElement("response");
+						response.SetAttribute("ResponseTime", r.ResponseTime.ToString());
+						response.SetAttribute("TouchPosition", r.TouchLocation.ToString());
+						trial.AppendChild(response);
+					}
+				practice.AppendChild(trial);
+			}
 		}
 		
 		session.AppendChild(practice);
@@ -904,79 +922,81 @@ public class XmlManager {
 		
 		//Loop through all the events and write them out
 		foreach(StarEvent eS in gm.Events){
-			XmlElement trial = xml.CreateElement("trial");
-			
-				trial.SetAttribute("EndCondition", eS.EndCondition);
-			
-				trial.SetAttribute("Duration",eS.Duration.ToString());
-			
-				float good=eS.NumGoodTouches;
-				avggood +=good;
-				float bad=eS.NumBadTouches;
-				avgbad+=bad; 
-				float repeat=eS.RepeatTouches;
-				avgrepeat +=repeat;
-				float timetarget=eS.AvgTimePerTarget();
-				avgtimetarget += timetarget;
-				float timeaction=eS.AvgTimePerAction();
-				avgtimeaction += timeaction;
-				float std=eS.StD();
-				avgstd+= std;
-				List<int> perArea= eS.correctPerArea();
-				string pArea="(";
-				for(int i =0;i<perArea.Count;i++){
-					avgperArea[i] += perArea[i];
+			if(eS.Completed){
+				XmlElement trial = xml.CreateElement("trial");
 				
-					pArea += perArea[i];
-					if(i<perArea.Count-1)
-						pArea+=",";
-					else
-						pArea+=")";
-				}
-				float location=eS.AvgDistanceofTargets();
-				avglocation+= location;
-				float first=eS.AvgTimeStart();
-				avgfirst+= first;
-				float last=eS.AvgTimeLast();
-				avglast+= last;
-				float dist=eS.AvgDistance();
-				avgdist+= dist;
-			
-				trial.SetAttribute("NumGoodTouches", good.ToString());
-				trial.SetAttribute("NumBadTouches", bad.ToString());
-				trial.SetAttribute("NumRepeats", repeat.ToString());
-			
-				trial.SetAttribute("AvgTimePerTarget", timetarget.ToString());
-				trial.SetAttribute("StandardDeviation", std.ToString());
-				trial.SetAttribute("AvgTimePerAction", timeaction.ToString());
-			
-			
-				trial.SetAttribute("TargetsPerArea",pArea);
-				trial.SetAttribute("AvgLocation", location.ToString());
-			
-			
-				trial.SetAttribute("AvgFirstTen", first.ToString());
-				trial.SetAttribute("AvgLastTen", last.ToString());
-				trial.SetAttribute("AvgDistancePerTarget", dist.ToString());
-			
-				foreach(Response r in eS.Responses){
-					XmlElement response = xml.CreateElement("response");
+					trial.SetAttribute("EndCondition", eS.EndCondition);
 				
-					string t ="";
-					if(r.ResponseType==0)
-						t="GOOD";
-					else if(r.ResponseType==1)
-						t="BAD";
-					else if(r.ResponseType==2)
-						t="REPEAT";
+					trial.SetAttribute("Duration",eS.Duration.ToString());
 				
-					response.SetAttribute("ResponseType", t);
-					response.SetAttribute("ResponseTime", r.ResponseTime.ToString());
-					response.SetAttribute("TouchPosition", r.TouchLocation.ToString());
-					trial.AppendChild(response);
-				}
-			
-			trials.AppendChild(trial);
+					float good=eS.NumGoodTouches;
+					avggood +=good;
+					float bad=eS.NumBadTouches;
+					avgbad+=bad; 
+					float repeat=eS.RepeatTouches;
+					avgrepeat +=repeat;
+					float timetarget=eS.AvgTimePerTarget();
+					avgtimetarget += timetarget;
+					float timeaction=eS.AvgTimePerAction();
+					avgtimeaction += timeaction;
+					float std=eS.StD();
+					avgstd+= std;
+					List<int> perArea= eS.correctPerArea();
+					string pArea="(";
+					for(int i =0;i<perArea.Count;i++){
+						avgperArea[i] += perArea[i];
+					
+						pArea += perArea[i];
+						if(i<perArea.Count-1)
+							pArea+=",";
+						else
+							pArea+=")";
+					}
+					float location=eS.AvgDistanceofTargets();
+					avglocation+= location;
+					float first=eS.AvgTimeStart();
+					avgfirst+= first;
+					float last=eS.AvgTimeLast();
+					avglast+= last;
+					float dist=eS.AvgDistance();
+					avgdist+= dist;
+				
+					trial.SetAttribute("NumGoodTouches", good.ToString());
+					trial.SetAttribute("NumBadTouches", bad.ToString());
+					trial.SetAttribute("NumRepeats", repeat.ToString());
+				
+					trial.SetAttribute("AvgTimePerTarget", timetarget.ToString());
+					trial.SetAttribute("StandardDeviation", std.ToString());
+					trial.SetAttribute("AvgTimePerAction", timeaction.ToString());
+				
+				
+					trial.SetAttribute("TargetsPerArea",pArea);
+					trial.SetAttribute("AvgLocation", location.ToString());
+				
+				
+					trial.SetAttribute("AvgFirstTen", first.ToString());
+					trial.SetAttribute("AvgLastTen", last.ToString());
+					trial.SetAttribute("AvgDistancePerTarget", dist.ToString());
+				
+					foreach(Response r in eS.Responses){
+						XmlElement response = xml.CreateElement("response");
+					
+						string t ="";
+						if(r.ResponseType==0)
+							t="GOOD";
+						else if(r.ResponseType==1)
+							t="BAD";
+						else if(r.ResponseType==2)
+							t="REPEAT";
+					
+						response.SetAttribute("ResponseType", t);
+						response.SetAttribute("ResponseTime", r.ResponseTime.ToString());
+						response.SetAttribute("TouchPosition", r.TouchLocation.ToString());
+						trial.AppendChild(response);
+					}
+				
+				trials.AppendChild(trial);
+			}
 		}
 		avggood/=gm.Events.Count;
 		avgbad/=gm.Events.Count;
@@ -1027,27 +1047,28 @@ public class XmlManager {
 		
 		//Loop through all the events and write them out
 		foreach(ImplicitEvent eS in gm.Practice){
+			if(eS.Completed){
+				XmlElement trial = xml.CreateElement("event");
 			
-			XmlElement trial = xml.CreateElement("event");
+				if(eS.Response==null){
+					trial.SetAttribute("Correct", "false");
+				}
+				else{
+					trial.SetAttribute("Correct", "true");
+					responseCount++;
+					avgTime += eS.Response.ResponseTime;
+					avgDist += eS.Response.DistanceFromCenter;
+					trial.SetAttribute("ResponseTime", eS.Response.ResponseTime.ToString());
+					trial.SetAttribute("TouchPosition", eS.Response.TouchLocation.ToString());
+					trial.SetAttribute("DistanceFromCenter", eS.Response.DistanceFromCenter.ToString());
+				}
 			
-			if(eS.Response==null){
-				trial.SetAttribute("Correct", "false");
+				practice.AppendChild(trial);
 			}
-			else{
-				trial.SetAttribute("Correct", "true");
-				responseCount++;
-				avgTime += eS.Response.ResponseTime;
-				avgDist += eS.Response.DistanceFromCenter;
-				trial.SetAttribute("ResponseTime", eS.Response.ResponseTime.ToString());
-				trial.SetAttribute("TouchPosition", eS.Response.TouchLocation.ToString());
-				trial.SetAttribute("DistanceFromCenter", eS.Response.DistanceFromCenter.ToString());
-			}
-			
-			practice.AppendChild(trial);
 		}
 			
-		avgTime= avgTime / responseCount;
-		avgDist = avgDist / responseCount;
+		avgTime= avgTime / (responseCount==0? 1 : responseCount);
+		avgDist = avgDist / (responseCount==0? 1 : responseCount);
 		responseCount = responseCount / gm.Practice.Count;
 		
 		practice.SetAttribute("PercentCorrect", responseCount.ToString());
@@ -1090,26 +1111,28 @@ public class XmlManager {
 			//Loop through all the events and write them out
 			foreach(ImplicitEvent iE in iEs){
 				
-				XmlElement trial = xml.CreateElement("event");
-			
-				if(iE.Response==null){
-					trial.SetAttribute("Correct", "false");
+				if(iE.Completed){
+					XmlElement trial = xml.CreateElement("event");
+				
+					if(iE.Response==null){
+						trial.SetAttribute("Correct", "false");
+					}
+					else{
+						trial.SetAttribute("Correct", "true");
+						responseCount++;
+						avgTime += iE.Response.ResponseTime;
+						avgDist += iE.Response.DistanceFromCenter;
+						trial.SetAttribute("ResponseTime", iE.Response.ResponseTime.ToString());
+						trial.SetAttribute("TouchPosition", iE.Response.TouchLocation.ToString());
+						trial.SetAttribute("DistanceFromCenter", iE.Response.DistanceFromCenter.ToString());
+					}
+				
+					block.AppendChild(trial);
 				}
-				else{
-					trial.SetAttribute("Correct", "true");
-					responseCount++;
-					avgTime += iE.Response.ResponseTime;
-					avgDist += iE.Response.DistanceFromCenter;
-					trial.SetAttribute("ResponseTime", iE.Response.ResponseTime.ToString());
-					trial.SetAttribute("TouchPosition", iE.Response.TouchLocation.ToString());
-					trial.SetAttribute("DistanceFromCenter", iE.Response.DistanceFromCenter.ToString());
-				}
-			
-				block.AppendChild(trial);
 			}
 			
-			avgTime= avgTime / responseCount;
-			avgDist = avgDist / responseCount;
+			avgTime= avgTime / (responseCount==0? 1 : responseCount);
+			avgDist = avgDist / (responseCount==0? 1 : responseCount);
 			responseCount = responseCount / iEs.Count;
 			
 			block.SetAttribute("PercentCorrect", responseCount.ToString());
@@ -1137,45 +1160,48 @@ public class XmlManager {
 		//Loop through all the events and write them out
 		foreach(StoppingEvent eS in gm.Practice){
 			
-			XmlElement trial = xml.CreateElement("event");
+			if(eS.Completed){
 			
-			trial.SetAttribute("TurnedOrange", (!eS.Go).ToString());
-			trial.SetAttribute("TurningTime", eS.TurningTime.ToString());
-			
-			if(eS.Go) blueCount++;
-			else orangeCount++;
-			
-			avgTurningTime += eS.TurningTime;
-			
-			if((eS.Response==null && !eS.Go) || (eS.Response!=null && eS.Go)){
-				trial.SetAttribute("Correct", "true");
-				if(eS.Go)
-					avgCorrectBlue++;
-				else{
-					avgCorrectOrange++;
+				XmlElement trial = xml.CreateElement("event");
+				
+				trial.SetAttribute("TurnedOrange", (!eS.Go).ToString());
+				trial.SetAttribute("TurningTime", eS.TurningTime.ToString());
+				
+				if(eS.Go) blueCount++;
+				else orangeCount++;
+				
+				avgTurningTime += eS.TurningTime;
+				
+				if((eS.Response==null && !eS.Go) || (eS.Response!=null && eS.Go)){
+					trial.SetAttribute("Correct", "true");
+					if(eS.Go)
+						avgCorrectBlue++;
+					else{
+						avgCorrectOrange++;
+					}
 				}
-			}
-			else trial.SetAttribute("Correct", "false");
-			
-			if(eS.Response!=null ){
-				if(eS.Go){
-					responseCount++;
-					avgTime += eS.Response.ResponseTime;
-					avgDist += eS.Response.DistanceFromCenter;
+				else trial.SetAttribute("Correct", "false");
+				
+				if(eS.Response!=null ){
+					if(eS.Go){
+						responseCount++;
+						avgTime += eS.Response.ResponseTime;
+						avgDist += eS.Response.DistanceFromCenter;
+					}
+					trial.SetAttribute("ResponseTime", eS.Response.ResponseTime.ToString());
+					trial.SetAttribute("TouchPosition", eS.Response.TouchLocation.ToString());
+					trial.SetAttribute("DistanceFromCenter", eS.Response.DistanceFromCenter.ToString());
 				}
-				trial.SetAttribute("ResponseTime", eS.Response.ResponseTime.ToString());
-				trial.SetAttribute("TouchPosition", eS.Response.TouchLocation.ToString());
-				trial.SetAttribute("DistanceFromCenter", eS.Response.DistanceFromCenter.ToString());
+				
+				practice.AppendChild(trial);
 			}
-			
-			practice.AppendChild(trial);
 		}
 		
-		practice.SetAttribute("GoPercentCorrect", (avgCorrectBlue/blueCount).ToString());
-		practice.SetAttribute("AvgDistanceFromCenter", (avgDist / responseCount).ToString());
-		practice.SetAttribute("AvgResponseTime", (avgTime / responseCount).ToString());
-		practice.SetAttribute("StopPercentCorrect", (avgCorrectOrange/orangeCount).ToString());
-		practice.SetAttribute("AvgTurningTime", (avgTurningTime/orangeCount).ToString());
+		practice.SetAttribute("GoPercentCorrect", (avgCorrectBlue/(blueCount==0? 1 : blueCount)).ToString());
+		practice.SetAttribute("AvgDistanceFromCenter", (avgDist / (responseCount==0? 1 : responseCount)).ToString());
+		practice.SetAttribute("AvgResponseTime", (avgTime / (responseCount==0? 1 : responseCount)).ToString());
+		practice.SetAttribute("StopPercentCorrect", (avgCorrectOrange/(orangeCount==0? 1 : orangeCount)).ToString());
+		practice.SetAttribute("AvgTurningTime", (avgTurningTime/(orangeCount==0? 1 : orangeCount)).ToString());
 		
 		session.AppendChild(practice);
 		
@@ -1194,45 +1220,48 @@ public class XmlManager {
 		//Loop through all the events and write them out
 		foreach(StoppingEvent eS in gm.Events){
 			
-			XmlElement trial = xml.CreateElement("event");
+			if(eS.Completed){
 			
-			trial.SetAttribute("TurnedOrange", (!eS.Go).ToString());
-			trial.SetAttribute("TurningTime", eS.TurningTime.ToString());
-			
-			if(eS.Go) blueCount++;
-			else orangeCount++;
-			
-			avgTurningTime += eS.TurningTime;
-			
-			if((eS.Response==null && !eS.Go) || (eS.Response!=null && eS.Go)){
-				trial.SetAttribute("Correct", "true");
-				if(eS.Go)
-					avgCorrectBlue++;
-				else{
-					avgCorrectOrange++;
+				XmlElement trial = xml.CreateElement("event");
+				
+				trial.SetAttribute("TurnedOrange", (!eS.Go).ToString());
+				trial.SetAttribute("TurningTime", eS.TurningTime.ToString());
+				
+				if(eS.Go) blueCount++;
+				else orangeCount++;
+				
+				avgTurningTime += eS.TurningTime;
+				
+				if((eS.Response==null && !eS.Go) || (eS.Response!=null && eS.Go)){
+					trial.SetAttribute("Correct", "true");
+					if(eS.Go)
+						avgCorrectBlue++;
+					else{
+						avgCorrectOrange++;
+					}
 				}
-			}
-			else trial.SetAttribute("Correct", "false");
-			
-			if(eS.Response!=null ){
-				if(eS.Go){
-					responseCount++;
-					avgTime += eS.Response.ResponseTime;
-					avgDist += eS.Response.DistanceFromCenter;
+				else trial.SetAttribute("Correct", "false");
+				
+				if(eS.Response!=null ){
+					if(eS.Go){
+						responseCount++;
+						avgTime += eS.Response.ResponseTime;
+						avgDist += eS.Response.DistanceFromCenter;
+					}
+					trial.SetAttribute("ResponseTime", eS.Response.ResponseTime.ToString());
+					trial.SetAttribute("TouchPosition", eS.Response.TouchLocation.ToString());
+					trial.SetAttribute("DistanceFromCenter", eS.Response.DistanceFromCenter.ToString());
 				}
-				trial.SetAttribute("ResponseTime", eS.Response.ResponseTime.ToString());
-				trial.SetAttribute("TouchPosition", eS.Response.TouchLocation.ToString());
-				trial.SetAttribute("DistanceFromCenter", eS.Response.DistanceFromCenter.ToString());
+				
+				trials.AppendChild(trial);
 			}
-			
-			trials.AppendChild(trial);
 		}
 		
-		trials.SetAttribute("GoPercentCorrect", (avgCorrectBlue/blueCount).ToString());
-		trials.SetAttribute("AvgDistanceFromCenter", (avgDist / responseCount).ToString());
-		trials.SetAttribute("AvgResponseTime", (avgTime / responseCount).ToString());
-		trials.SetAttribute("StopPercentCorrect", (avgCorrectOrange/orangeCount).ToString());
-		trials.SetAttribute("AvgTurningTime", (avgTurningTime/orangeCount).ToString());
+		trials.SetAttribute("GoPercentCorrect", (avgCorrectBlue/(blueCount==0? 1 :blueCount)).ToString());
+		trials.SetAttribute("AvgDistanceFromCenter", (avgDist / (responseCount==0? 1 : responseCount)).ToString());
+		trials.SetAttribute("AvgResponseTime", (avgTime / (responseCount==0? 1 : responseCount)).ToString());
+		trials.SetAttribute("StopPercentCorrect", (avgCorrectOrange/(orangeCount==0? 1 : orangeCount)).ToString());
+		trials.SetAttribute("AvgTurningTime", (avgTurningTime/(orangeCount==0? 1 : orangeCount)).ToString());
 		session.AppendChild(trials);	
 	}
 	
@@ -1241,25 +1270,27 @@ public class XmlManager {
 		
 		//Loop through all the practice trials
 		foreach(AssociateEvent eS in gm.Practice){
-			XmlElement trial = xml.CreateElement("trial");
-				trial.SetAttribute("NumBadTouches",(eS.Responses.Count-1).ToString());
-				
-				int score = 0;	
-				if(eS.Responses.Count>1){
-					int target = eS.TargetImage;
+			if(eS.Completed){
+				XmlElement trial = xml.CreateElement("trial");
+					trial.SetAttribute("NumBadTouches",(eS.Responses.Count-1).ToString());
 					
-					if(target<7){
-						if(eS.Responses[0].DotPressed>=7) score =1;
-						else score =2;
+					int score = 0;	
+					if(eS.Responses.Count>1){
+						int target = eS.TargetImage;
+						
+						if(target<7){
+							if(eS.Responses[0].DotPressed>=7) score =1;
+							else score =2;
+						}
+						else{
+							if(eS.Responses[0].DotPressed>=7) score =2;
+							else score =1;
+						}
 					}
-					else{
-						if(eS.Responses[0].DotPressed>=7) score =2;
-						else score =1;
-					}
-				}
-			
-				trial.SetAttribute("Score",score.ToString());
-			practice.AppendChild(trial);
+				
+					trial.SetAttribute("Score",score.ToString());
+				practice.AppendChild(trial);
+			}
 		}
 		
 		session.AppendChild(practice);
@@ -1269,7 +1300,7 @@ public class XmlManager {
 		
 		float avgBadTouch =0;
 		
-		int indexOfLastSpike=0;
+		int indexOfLastSpike=-1;
 		
 		int index = 0;
 		
@@ -1281,7 +1312,8 @@ public class XmlManager {
 		
 		//Loop through all the events and write them out
 		foreach(AssociateEvent eS in gm.Events){
-			XmlElement trial = xml.CreateElement("trial");
+			if(eS.Completed){
+				XmlElement trial = xml.CreateElement("trial");
 				trial.SetAttribute("NumBadTouches",(eS.Responses.Count-1).ToString());
 			
 				avgBadTouch +=(eS.Responses.Count-1);
@@ -1316,14 +1348,15 @@ public class XmlManager {
 				else if(probabilityCorrectTouch>=.5 &&indexOfFiftyPercent ==-1)
 					indexOfFiftyPercent = index;
 			
-			trials.AppendChild(trial);
+				trials.AppendChild(trial);
+			}
 			index++;
 		}
 		
 		avgBadTouch = avgBadTouch/(float)gm.Events.Count;
 		
 		trials.SetAttribute("AvgNumBadTouch", avgBadTouch.ToString());
-		trials.SetAttribute("LearningRateItems", (indexOfLastSpike+1).ToString());
+		trials.SetAttribute("LearningRateItems", (indexOfLastSpike==-1? "NaN" : (indexOfLastSpike+1).ToString()));
 		trials.SetAttribute("AvgProbabilityCorrectCategory", Mathf.Round(probabilityCorrectTouch *100).ToString() +"%");
 		trials.SetAttribute("LearningRateCategory", indexOfFiftyPercent==-1 ? "NaN" : (indexOfFiftyPercent+1).ToString());
 	

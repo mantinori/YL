@@ -404,7 +404,7 @@ public class StoppingManager : GameManager {
 		}
 		
 		//Writeout 
-		xml.WriteOut();
+		xml.WriteOut(true);
 		
 		//SessionTitle screen
 		yield return StartCoroutine(showTitle("Session Over",3));
@@ -417,89 +417,87 @@ public class StoppingManager : GameManager {
 	
 	// Constantly check for player input
 	void Update () {	
+			
+		bool currentTouch;
 		
-		//If were in the probe mode
-		if(state == GameState.Probe){
+		//Get the touch location based on the platform
+		if(Application.platform == RuntimePlatform.IPhonePlayer){
+			if(Input.touchCount>0){
+				touchPos = Input.touches[0].position;
 			
-			bool currentTouch;
-			
-			//Get the touch location based on the platform
-			if(Application.platform == RuntimePlatform.IPhonePlayer){
-				if(Input.touchCount>0){
-					touchPos = Input.touches[0].position;
-				
-					currentTouch = true;
-				}
-				else currentTouch =false;		
+				currentTouch = true;
 			}
-			else{
-				if(Input.GetMouseButton(0)){
-					touchPos = Input.mousePosition;
-				
-					currentTouch = true;
-				}
-				else currentTouch =false;
-			}
+			else currentTouch =false;		
+		}
+		else{
+			if(Input.GetMouseButton(0)){
+				touchPos = Input.mousePosition;
 			
-			//Not Touching
-			if(!currentTouch)
-				touching = false;
-			//If a player has touched the screen, not holding
-			else if(!touching && currentTouch){	
-				if(State == GameManager.GameState.Probe){
-					Ray ray = camera.ScreenPointToRay(touchPos);
-					RaycastHit hit = new RaycastHit();
-					//If the raycast of the touch hit something
-					if(Physics.Raycast(ray, out hit)) {
-						//Hit the Stimulus
-						if(hit.collider.name == "Stimulus"){
-					
-							//Reverts the y orientation
-							touchPos.y = Screen.height - touchPos.y;
+				currentTouch = true;
+			}
+			else currentTouch =false;
+		}
+		
+		//Not Touching
+		if(!currentTouch)
+			touching = false;
+		//If a player has touched the screen, not holding
+		else if(!touching && currentTouch){	
+			
+			touching = true;
+			
+			if(State == GameManager.GameState.Probe){
+				Ray ray = camera.ScreenPointToRay(touchPos);
+				RaycastHit hit = new RaycastHit();
+				//If the raycast of the touch hit something
+				if(Physics.Raycast(ray, out hit)) {
+					//Hit the Stimulus
+					if(hit.collider.name == "Stimulus"){
+				
+						//Reverts the y orientation
+						touchPos.y = Screen.height - touchPos.y;
+						
+						//Calculate the response time
+						float time = Time.time - startTime;
+						
+						//Make sure it was before the cutoff
+						if(time<=.7f){
+							float x = ((stoppingStimulus.transform.position.x + 26.5f)/53f) * Screen.width;
 							
-							touching = true;
+							float y = ((stoppingStimulus.transform.position.z - 15f)/-30f) * Screen.height;
 							
-							//Calculate the response time
-							float time = Time.time - startTime;
+							Vector2 targPos = new Vector2(x,y);
 							
-							//Make sure it was before the cutoff
-							if(time<=.7f){
-								float x = ((stoppingStimulus.transform.position.x + 26.5f)/53f) * Screen.width;
-								
-								float y = ((stoppingStimulus.transform.position.z - 15f)/-30f) * Screen.height;
-								
-								Vector2 targPos = new Vector2(x,y);
-								
-								//Create the respones
-								Response r = new Response(targPos, time,new Vector2(touchPos.x,touchPos.y));
-										
-								Vector2 screenPos = Vector2.zero;
-								
-								screenPos.x = ((touchPos.x/Screen.width) * 53) - 26.5f;
-								screenPos.y = ((touchPos.y/Screen.height) * -30) +15;
-								
-								//Start the fade spot
-								
-								int good = 1;
-								if(!CurrentEvent.Go)
-									good = 0;
-								
-								StartCoroutine(spot.fadeFinger(screenPos, good));
-								
-								//Add the response
-								CurrentEvent.Response =r;
-								
-								//If were in the real game
-								if(currentEventNum>7 && !CurrentEvent.Go){
-									avgResponseTime-=.025f;
-										
-									Mathf.Clamp(avgResponseTime,0,1.4f);
-								}	
-							}
+							//Create the respones
+							Response r = new Response(targPos, time,new Vector2(touchPos.x,touchPos.y));
+									
+							Vector2 screenPos = Vector2.zero;
+							
+							screenPos.x = ((touchPos.x/Screen.width) * 53) - 26.5f;
+							screenPos.y = ((touchPos.y/Screen.height) * -30) +15;
+							
+							//Start the fade spot
+							
+							int good = 1;
+							if(!CurrentEvent.Go)
+								good = 0;
+							
+							StartCoroutine(spot.fadeFinger(screenPos, good));
+							
+							//Add the response
+							CurrentEvent.Response =r;
+							
+							//If were in the real game
+							if(currentEventNum>7 && !CurrentEvent.Go){
+								avgResponseTime-=.025f;
+									
+								Mathf.Clamp(avgResponseTime,0,1.4f);
+							}	
 						}
 					}
 				}
 			}
 		}
+	
 	}
 }
