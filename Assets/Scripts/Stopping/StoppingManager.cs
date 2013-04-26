@@ -404,7 +404,7 @@ public class StoppingManager : GameManager {
 		}
 		
 		//Writeout 
-		xml.WriteOut(true);
+		csv.WriteOut(true);
 		
 		//SessionTitle screen
 		yield return StartCoroutine(showTitle("Session Over",3));

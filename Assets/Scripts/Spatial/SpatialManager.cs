@@ -434,7 +434,7 @@ public class SpatialManager : GameManager {
 		}
 		
 		//Writeout the log file
-		xml.WriteOut(true);
+		csv.WriteOut(true);
 		
 		yield return StartCoroutine(showTitle("Session Over",3));
 		

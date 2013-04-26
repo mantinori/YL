@@ -43,6 +43,9 @@ public class GameManager : MonoBehaviour {
 	//The XmlManager class of the scene
 	protected XmlManager xml;
 	
+	//The CsvManager class of the scene
+	protected CsvManager csv;
+	
 	//The current event number
 	protected int currentEventNum;
 	
@@ -125,6 +128,8 @@ public class GameManager : MonoBehaviour {
 		activeSlope =0;
 		
 		xml = new XmlManager();
+		
+		csv = new CsvManager();
 		
 		state = GameState.Title;	
 		
@@ -269,7 +274,7 @@ public class GameManager : MonoBehaviour {
 									//Write out the incompleted xml
 									xml.WriteOut(false);
 									
-									//Go back to the menu
+								//Go back to the menu
 									Application.LoadLevel("menu");
 								}
 							}

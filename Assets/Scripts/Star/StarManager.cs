@@ -766,7 +766,7 @@ public class StarManager : GameManager {
 		}
 		
 		//Write out the Log file
-		xml.WriteOut(true);
+		csv.WriteOut(true);
 		
 		yield return StartCoroutine(showTitle("Session Over",3));
 		
@@ -825,6 +825,11 @@ public class StarManager : GameManager {
 					
 						//LittleStar
 						if(hit.collider.name == "littleStar"){
+							
+							if(CurrentEvent.Completed ==false){
+								CurrentEvent.Completed = true;
+							}
+							
 							//The star has not been touched yet
 							if(!hit.collider.renderer.material.name.Contains("Touched")){
 						
