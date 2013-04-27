@@ -173,31 +173,23 @@ public class CsvManager {
 		if (!fn.EndsWith(".xml")) fn += ".csv";
 		
 		//Set up the XmlDocument variable
-		StreamReader sR;
+		//StreamReader sR;
+		
+		TextReader reader;
 		
 		//Try to load the file. If it fails, exit out
 		try{
-			if(File.Exists(Path.Combine(XmlManager.SessionFilesPath, fn))){
-				NeuroLog.Log("Attempting to Load " + Path.Combine(XmlManager.SessionFilesPath, fn));
-				sR = new StreamReader(Path.Combine(XmlManager.SessionFilesPath, fn));
+			if(File.Exists(Path.Combine(CsvManager.SessionFilesPath, fn))){
+				NeuroLog.Log("Attempting to Load " + Path.Combine(CsvManager.SessionFilesPath, fn));
+				reader = new StreamReader(Path.Combine(CsvManager.SessionFilesPath, fn));
 			}
-			else{
-				NeuroLog.Log("Unable to find sessionFile!");
-			
-				sessionXML = "randomList";
-			
-				return null;
-			}/*
 			else{
 				NeuroLog.Log("Attempting to read from local Resources");
 					
 				TextAsset sessionData = Resources.Load("session_files/" + sessionXML) as TextAsset;
-		
-				TextReader reader = new StringReader(sessionData.text);
 				
-				sR = new StreamReader();
+				reader = new StringReader(sessionData.text);
 			}
-			*/
 		}
 		catch(Exception e){
 			NeuroLog.Log("Unable to find sessionFile! Error: " + e);
@@ -210,11 +202,11 @@ public class CsvManager {
 		List<EventStats> eS = new List<EventStats>();
 		
 		//Check the headers to make sure its the right type of file
-		using (CsvReader csv = new CsvReader(sR,true)){
+		using (CsvReader csv = new CsvReader(reader,true)){
         	List<string> headers = new List<string>(csv.GetFieldHeaders());
 			
-			for(int i=0; i<headers.Count;i++){
-				headers[i] = headers[i].ToLower();
+			for(int i=0;i<headers.Count;i++){
+				headers[i]= headers[i].ToLower();
 			}
 			
 			bool exit = false;
@@ -330,7 +322,7 @@ public class CsvManager {
 
     	string[] headers = csv.GetFieldHeaders();
 		
-		int i =1;
+		int i =2;
 		
     	while (csv.ReadNextRecord()){
 			
@@ -397,7 +389,7 @@ public class CsvManager {
 
     	string[] headers = csv.GetFieldHeaders();
 		
-		int i =1;
+		int i =2;
 		
     	while (csv.ReadNextRecord()){
 			
@@ -442,7 +434,7 @@ public class CsvManager {
 
     	string[] headers = csv.GetFieldHeaders();
 		
-		int i =1;
+		int i =2;
 		
 		StarEvent sE = new StarEvent();
 		
@@ -519,19 +511,23 @@ public class CsvManager {
 				//Block Num
 				else if (headers[j].ToLower() =="blocknum"){
 					if(int.TryParse(csv[j],out b)){
-						if(b <1){
-							NeuroLog.Log("Invalid value for 'dot' at line #" + i.ToString() + ". Needs to be greater than 0.");
+						if(block ==0){
+							block = b;
+						}
+						else if(b <block){
+							NeuroLog.Log("Invalid value for 'dot' at line #" + i.ToString() + ". Needs to be greater than "+block +" at this point. Please keep block num's together");
 							b = -1;
 						}
-						else if(block ==0){
-							block = b;
+						else if(b> block+1){
+							NeuroLog.Log("Invalid value for 'dot' at line #" + i.ToString() + ". Needs to be less than "+(block+1).ToString() 
+								+" at this point. Do not jump ahead.");
+							b = -1;
 						}
 					}
 					else NeuroLog.Log("Invalid value for 'BlockNum' at line #" + i.ToString() + ". Needs to be a int.");
 				}
 			}
 			if(b != -1){
-				
 				if(b != block){
 					
 					block = b;
@@ -588,13 +584,15 @@ public class CsvManager {
 
     	string[] headers = csv.GetFieldHeaders();
 		
-		int i =1;
+		int i =2;
+		
+		int block = 0;
 		
     	while (csv.ReadNextRecord()){
 			
 			int dot = -1;
 			
-			int block = -1;
+			int b=-1;
 			
 			for(int j = 0;j<fieldCount;j++){
 				if(headers[j].ToLower() == "dot"){	
@@ -607,17 +605,27 @@ public class CsvManager {
 					else NeuroLog.Log("Invalid value for 'dot' at line #" + i.ToString() + ". Needs to be a int.");
 				}
 				else if (headers[j].ToLower() =="blocknum"){
-					if(int.TryParse(csv[j],out block)){
-						if(block <1){
-							NeuroLog.Log("Invalid value for 'dot' at line #" + i.ToString() + ". Needs to be greater than 0.");
-							block = -1;
+					if(int.TryParse(csv[j],out b)){
+						if(block ==0){
+							block = b;
+						}
+						else if(b <block){
+							NeuroLog.Log("Invalid value for 'BlockNum' at line #" + i.ToString() + ". Needs to be greater than "+block +" at this point. Please keep block num's together");
+							b = -1;
+						}
+						else if(b> block+1){
+							NeuroLog.Log("Invalid value for 'BlockNum' at line #" + i.ToString() + ". Needs to be less than "+(block+1).ToString() 
+								+" at this point. Do not jump ahead.");
+							b = -1;
 						}
 					}
 					else NeuroLog.Log("Invalid value for 'BlockNum' at line #" + i.ToString() + ". Needs to be a int.");
 				}
 			}
 			
-			if(dot!=-1 && block !=-1) implicitEvents.Add(new ImplicitEvent(dot,block));
+			if(b != block && b!= -1) block = b;
+			
+			if(dot!=-1 && b !=-1) implicitEvents.Add(new ImplicitEvent(dot,block));
 			
 			i++;
 		}
@@ -634,7 +642,7 @@ public class CsvManager {
 
     	string[] headers = csv.GetFieldHeaders();
 		
-		int i =1;
+		int i =2;
 		
     	while (csv.ReadNextRecord()){
 			
@@ -674,7 +682,7 @@ public class CsvManager {
 
     	string[] headers = csv.GetFieldHeaders();
 		
-		int i =1;			
+		int i =2;			
 		
     	while (csv.ReadNextRecord()){
 
@@ -1671,7 +1679,7 @@ public class CsvManager {
 		DateTime Now = DateTime.Now;
 		string theTime = Now.ToShortDateString().Replace('/', '-') + "-" + Now.ToString("HH:mm:ss").Replace(':', '-');
 		
-		string[] filePaths = Directory.GetFiles(XmlManager.LogFilesPath);
+		string[] filePaths = Directory.GetFiles(CsvManager.LogFilesPath);
 		
 		int count =1;
 		

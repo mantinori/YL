@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml;
+using LumenWorks.Framework.IO.Csv;
 
 //Script used to control all activity in the menu scene.
 public class MenuController : MonoBehaviour {
@@ -42,10 +43,12 @@ public class MenuController : MonoBehaviour {
 		abortButton.response = displayWarning;
 		
 		if(language == "spanish"){
-			abortButton.GetComponentInChildren<UILabel>().text = "Cambiar\nusuario"; 
+			abortButton.GetComponentInChildren<UILabel>().text = "Cambiar usuario"; 
 			quitButton.GetComponentInChildren<UILabel>().text = "Salir"; 
 			yesButton.GetComponentInChildren<UILabel>().text = "Sí";
 			warning.text = " La sesión actual será borrada,\nesta seguro que quiere continuar?";
+			((BoxCollider)abortButton.collider).size = new Vector3(200,40,0);
+			abortButton.GetComponentInChildren<UISlicedSprite>().transform.localScale = new Vector3(215,35,1);
 		}
 		
 		yesButton.response = resetDevice;
@@ -132,8 +135,8 @@ public class MenuController : MonoBehaviour {
 		}
 	}
 	
-	//If a task button was pressed, find out what game type it is then start the game
-	private void beginTask(GameObject o){
+	//Old xml version: If a task button was pressed, find out what game type it is then start the game 
+	/*private void beginTask(GameObject o){
 		
 		//String the fileName
 		string fileName = o.name +".xml";
@@ -194,7 +197,86 @@ public class MenuController : MonoBehaviour {
 		//Stopping
 		else if(type =="5")
 			Application.LoadLevel("stopping");
+	}*/
+	
+	//If a task button was pressed, find out what game type it is then start the game
+	private void beginTask(GameObject o){
+		
+		//String the fileName
+		string fileName = o.name +".csv";
+		
+		//Get the taskNumber
+		int num = int.Parse(o.name.Replace("task",""));
+		
+		StreamReader sR;
+		
+		try{
+			if(File.Exists(Path.Combine(CsvManager.SessionFilesPath, fileName))){
+				sR = new StreamReader(Path.Combine(CsvManager.SessionFilesPath, fileName));
+			}
+			else{
+				NeuroLog.Error("Unable to find task file");
+				
+				return;
+			}/*
+			else{
+				NeuroLog.Log("Attempting to read from local Resources");
+					
+				TextAsset sessionData = Resources.Load("session_files/" + sessionXML) as TextAsset;
+		
+				TextReader reader = new StringReader(sessionData.text);
+				
+				sR = new StreamReader();
+			}
+			*/
+		}
+		catch{
+			
+			NeuroLog.Error("Unable to find task file");
+				
+			return;
+		}
+		
+		PlayerPrefs.SetInt("-currentTask", num);
+		
+		//Check the headers to make sure its the right type of file
+		using (CsvReader csv = new CsvReader(sR,true)){
+        	List<string> headers = new List<string>(csv.GetFieldHeaders());
+			
+			for(int i=0; i<headers.Count;i++){
+				headers[i] = headers[i].ToLower();
+			}
+			
+			if(headers.Contains("dots") && headers.Contains("delay")){
+				Application.LoadLevel("spatial");
+				NeuroLog.Log("Loading Spatial game");
+			}
+			else if(headers.Contains("side") && headers.Contains("color")){
+				Application.LoadLevel("inhibition");
+				NeuroLog.Log("Loading Inhibition game");
+			}
+			else if(headers.Contains("blocknum") && headers.Contains("type") && headers.Contains("position") && headers.Contains("rotation")){
+				Application.LoadLevel("star");
+				NeuroLog.Log("Loading Star game");
+			}
+			else if(headers.Contains("blocknum") && headers.Contains("dot")){
+				Application.LoadLevel("implicit");
+				NeuroLog.Log("Loading Implicit game");
+			}
+			else if(headers.Contains("go") && headers.Contains("dot")){
+				Application.LoadLevel("stopping");
+				NeuroLog.Log("Loading Stopping game");
+			}
+			else if(headers.Contains("target") && headers.Contains("stimuli")){
+				Application.LoadLevel("associate");
+				NeuroLog.Log("Loading Associate game");
+			}
+			else{
+				NeuroLog.Log("Listed headers in task " +num + "do not match up with any of the current programs");
+			}
+		}
 	}
+	
 	
 	//Bring up warning message
 	private void displayWarning(GameObject o){
