@@ -38,7 +38,7 @@ public class ImplicitManager : GameManager {
 		stimPositions = new Vector2[4]{new Vector2(-15,10), new Vector2(5,5), new Vector2(15,-10), new Vector2(-10,-5)};
 		
 		//Preform the read in to get the events
-		events =  xml.ReadInSession();
+		events =  csv.ReadInSession();
 		
 		//Generate the practice events
 		generatePractice();

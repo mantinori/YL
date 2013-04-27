@@ -90,7 +90,7 @@ public class CsvManager {
 	// Write out exit code file to let know the dashboard if we exited well or not
 	// Use code 1 for error, code 0 for everything ok.
 	public static void WriteExitCode(string module, int code){
-		NeuroLog.Debug("writing exit code " + code + " for module " + module);
+ 		NeuroLog.Log("writing exit code " + code + " for module " + module);
 		string fn = System.Environment.MachineName + "_" + module + "_exit_code.txt";
 		using (StreamWriter sw = new StreamWriter(Path.Combine(TraceFilesPath, fn))) {
 			sw.WriteLine(code);
@@ -116,7 +116,7 @@ public class CsvManager {
 			}
 			//If it can't create the folder, return false
 			catch (System.Exception e) {
-				NeuroLog.Debug("Couldn't create directory " + dir.FullName + ": " + e);
+				NeuroLog.Log("Couldn't create directory " + dir.FullName + ": " + e);
 				return false;
 			}
 		}
@@ -148,7 +148,7 @@ public class CsvManager {
 		return true;
 	}
 	
-	/*
+	
 	//Base method used to start the read in process, returns true if successful
 	public List<EventStats> ReadInSession()
 	{
@@ -157,7 +157,7 @@ public class CsvManager {
 		//Check to see if the task number is in the correct range of 1-7
 		if(tNum<1 ||tNum>7){
 			
-			NeuroLog.Error("Invalid task number given: " + tNum.ToString());
+			NeuroLog.Log("Invalid task number given: " + tNum.ToString());
 			
 			sessionXML = "randomList";
 			
@@ -170,72 +170,143 @@ public class CsvManager {
 		
 		//Add an xml extension
 		string fn = sessionXML;
-		if (!fn.EndsWith(".xml")) fn += ".xml";
+		if (!fn.EndsWith(".xml")) fn += ".csv";
 		
 		//Set up the XmlDocument variable
-		XmlDocument xml = new XmlDocument();
+		StreamReader sR;
 		
 		//Try to load the file. If it fails, exit out
 		try{
 			if(File.Exists(Path.Combine(XmlManager.SessionFilesPath, fn))){
-				Debug.Log("Attempting to Load " + Path.Combine(XmlManager.SessionFilesPath, fn));
-				xml.Load(Path.Combine(XmlManager.SessionFilesPath, fn));
+				NeuroLog.Log("Attempting to Load " + Path.Combine(XmlManager.SessionFilesPath, fn));
+				sR = new StreamReader(Path.Combine(XmlManager.SessionFilesPath, fn));
 			}
 			else{
-				NeuroLog.Error("Attempting to read from local Resources");
+				NeuroLog.Log("Unable to find sessionFile!");
+			
+				sessionXML = "randomList";
+			
+				return null;
+			}/*
+			else{
+				NeuroLog.Log("Attempting to read from local Resources");
 					
 				TextAsset sessionData = Resources.Load("session_files/" + sessionXML) as TextAsset;
 		
 				TextReader reader = new StringReader(sessionData.text);
-			
-				xml.Load(reader);
+				
+				sR = new StreamReader();
 			}
+			*/
 		}
 		catch(Exception e){
-			NeuroLog.Error("Unable to find sessionFile! Error: " + e);
+			NeuroLog.Log("Unable to find sessionFile! Error: " + e);
 			
 			sessionXML = "randomList";
 			
 			return null;
 		}
 		
-		XmlNode sessionNode = xml.SelectSingleNode("/session");
+		List<EventStats> eS = new List<EventStats>();
 		
-		string gameType = sessionNode.Attributes[0].Value;
-		
-		if((gameType !="0" && (typeof(SpatialManager) == gm.GetType())) ||
-			(gameType !="1" && (typeof(InhibitionManager) == gm.GetType())) ||
-			(gameType !="2" && (typeof(StarManager) == gm.GetType())) ||
-			(gameType !="3" && (typeof(ImplicitManager) == gm.GetType())) ||
-			(gameType !="4" && (typeof(AssociateManager) == gm.GetType())) ||
-			(gameType !="5" && (typeof(StoppingManager) == gm.GetType()))){
-			NeuroLog.Error("Invalid read in file for current scene. File is " + gameType+ " while scene is " + gm.GetType());
+		//Check the headers to make sure its the right type of file
+		using (CsvReader csv = new CsvReader(sR,true)){
+        	List<string> headers = new List<string>(csv.GetFieldHeaders());
 			
-			sessionXML = "randomList";
+			for(int i=0; i<headers.Count;i++){
+				headers[i] = headers[i].ToLower();
+			}
 			
-			return null;
+			bool exit = false;
+			
+			if(gm.SType == GameManager.SessionType.Spatial){
+				if(!headers.Contains("dots")){
+					NeuroLog.Log("Invalid read in file for current scene. File is missing header 'Dots' for Spatial Scene");
+					exit =true;
+				}
+				else if(!headers.Contains("delay")){
+					NeuroLog.Log("Invalid read in file for current scene. File is missing header 'Delay' for Spatial Scene");
+					exit =true;
+				}
+				else 	
+					eS = ReadSpatialEvents(csv);
+			}
+			else if(gm.SType == GameManager.SessionType.Inhibition){
+				if(!headers.Contains("side")){
+					NeuroLog.Log("Invalid read in file for current scene. File is missing header 'Side' for Inhibition Scene");
+					exit =true;
+				}
+				else if(!headers.Contains("color")){
+					NeuroLog.Log("Invalid read in file for current scene. File is missing header 'Color' for Inhibition Scene");
+					exit =true;
+				}
+				else 
+					eS = ReadInhibEvents(csv);
+			}
+			else if(gm.SType == GameManager.SessionType.Star){
+				if(!headers.Contains("blocknum")){
+					NeuroLog.Log("Invalid read in file for current scene. File is missing header 'BlockNum' for Star Scene");
+					exit =true;
+				}
+				else if(!headers.Contains("type")){
+					NeuroLog.Log("Invalid read in file for current scene. File is missing header 'Type' for Star Scene");
+					exit =true;
+				}
+				else if(!headers.Contains("position")){
+					NeuroLog.Log("Invalid read in file for current scene. File is missing header 'Position' for Star Scene");
+					exit =true;
+				}
+				else if(!headers.Contains("rotation")){
+					NeuroLog.Log("Invalid read in file for current scene. File is missing header 'Rotation' for Star Scene");
+					exit =true;
+				}
+				else
+					eS = ReadStarEvents(csv);
+			}
+			else if(gm.SType == GameManager.SessionType.Implicit){
+				if(!headers.Contains("blocknum")){
+					NeuroLog.Log("Invalid read in file for current scene. File is missing header 'BlockNum' for Implicit Scene");
+					exit =true;
+				}
+				else if(!headers.Contains("dot")){
+					NeuroLog.Log("Invalid read in file for current scene. File is missing header 'Dot' for Implicit Scene");
+					exit =true;
+				}
+				else
+					eS = ReadImplicitEvents(csv);
+			}
+			else if(gm.SType == GameManager.SessionType.Stopping){
+				if(!headers.Contains("go")){
+					NeuroLog.Log("Invalid read in file for current scene. File is missing header 'Go' for Stopping Scene");
+					exit =true;
+				}
+				else if(!headers.Contains("dot")){
+					NeuroLog.Log("Invalid read in file for current scene. File is missing header 'Dot' for Stopping Scene");
+					exit =true;
+				}
+				else 
+					eS = ReadStoppingEvents(csv);
+			}
+			else if(gm.SType == GameManager.SessionType.Associate ){
+				if(!headers.Contains("target")){
+					NeuroLog.Log("Invalid read in file for current scene. File is missing header 'Target' for Associate Scene");
+					exit =true;
+				}
+				else if(!headers.Contains("stimuli")){
+					NeuroLog.Log("Invalid read in file for current scene. File is missing header 'Stimuli' for Associate Scene");
+					exit =true;
+				}
+				else
+					eS = ReadAssociateEvents(csv);
+			}
+			
+			
+			if(exit){
+				sessionXML = "randomList";
+			
+				return null;
+			}
 		}
-		
-		
-		XmlNode eventsNode = xml.SelectSingleNode("/session/events");
-		
-		List<EventStats> eS;
-		
-		//Read in Trials
-		if(gm.SType == GameManager.SessionType.Spatial)
-			eS = ReadSpatialEvents(eventsNode);
-		else if(gm.SType == GameManager.SessionType.Inhibition)
-			eS = ReadInhibEvents(eventsNode);
-		else if(gm.SType == GameManager.SessionType.Star)
-			eS = ReadStarEvents(eventsNode);
-		else if(gm.SType == GameManager.SessionType.Implicit)
-			eS = ReadImplicitEvents(eventsNode);
-		else if(gm.SType == GameManager.SessionType.Associate)
-			eS = ReadAssociateEvents(eventsNode);
-		else if(gm.SType == GameManager.SessionType.Stopping)
-			eS = ReadStoppingEvents(eventsNode);
-		else
-			return null;
 		
 		//Make sure it actually read in something
 		if(eS == null || eS.Count == 0){
@@ -251,384 +322,438 @@ public class CsvManager {
 	}
 	
 	//Method used to read in all the trials of the game
-	private List<EventStats> ReadSpatialEvents(XmlNode eventsNode){
+	private List<EventStats> ReadSpatialEvents(CsvReader csv){
 		
 		List<EventStats> events = new List<EventStats>();
 		
-		//For all the trials
-		for (int i=0; i<eventsNode.ChildNodes.Count; i++){
-			//Make sure were trying to deal with trial
-			if(eventsNode.ChildNodes[i].Name =="event"){
+    	int fieldCount = csv.FieldCount;
+
+    	string[] headers = csv.GetFieldHeaders();
+		
+		int i =1;
+		
+    	while (csv.ReadNextRecord()){
 			
-				List<int> dots = new List<int>();
-				float delay=.1f;
-				
-				//For each attribute in the trial
-				foreach(XmlAttribute attri in eventsNode.ChildNodes[i].Attributes){
-					//StartRotation
-					if(attri.Name.ToLower() == "dots"){
-						int num;
+			List<int> dots = new List<int>();
+			float delay=.1f;
 			
-						string[] d = attri.Value.Split(';');
-						for(int j =0;j<d.Length;j++){
-							if(int.TryParse(d[j],out num)){
-								if(num<1 || num>9){
-									Debug.LogError("Invalid Value for '"+ d[j] +"' value for 'dots' of trial #" + (j+1).ToString() + ". Needs to be between 1 and 9.");
-								}
-								else{
-									dots.Add(num);
-								}
+			for(int j = 0;j<fieldCount;j++){
+			
+				if(headers[j].ToLower() == "dots"){
+					int num;
+					
+					string[] d = csv[j].Split(';');
+					for(int k =0;k<d.Length;k++){
+						if(int.TryParse(d[k],out num)){
+							if(num<1 || num>9){
+								NeuroLog.Error("Invalid Value for '"+ d[k] +"' value for 'dots' of line #" + i.ToString() + ". Needs to be between 1 and 9.");
 							}
 							else{
-								Debug.LogError("Invalid ValueType for '"+ d[j] +"' value for 'dots' of trial #" + (j+1).ToString() + ". Needs to be a float.");
+								dots.Add(num);
 							}
 						}
-					}
-					//Delay
-					else if(attri.Name.ToLower() == "delay"){	
-						if(float.TryParse(attri.Value,out delay)){
-							if(delay!= .1f && delay != 3){
-								NeuroLog.Error("Invalid value for 'delay' at trial #" + (i+1).ToString() + ". Needs to be either .1 or 3.");
-								delay = .1f;
-							}
+						else{
+							NeuroLog.Error("Invalid ValueType for '"+ d[k] +"' value for 'dots' of line #" + i.ToString() + ". Needs to be a float.");
 						}
-						else NeuroLog.Error("Invalid value for 'delay' at trial #" + (i+1).ToString() + ". Needs to be a float.");
 					}
-					//Other attributes that don't have cases
-					else NeuroLog.Error("Unknown attribute '" + attri.Name + "' at trial #" + (i+1).ToString() + ".");
 				}
-				
-				
+				//Delay
+				else if(headers[j].ToLower() == "delay"){
+
+					if(float.TryParse(csv[j],out delay)){
+						if(delay!= .1f && delay != 3){
+							NeuroLog.Log("Invalid value for 'delay' at line #" + i.ToString() + ". Needs to be either .1 or 3.");
+							delay = .1f;
+						}
+					}
+					else NeuroLog.Log("Invalid value for 'delay' at line #" + i.ToString() + ". Needs to be a float.");
+				}
+				else{
+					NeuroLog.Log(headers[j].ToLower());
+				}
+			}
+			
+			if(dots.Count!=0){
 				SpatialEvent sE = new SpatialEvent(dots);
 				sE.Delay = delay;
-				
+			
 				//Add the newly compiled event to the event list
 				events.Add(sE);
 			}
+			
+			i++;
 		}
-		
+	
 		//Set the event list
 		return events;
 	}
 	
 	//Method used to read in all the trials of the game
-	private List<EventStats> ReadInhibEvents(XmlNode eventsNode){
+	private List<EventStats> ReadInhibEvents(CsvReader csv){
 		
 		List<EventStats> inhibEvents = new List<EventStats>();
+	
+    	int fieldCount = csv.FieldCount;
+
+    	string[] headers = csv.GetFieldHeaders();
 		
-		//For all the trials
-		for (int i=0; i<eventsNode.ChildNodes.Count; i++){
+		int i =1;
+		
+    	while (csv.ReadNextRecord()){
 			
 			char charVar='0';
 			string color="";
 			
-			//Make sure were trying to deal with event
-			if(eventsNode.ChildNodes[i].Name =="event"){
-				foreach(XmlAttribute attri in eventsNode.ChildNodes[i].Attributes){
-					//Side
-					if(attri.Name.ToLower() == "side"){	
-						if(char.TryParse(attri.Value.ToLower(),out charVar)){
-							if(charVar !='l'  && charVar !='r'){
-								NeuroLog.Error("Invalid value for 'side' at event #" + (i+1).ToString() + ". Needs to be either 'l' or 'r'.");
-								charVar = 'l';
-							}
-						}
-						else 
-							NeuroLog.Error("Invalid value for 'side' at event #" + (i+1).ToString() + ". Needs to be a char.");
-					}
-					//Color
-					else if(attri.Name.ToLower() == "color"){	
-						color = attri.Value.ToLower();
-						if(color!="yellow" && color!="purple"){	
-							NeuroLog.Error("Invalid value for 'color' at event #" + (i+1).ToString() + ". Needs to be either 'yellow' or 'purple'.");
-							color = "yellow";
+			for(int j = 0;j<fieldCount;j++){
+				if(headers[j].ToLower() == "side"){	
+					if(char.TryParse(csv[j].ToLower(),out charVar)){
+						if(charVar !='l'  && charVar !='r'){
+							NeuroLog.Log("Invalid value for 'side' at event #" + i.ToString() + ". Needs to be either 'l' or 'r'.");
+							charVar = '0';
 						}
 					}
-					//Other attributes that don't have cases
-					else NeuroLog.Error("Unknown attribute '" + attri.Name + "' at event #" + (i+1).ToString() + ".");
+					else 
+						NeuroLog.Log("Invalid value for 'side' at event #" + i.ToString() + ". Needs to be a char.");
 				}
-				
-				InhibitionEvent iE = new InhibitionEvent(charVar,color);
-				
-				inhibEvents.Add(iE);
-			}	
+				//Color
+				else if(headers[j].ToLower() == "color"){	
+					color = csv[j].ToLower();
+					if(color!="yellow" && color!="purple"){	
+						NeuroLog.Log("Invalid value for 'color' at line #" + i.ToString() + ". Needs to be either 'yellow' or 'purple'.");
+						color = "";
+					}
+				}
+			}
+			
+			if(charVar!='0' && color !="") inhibEvents.Add(new InhibitionEvent(charVar,color));
+			
+			i++;
 		}
+	
 		return inhibEvents;
 	}
 	
 	//Method used to read in all the trials of the game
-	private List<EventStats> ReadStarEvents(XmlNode eventsNode){
+	private List<EventStats> ReadStarEvents(CsvReader csv){
 		
 		List<EventStats> starEvents = new List<EventStats>();
 		
-		//For all the trials
-		foreach(XmlNode trial in eventsNode.ChildNodes){
+    	int fieldCount = csv.FieldCount;
+
+    	string[] headers = csv.GetFieldHeaders();
 		
-			StarEvent sE = new StarEvent();
+		int i =1;
+		
+		StarEvent sE = new StarEvent();
+		
+		int lS=0;
+		int bS=0;
+		int d=0;
+		int t=0;
 			
-			int lS=0;
-			int bS=0;
-			int d=0;
-			int t=0;
+		int block =0;
+		
+		List<StarObject> objs = new List<StarObject>();
+		
+    	while (csv.ReadNextRecord()){
+			int type = -1;
+			int b=-1;
+			Vector2 pos = new Vector2(Mathf.Infinity,Mathf.Infinity);
+			float rotation = 0;
 			
-			List<StarObject> objs = new List<StarObject>();
-			
-			for (int i=0; i<trial.ChildNodes.Count; i++){
-			
-				//Make sure were trying to deal with event
-				if(trial.ChildNodes[i].Name =="event"){
-					
-					int type = -1;
-					Vector2 pos = new Vector2(Mathf.Infinity,Mathf.Infinity);
-					float rotation = 0;
-					
-					foreach(XmlAttribute attri in trial.ChildNodes[i].Attributes){
-						//Type
-						if(attri.Name.ToLower() == "type"){	
-							if(int.TryParse(attri.Value.ToLower(),out type)){
-								if(type <0  && type>3){
-									NeuroLog.Error("Invalid value for 'type' at event #" + (i+1).ToString() + ". Needs to be between 0 and 4.");
-									type = -1;
-								}
-								else{
-									if(type == 0)
-										lS++;
-									else if(type ==1)
-										bS++;
-									else if(type ==2)
-										d++;
-									else if(type ==3)
-										t++;
-								}
-							}
-							else NeuroLog.Error("Invalid value for 'type' at event #" + (i+1).ToString() + ". Needs to be a int.");
+			for(int j = 0;j<fieldCount;j++){
+				//Type
+				if(headers[j].ToLower() == "type"){	
+					if(int.TryParse(csv[j].ToLower(),out type)){
+						if(type <0  && type>3){
+							NeuroLog.Log("Invalid value for 'type' at line #" + i.ToString() + ". Needs to be between 0 and 4.");
+							type = -1;
 						}
-						//Position
-						else if(attri.Name.ToLower() =="position"){
-							string[] input = attri.Value.Split(',');
-							
-							float x = Mathf.Infinity;
-							float y = Mathf.Infinity;
-							
-							if(float.TryParse(input[0],out x)){
-								if(x!=Mathf.Infinity){
-									if(x>170 || x<-170){
-										x = Mathf.Infinity;
-										NeuroLog.Error("Invalid value for 'position.x' at event #" + (i+1).ToString() + ". Needs to be between -170 and 170.");
-									}
-								}
-							}
-							else NeuroLog.Error("Invalid value for 'position.x' at event #" + (i+1).ToString() + ". Needs to be a float.");
-							
-							if(float.TryParse(input[1],out y)){
-								if(y!=Mathf.Infinity){
-									if(y>90 || y<-75){
-										y = Mathf.Infinity;
-										NeuroLog.Error("Invalid value for 'position.y' at event #" + (i+1).ToString() + ". Needs to be between -75 and 90.");
-									}
-								}
-							}
-							else NeuroLog.Error("Invalid value for 'position.y' at event #" + (i+1).ToString() + ". Needs to be a float.");
-							
-							pos = new Vector2(x,y);
+						else{
+							if(type == 0)
+								lS++;
+							else if(type ==1)
+								bS++;
+							else if(type ==2)
+								d++;
+							else if(type ==3)
+								t++;
 						}
-						//Rotation
-						else if(attri.Name.ToLower() == "rotation"){	
-							if(!float.TryParse(attri.Value.ToLower(),out rotation))
-								NeuroLog.Error("Invalid value for 'rotation' at event #" + (i+1).ToString() + ". Needs to be a float.");
-						}
-						//Other attributes that don't have cases
-						else NeuroLog.Error("Unknown attribute '" + attri.Name + "' at event #" + (i+1).ToString() + ".");
 					}
+					else NeuroLog.Log("Invalid value for 'type' at line #" + i.ToString() + ". Needs to be a int.");
+				}
+				//Position
+				else if(headers[j].ToLower() =="position"){
+					string[] input = csv[j].Split(';');
 					
-					if(type!=-1 && pos.x != Mathf.Infinity && pos.y != Mathf.Infinity){
-						StarObject sO = new StarObject(type,pos,rotation);
+					float x = Mathf.Infinity;
+					float y = Mathf.Infinity;
+					
+					if(float.TryParse(input[0],out x)){
+						if(x!=Mathf.Infinity){
+							if(x>170 || x<-170){
+								x = Mathf.Infinity;
+								NeuroLog.Log("Invalid value for 'position.x' at line #" + i.ToString() + ". Needs to be between -170 and 170.");
+							}
+						}
+					}
+					else NeuroLog.Log("Invalid value for 'position.x' at line #" + i.ToString() + ". Needs to be a float.");
+					
+					if(float.TryParse(input[1],out y)){
+						if(y!=Mathf.Infinity){
+							if(y>90 || y<-75){
+								y = Mathf.Infinity;
+								NeuroLog.Log("Invalid value for 'position.y' at line #" + i.ToString() + ". Needs to be between -75 and 90.");
+							}
+						}
+					}
+					else NeuroLog.Log("Invalid value for 'position.y' at line #" + i.ToString() + ". Needs to be a float.");
+					
+					pos = new Vector2(x,y);
+				}
+				//Rotation
+				else if(headers[j].ToLower() == "rotation"){	
+					if(!float.TryParse(csv[j].ToLower(),out rotation))
+						NeuroLog.Log("Invalid value for 'rotation' at line #" + i.ToString() + ". Needs to be a float.");
+				}
+				//Block Num
+				else if (headers[j].ToLower() =="blocknum"){
+					if(int.TryParse(csv[j],out b)){
+						if(b <1){
+							NeuroLog.Log("Invalid value for 'dot' at line #" + i.ToString() + ". Needs to be greater than 0.");
+							b = -1;
+						}
+						else if(block ==0){
+							block = b;
+						}
+					}
+					else NeuroLog.Log("Invalid value for 'BlockNum' at line #" + i.ToString() + ". Needs to be a int.");
+				}
+			}
+			if(b != -1){
+				
+				if(b != block){
+					
+					block = b;
+					sE.Objects = objs;
+			
+					sE.NumBigStars = bS;
+					sE.NumLittleStars=lS;
+					sE.NumTriangles = t;
+					sE.NumDots = d;
+					
+					starEvents.Add(sE);
+					
+					lS=0;
+					bS=0;
+					d=0;
+					t=0;
+			
+					objs = new List<StarObject>();
+					
+					sE = new StarEvent();
+				}
+				
+				if(type!=-1 && pos.x != Mathf.Infinity && pos.y != Mathf.Infinity){
+					StarObject sO = new StarObject(type,pos,rotation);
 						
-						objs.Add(sO);
-					}
-				}	
+					objs.Add(sO);
+				}
 			}
 			
+			i++;
+		}
+		
+		if(objs.Count>0){
 			sE.Objects = objs;
 			
 			sE.NumBigStars = bS;
 			sE.NumLittleStars=lS;
 			sE.NumTriangles = t;
 			sE.NumDots = d;
-			
+					
 			starEvents.Add(sE);
 		}
+	
+		
 		return starEvents;
 	}
 	
 	//Method used to read in all the trials of the game
-	private List<EventStats> ReadImplicitEvents(XmlNode eventsNode){
+	private List<EventStats> ReadImplicitEvents(CsvReader csv){
 		
 		List<EventStats> implicitEvents = new List<EventStats>();
 		
-		int trialNum =1;
+    	int fieldCount = csv.FieldCount;
+
+    	string[] headers = csv.GetFieldHeaders();
 		
-		//For all the trials
-		foreach(XmlNode trial in eventsNode.ChildNodes){
-			for (int i=0; i<trial.ChildNodes.Count; i++){
-				
-				//Make sure were trying to deal with event
-				if(trial.ChildNodes[i].Name =="event"){
-					
-					int dot = -1;
-					
-					foreach(XmlAttribute attri in trial.ChildNodes[i].Attributes){
-						//Dot
-						if(attri.Name.ToLower() == "dot"){	
-							if(int.TryParse(attri.Value.ToLower(),out dot)){
-								if(dot <1  && dot>4){
-									NeuroLog.Error("Invalid value for 'dot' at event #" + (i+1).ToString() + ". Needs to be between 0 and 4.");
-									dot = -1;
-								}
-							}
-							else NeuroLog.Error("Invalid value for 'dot' at event #" + (i+1).ToString() + ". Needs to be a int.");
+		int i =1;
+		
+    	while (csv.ReadNextRecord()){
+			
+			int dot = -1;
+			
+			int block = -1;
+			
+			for(int j = 0;j<fieldCount;j++){
+				if(headers[j].ToLower() == "dot"){	
+					if(int.TryParse(csv[j],out dot)){
+						if(dot <1  && dot>4){
+							NeuroLog.Log("Invalid value for 'dot' at line #" + i.ToString() + ". Needs to be between 0 and 4.");
+							dot = -1;
 						}
-						//Other attributes that don't have cases
-						else NeuroLog.Error("Unknown attribute '" + attri.Name + "' at event #" + (i+1).ToString() + ".");
 					}
-					
-					if(dot!=-1) implicitEvents.Add(new ImplicitEvent(dot,trialNum));
-				}	
+					else NeuroLog.Log("Invalid value for 'dot' at line #" + i.ToString() + ". Needs to be a int.");
+				}
+				else if (headers[j].ToLower() =="blocknum"){
+					if(int.TryParse(csv[j],out block)){
+						if(block <1){
+							NeuroLog.Log("Invalid value for 'dot' at line #" + i.ToString() + ". Needs to be greater than 0.");
+							block = -1;
+						}
+					}
+					else NeuroLog.Log("Invalid value for 'BlockNum' at line #" + i.ToString() + ". Needs to be a int.");
+				}
 			}
-			trialNum++;
+			
+			if(dot!=-1 && block !=-1) implicitEvents.Add(new ImplicitEvent(dot,block));
+			
+			i++;
 		}
+	
 		return implicitEvents;
 	}
 	
 	//Method used to read in all the trials of the game
-	private List<EventStats> ReadStoppingEvents(XmlNode eventsNode){
+	private List<EventStats> ReadStoppingEvents(CsvReader csv){
 		
 		List<EventStats> stoppingEvents = new List<EventStats>();
 		
-		//For all the trials
-		for (int i=0; i<eventsNode.ChildNodes.Count; i++){
+    	int fieldCount = csv.FieldCount;
+
+    	string[] headers = csv.GetFieldHeaders();
+		
+		int i =1;
+		
+    	while (csv.ReadNextRecord()){
 			
 			int dot=-1;
 			bool go =true;
 			
-			//Make sure were trying to deal with event
-			if(eventsNode.ChildNodes[i].Name =="event"){
-				foreach(XmlAttribute attri in eventsNode.ChildNodes[i].Attributes){
-					//Side
-					if(attri.Name.ToLower() == "dot"){	
-						if(int.TryParse(attri.Value.ToLower(),out dot)){
-							if(dot>4 || dot<1){
-								NeuroLog.Error("Invalid value for 'dot' at event #" + (i+1).ToString() + ". Needs to be between 1 and 4.");
-								dot = 1;
-							}
+			for(int j = 0;j<fieldCount;j++){
+				if(headers[j].ToLower() == "dot"){	
+					if(int.TryParse(csv[j],out dot)){
+						if(dot <1  && dot>4){
+							NeuroLog.Log("Invalid value for 'dot' at line #" + i.ToString() + ". Needs to be between 0 and 4.");
+							dot = -1;
 						}
-						else 
-							NeuroLog.Error("Invalid value for 'dot' at event #" + (i+1).ToString() + ". Needs to be an int.");
 					}
-					//Color
-					else if(attri.Name.ToLower() == "go"){	
-						if(!bool.TryParse(attri.Value.ToLower(),out go))
-							NeuroLog.Error("Invalid value for 'go' at event #" + (i+1).ToString() + ". Needs to be an bool.");
-					}
-					//Other attributes that don't have cases
-					else NeuroLog.Error("Unknown attribute '" + attri.Name + "' at event #" + (i+1).ToString() + ".");
+					else NeuroLog.Log("Invalid value for 'dot' at line #" + i.ToString() + ". Needs to be a int.");
 				}
-				
-				StoppingEvent sE = new StoppingEvent(dot,go);
-				
-				stoppingEvents.Add(sE);
-			}	
+				else if (headers[j].ToLower() =="go"){
+					if(!bool.TryParse(csv[j],out go))
+						NeuroLog.Log("Invalid value for 'go' at line #" + (i+1).ToString() + ". Needs to be an bool.");
+				}
+			}
+			
+			if(dot!=-1) stoppingEvents.Add(new StoppingEvent(dot,go));
+			
+			i++;
 		}
+		
 		return stoppingEvents;
 	}
 	
 	//Method used to read in all the trials of the game
-	private List<EventStats> ReadAssociateEvents(XmlNode eventsNode){
+	private List<EventStats> ReadAssociateEvents(CsvReader csv){
 		
 		List<EventStats> associateEvents = new List<EventStats>();
 		
-		//For all the trials
-		for(int i = 0; i< eventsNode.ChildNodes.Count; i++){
-			//Make sure were trying to deal with event
-			if(eventsNode.ChildNodes[i].Name.ToLower() =="event"){
-				int target = -1;
-				List<int> stim = new List<int>();
-				
-				foreach(XmlAttribute attri in eventsNode.ChildNodes[i].Attributes){
-					//Target
-					if(attri.Name.ToLower() == "target"){	
-						if(int.TryParse(attri.Value.ToLower(),out target)){
-							if(target <1  && target>12){
-								NeuroLog.Error("Invalid value for 'target' at event #" + (i+1).ToString() + ". Needs to be between 1 and 12.");
-								target = -1;
-							}
-						}
-						else NeuroLog.Error("Invalid value for 'target' at event #" + (i+1).ToString() + ". Needs to be a int.");
-					}
-					//Stimuli
-					else if(attri.Name.ToLower() =="stimuli"){
-						string[] input = attri.Value.Split(';');
-						
-						int output;
-						
-						//For the first four values
-						for(int s = 0;s<4;s++){
-							if(int.TryParse(input[s], out output)){
-								if(output<1  && output>12)
-									NeuroLog.Error("Invalid value for 'stimuli["+s.ToString()+"]' at event #" + (i+1).ToString() + ". Needs to be between 1 and 12.");
-								else
-									stim.Add(output);
-							}
-							else
-								NeuroLog.Error("Invalid value for stimuli["+s.ToString()+"]' at event #" + (i+1).ToString() + ". Needs to be a int.");
+    	int fieldCount = csv.FieldCount;
+
+    	string[] headers = csv.GetFieldHeaders();
+		
+		int i =1;			
+		
+    	while (csv.ReadNextRecord()){
+
+			int target = -1;
+			List<int> stim = new List<int>();
+			
+			for(int j = 0;j<fieldCount;j++){
+				if(headers[j].ToLower() == "target"){	
+					if(int.TryParse(csv[j].ToLower(),out target)){
+						if(target <1  && target>12){
+							NeuroLog.Log("Invalid value for 'target' at line #" + i.ToString() + ". Needs to be between 1 and 12.");
+							target = -1;
 						}
 					}
-					//Other attributes that don't have cases
-					else NeuroLog.Error("Unknown attribute '" + attri.Name + "' at event #" + (i+1).ToString() + ".");
+					else NeuroLog.Log("Invalid value for 'target' at line #" + i.ToString() + ". Needs to be a int.");
 				}
-				
-				if(target != -1 && stim.Count==4){
+				//Stimuli
+				else if(headers[j].ToLower() =="stimuli"){
+					string[] input = csv[j].Split(';');
 					
-					int correspondingNum=0;
+					int output;
 					
-					switch(target){
-						case 1: correspondingNum = 12;
-								break;
-		 				case 2: correspondingNum = 9;
-								break;
-		 				case 3: correspondingNum = 11;
-								break;
-		 				case 4: correspondingNum = 7;
-								break;
-		 				case 5: correspondingNum = 8;
-								break;
-						case 6: correspondingNum = 10;
-								break;
-						case 7: correspondingNum = 4;
-								break;
-						case 8: correspondingNum = 5;
-								break;
-						case 9: correspondingNum = 2;
-								break;
-						case 10: correspondingNum = 6;
-								break;
-						case 11: correspondingNum = 3;
-								break;
-						case 12: correspondingNum = 1;
-								break;
+					//For the first four values
+					for(int s = 0;s<4;s++){
+						if(int.TryParse(input[s], out output)){
+							if(output<1  && output>12)
+								NeuroLog.Log("Invalid value for 'stimuli["+s.ToString()+"]' at event #" + (i+1).ToString() + ". Needs to be between 1 and 12.");
+							else
+								stim.Add(output);
+						}
+						else
+							NeuroLog.Log("Invalid value for stimuli["+s.ToString()+"]' at event #" + (i+1).ToString() + ". Needs to be a int.");
 					}
-					
-					if(stim.Contains(correspondingNum))
-						associateEvents.Add(new AssociateEvent(target,stim));
-					else
-						NeuroLog.Error("Invalid trial. One stimuli value must be '"+ correspondingNum + "' to match the target value of '" + target + "'.");		
 				}
 			}
+			
+			if(target != -1 && stim.Count==4){
+				
+				int correspondingNum=0;
+				
+				switch(target){
+					case 1: correspondingNum = 12;
+							break;
+	 				case 2: correspondingNum = 9;
+							break;
+	 				case 3: correspondingNum = 11;
+							break;
+	 				case 4: correspondingNum = 7;
+							break;
+	 				case 5: correspondingNum = 8;
+							break;
+					case 6: correspondingNum = 10;
+							break;
+					case 7: correspondingNum = 4;
+							break;
+					case 8: correspondingNum = 5;
+							break;
+					case 9: correspondingNum = 2;
+							break;
+					case 10: correspondingNum = 6;
+							break;
+					case 11: correspondingNum = 3;
+							break;
+					case 12: correspondingNum = 1;
+							break;
+				}
+				
+				if(stim.Contains(correspondingNum))
+					associateEvents.Add(new AssociateEvent(target,stim));
+				else
+					NeuroLog.Log("Invalid trial. One stimuli value must be '"+ correspondingNum + "' to match the target value of '" + target + "'.");
+			}
+			
+			i++;
 		}
+	
 		
 		return associateEvents;
 	}
-	*/
 	
 	//Method used to write out the log file once the game has completed
 	//takes  bool that indicates whether the session was properly completed
@@ -1563,7 +1688,7 @@ public class CsvManager {
 			statsXML+=".csv";
 		} catch(ArgumentOutOfRangeException e) {
 			// If the player quits the game before a gameType is chosen
-			NeuroLog.Debug(e.Message);
+			NeuroLog.Log(e.Message);
 			statsXML = mUserName +"_None_" + theTime + ".csv";
 		}
 	}

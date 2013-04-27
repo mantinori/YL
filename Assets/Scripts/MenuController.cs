@@ -42,10 +42,10 @@ public class MenuController : MonoBehaviour {
 		abortButton.response = displayWarning;
 		
 		if(language == "spanish"){
-			abortButton.GetComponentInChildren<UILabel>().text = "Dejar"; 
+			abortButton.GetComponentInChildren<UILabel>().text = "Cambiar\nusuario"; 
 			quitButton.GetComponentInChildren<UILabel>().text = "Salir"; 
 			yesButton.GetComponentInChildren<UILabel>().text = "Sí";
-			warning.text = "¡Advertencia!\nSe eliminará su condición actual.\n¿Continuar?";
+			warning.text = " La sesión actual será borrada,\nesta seguro que quiere continuar?";
 		}
 		
 		yesButton.response = resetDevice;

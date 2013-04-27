@@ -31,7 +31,7 @@ public class SpatialManager : GameManager {
 		}
 		
 		//Read in the events
-		events =  xml.ReadInSession();
+		events = csv.ReadInSession();
 		
 		//Generate the practice events
 		generatePractice();

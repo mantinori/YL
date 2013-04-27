@@ -41,7 +41,7 @@ public class GameManager : MonoBehaviour {
 	public FadingFingerprint spot;
 	
 	//The XmlManager class of the scene
-	protected XmlManager xml;
+	//protected XmlManager xml;
 	
 	//The CsvManager class of the scene
 	protected CsvManager csv;
@@ -127,7 +127,7 @@ public class GameManager : MonoBehaviour {
 		
 		activeSlope =0;
 		
-		xml = new XmlManager();
+		//xml = new XmlManager();
 		
 		csv = new CsvManager();
 		
@@ -271,8 +271,8 @@ public class GameManager : MonoBehaviour {
 									
 									NeuroLog.Debug("READ 'Z' SWIPE, HALTING TASK");
 									
-									//Write out the incompleted xml
-									xml.WriteOut(false);
+									//Write out the incompleted csv
+									csv.WriteOut(false);
 									
 								//Go back to the menu
 									Application.LoadLevel("menu");

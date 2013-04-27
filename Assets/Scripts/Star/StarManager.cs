@@ -48,7 +48,7 @@ public class StarManager : GameManager {
 		}
 		
 		//Read in the event
-		events =  xml.ReadInSession();
+		events =  csv.ReadInSession();
 		
 		//If read in failed, generate basic list of events
 		if(events == null){

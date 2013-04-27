@@ -30,7 +30,7 @@ public class InhibitionManager : GameManager {
 		inhibStimulus = GameObject.Find("Stimulus");
 		
 		//Preform the read in to get the events
-		events =  xml.ReadInSession();
+		events =  csv.ReadInSession();
 		
 		//Generate the practice events
 		generatePractice();
