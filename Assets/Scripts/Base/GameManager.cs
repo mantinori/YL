@@ -175,9 +175,11 @@ public class GameManager : MonoBehaviour {
 	
 	//Plays a audio cue to indicate the player pressed the screen
 	public void playSound(float p){
+		/*
 		audioSource.pitch = p;
 		
 		audioSource.Play();
+		*/
 	}
 	
 	//Show the title card before a new section

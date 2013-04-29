@@ -57,7 +57,7 @@ public class ConfigManager : MonoBehaviour {
 		
 		height = Mathf.RoundToInt(width/1.77777778f);
 		
-		Screen.SetResolution(width,height,true);
+		Screen.SetResolution(width,height,false);
 		
 		//Have the static xmlmanager check to make sure the folders are properly set up
 		if(!XmlManager.CheckFolders()){
