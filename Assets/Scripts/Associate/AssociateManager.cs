@@ -246,10 +246,10 @@ public class AssociateManager : GameManager {
 	protected override  void generatePractice(){
 		List<EventStats> newPractice = new List<EventStats>();
 		
-		newPractice.Add(new AssociateEvent(-1,new List<int>(){2,5,-2,7}));
-		newPractice.Add(new AssociateEvent(-4,new List<int>(){11,-3,6,4}));
-		newPractice.Add(new AssociateEvent(-2,new List<int>(){1,9,3,-1}));
-		newPractice.Add(new AssociateEvent(-3,new List<int>(){-4,8,4,2}));
+		newPractice.Add(new AssociateEvent(-1,new List<int>(){-3,-1,-2,-4}));
+		newPractice.Add(new AssociateEvent(-4,new List<int>(){-1,-3,-4,-2}));
+		newPractice.Add(new AssociateEvent(-2,new List<int>(){-2,-4,-3,-1}));
+		newPractice.Add(new AssociateEvent(-3,new List<int>(){-4,-2,-1,-3}));
 		
 		System.Random rand = new System.Random();
 		
@@ -282,10 +282,10 @@ public class AssociateManager : GameManager {
 		//Troubled first pair
 		target.renderer.material.mainTexture = pracImages[0];
 		
-		stimuli[0].renderer.material.mainTexture = images[1];
-		stimuli[1].renderer.material.mainTexture = images[4];
+		stimuli[0].renderer.material.mainTexture = pracImages[3];
+		stimuli[1].renderer.material.mainTexture = pracImages[0];
 		stimuli[2].renderer.material.mainTexture = pracImages[1];
-		stimuli[3].renderer.material.mainTexture = images[6];
+		stimuli[3].renderer.material.mainTexture = pracImages[2];
 		
 		yield return StartCoroutine(startEvent());
 		
@@ -324,10 +324,10 @@ public class AssociateManager : GameManager {
 		//Confidant first pair
 		tutDots = new List<Vector3>(){new Vector3(0f,-5f,0f)};
 		target.renderer.material.mainTexture = pracImages[1];
-		stimuli[0].renderer.material.mainTexture = images[0];
+		stimuli[0].renderer.material.mainTexture = pracImages[1];
 		stimuli[1].renderer.material.mainTexture = pracImages[0];
-		stimuli[2].renderer.material.mainTexture = images[3];
-		stimuli[3].renderer.material.mainTexture = images[9];
+		stimuli[2].renderer.material.mainTexture = pracImages[3];
+		stimuli[3].renderer.material.mainTexture = pracImages[2];
 		
 		yield return StartCoroutine(startEvent());
 		
@@ -353,9 +353,9 @@ public class AssociateManager : GameManager {
 		
 		target.renderer.material.mainTexture = pracImages[2];
 		
-		stimuli[0].renderer.material.mainTexture = images[10];
-		stimuli[1].renderer.material.mainTexture = images[5];
-		stimuli[2].renderer.material.mainTexture = images[3];
+		stimuli[0].renderer.material.mainTexture = pracImages[0];
+		stimuli[1].renderer.material.mainTexture = pracImages[1];
+		stimuli[2].renderer.material.mainTexture = pracImages[2];
 		stimuli[3].renderer.material.mainTexture = pracImages[3];
 		
 		yield return StartCoroutine(startEvent());
@@ -388,9 +388,9 @@ public class AssociateManager : GameManager {
 		tutDots = new List<Vector3>(){new Vector3(0f,-5f,0f)};
 		target.renderer.material.mainTexture = pracImages[3];
 		stimuli[0].renderer.material.mainTexture = pracImages[2];
-		stimuli[1].renderer.material.mainTexture = images[4];
-		stimuli[2].renderer.material.mainTexture = images[2];
-		stimuli[3].renderer.material.mainTexture = images[11];
+		stimuli[1].renderer.material.mainTexture = pracImages[3];
+		stimuli[2].renderer.material.mainTexture = pracImages[1];
+		stimuli[3].renderer.material.mainTexture = pracImages[0];
 		
 		yield return StartCoroutine(startEvent());
 		
