@@ -28,6 +28,7 @@ public class SpatialManager : GameManager {
 		//Hide all the balls
 		foreach(GameObject g in dots){
 			g.renderer.enabled = false;
+			g.renderer.material.color = Color.blue;
 		}
 		
 		//Read in the events

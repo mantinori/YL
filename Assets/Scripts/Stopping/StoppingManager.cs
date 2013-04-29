@@ -39,7 +39,7 @@ public class StoppingManager : GameManager {
 		
 		stoppingStimulus = GameObject.Find("Stimulus");
 		
-		stoppingStimulus.renderer.material.color = Color.blue;
+		stoppingStimulus.renderer.material.color = Color.yellow;
 		
 		stimPositions = new Vector2[4]{new Vector2(-15,10), new Vector2(5,5), new Vector2(15,-10), new Vector2(-10,-5)};
 		
@@ -224,7 +224,7 @@ public class StoppingManager : GameManager {
 		
 		yield return StartCoroutine(tFinger.moveTo(new List<Vector3>(){halfWay}));
 		
-		stoppingStimulus.renderer.material.color = new Color(1,.75f,0);
+		stoppingStimulus.renderer.material.color = new Color(1,.5f,0);
 		
 		yield return StartCoroutine(tFinger.moveTo(tutDots));
 		
@@ -233,7 +233,7 @@ public class StoppingManager : GameManager {
 		//screen.enabled = true;
 		stoppingStimulus.renderer.enabled = false;
 		
-		stoppingStimulus.renderer.material.color = Color.blue;
+		stoppingStimulus.renderer.material.color = Color.yellow;
 		
 		yield return new WaitForSeconds(.05f);
 		
@@ -259,7 +259,7 @@ public class StoppingManager : GameManager {
 		
 		stoppingStimulus.transform.position =new Vector3(stimPositions[3].x,-3.5f,stimPositions[3].y);
 		
-		stoppingStimulus.renderer.material.color = Color.blue;
+		stoppingStimulus.renderer.material.color = Color.yellow;
 		
 		//screen.enabled = false;	
 		stoppingStimulus.renderer.enabled = true;
@@ -270,7 +270,7 @@ public class StoppingManager : GameManager {
 		
 		yield return StartCoroutine(tFinger.moveTo(new List<Vector3>(){halfWay}));
 		
-		stoppingStimulus.renderer.material.color = new Color(1,.75f,0);
+		stoppingStimulus.renderer.material.color = new Color(1,.5f,0);
 		
 		yield return StartCoroutine(tFinger.moveTo(tutDots));
 		
@@ -298,7 +298,7 @@ public class StoppingManager : GameManager {
 		//Main Session
 		while(currentEventNum< events.Count){
 			
-			stoppingStimulus.renderer.material.color = Color.blue;
+			stoppingStimulus.renderer.material.color = Color.yellow;
 			
 			if(practicing){
 				if(CurrentEvent.Dot==1)
@@ -333,7 +333,7 @@ public class StoppingManager : GameManager {
 				currentTime+= Time.deltaTime;
 				
 				if(!CurrentEvent.Go && currentTime> CurrentEvent.TurningTime && !changed)
-					stoppingStimulus.renderer.material.color = new Color(1,.75f,0);
+					stoppingStimulus.renderer.material.color = new Color(1,.5f,0);
 					
 				yield return new WaitForFixedUpdate();
 			}
