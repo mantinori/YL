@@ -803,12 +803,12 @@ public class XmlManager {
 				
 					trial.SetAttribute("TimedOut", eS.TimedOut.ToString());
 					
-					if(eS.PlayerResponse!=null){
-						trial.SetAttribute("ResponseTime", eS.PlayerResponse.ResponseTime.ToString());
-						trial.SetAttribute("TouchPosition", eS.PlayerResponse.TouchLocation.ToString());
-						trial.SetAttribute("DistanceFromCenter",eS.PlayerResponse.DistanceFromCenter.ToString());
+					if(eS.Response!=null){
+						trial.SetAttribute("ResponseTime", eS.Response.ResponseTime.ToString());
+						trial.SetAttribute("TouchPosition", eS.Response.TouchLocation.ToString());
+						trial.SetAttribute("DistanceFromCenter",eS.Response.DistanceFromCenter.ToString());
 				
-						if(eS.PlayerResponse.DotPressed ==1)
+						if(eS.Response.DotPressed ==1)
 							trial.SetAttribute("PressedSide","right");
 						else
 							trial.SetAttribute("PressedSide","left");
@@ -837,12 +837,12 @@ public class XmlManager {
 				
 					trial.SetAttribute("TimedOut", eS.TimedOut.ToString());
 					
-					if(eS.PlayerResponse!=null){
-						trial.SetAttribute("ResponseTime", eS.PlayerResponse.ResponseTime.ToString());
-						trial.SetAttribute("TouchPosition", eS.PlayerResponse.TouchLocation.ToString());
-						trial.SetAttribute("DistanceFromCenter",eS.PlayerResponse.DistanceFromCenter.ToString());
+					if(eS.Response!=null){
+						trial.SetAttribute("ResponseTime", eS.Response.ResponseTime.ToString());
+						trial.SetAttribute("TouchPosition", eS.Response.TouchLocation.ToString());
+						trial.SetAttribute("DistanceFromCenter",eS.Response.DistanceFromCenter.ToString());
 					
-						if(eS.PlayerResponse.DotPressed ==1) trial.SetAttribute("PressedSide","right");
+						if(eS.Response.DotPressed ==1) trial.SetAttribute("PressedSide","right");
 						else trial.SetAttribute("PressedSide","left");
 					}
 					

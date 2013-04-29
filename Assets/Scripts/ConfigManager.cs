@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml;
+using LumenWorks.Framework.IO.Csv;
 
 //Config Controller
 public class ConfigManager : MonoBehaviour {
@@ -56,7 +57,7 @@ public class ConfigManager : MonoBehaviour {
 		
 		height = Mathf.RoundToInt(width/1.77777778f);
 		
-		Screen.SetResolution(width, height, false);
+		Screen.SetResolution(width,height,true);
 		
 		//Have the static xmlmanager check to make sure the folders are properly set up
 		if(!XmlManager.CheckFolders()){
@@ -288,8 +289,12 @@ public class ConfigManager : MonoBehaviour {
 					PlayerPrefs.SetString("-language", "spanish");
 				}
 				
+				string name ="";
+				
 				//Save the player's info
 				if(testName==""){
+					
+					name = players.selection.Replace(" ", "");
 					PlayerPrefs.SetString("-player", players.selection);
 					PlayerPrefs.SetString("-testing", "f");
 					PlayerPrefs.SetString("-state", stateSelection.selection);
@@ -313,12 +318,23 @@ public class ConfigManager : MonoBehaviour {
 					xml.Save(Path.Combine(XmlManager.PlayerSpecificPath, "players.xml"));
 				}
 				else{
+					name = testName.Replace(" ", "");
+					
 					PlayerPrefs.SetString("-player", testName);
 					PlayerPrefs.SetString("-testing", "t");
 					PlayerPrefs.SetString("-state", "n/a");
 					PlayerPrefs.SetString("-region", "n/a");
 					PlayerPrefs.SetString("-subregion", "n/a");
 				}
+				
+				using(StreamWriter writer = new StreamWriter(Path.Combine(CsvManager.PlayerSpecificPath, name+"_Criterion.csv"))){
+					writer.WriteLine("TaskNum, CriterionScore, NumofPractice, ResponseRate, NumResponsesBasal");
+					
+					for(int i = 1;i<8;i++){
+						writer.WriteLine(i+", 0, ., ., .");
+					}
+				}
+				
 				message.text = "Config info saved!";
 				
 				buttonText.text = "CLOSE";

@@ -248,28 +248,28 @@ public class MenuController : MonoBehaviour {
 			}
 			
 			if(headers.Contains("dots") && headers.Contains("delay")){
-				Application.LoadLevel("spatial");
 				NeuroLog.Log("Loading Spatial game");
+				Application.LoadLevel("spatial");
 			}
 			else if(headers.Contains("side") && headers.Contains("color")){
-				Application.LoadLevel("inhibition");
 				NeuroLog.Log("Loading Inhibition game");
+				Application.LoadLevel("inhibition");
 			}
 			else if(headers.Contains("blocknum") && headers.Contains("type") && headers.Contains("position") && headers.Contains("rotation")){
-				Application.LoadLevel("star");
 				NeuroLog.Log("Loading Star game");
+				Application.LoadLevel("star");
 			}
 			else if(headers.Contains("blocknum") && headers.Contains("dot")){
-				Application.LoadLevel("implicit");
 				NeuroLog.Log("Loading Implicit game");
+				Application.LoadLevel("implicit");
 			}
 			else if(headers.Contains("go") && headers.Contains("dot")){
-				Application.LoadLevel("stopping");
 				NeuroLog.Log("Loading Stopping game");
+				Application.LoadLevel("stopping");
 			}
 			else if(headers.Contains("target") && headers.Contains("stimuli")){
-				Application.LoadLevel("associate");
 				NeuroLog.Log("Loading Associate game");
+				Application.LoadLevel("associate");
 			}
 			else{
 				NeuroLog.Log("Listed headers in task " +num + "do not match up with any of the current programs");

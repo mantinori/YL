@@ -783,6 +783,9 @@ public class CsvManager {
 		else if (gm.SType == GameManager.SessionType.Implicit) WriteOutImplicit(filePath);
 		else if (gm.SType == GameManager.SessionType.Associate) WriteOutAssociate(filePath);
 		else if (gm.SType == GameManager.SessionType.Stopping) WriteOutStopping(filePath);
+		
+		if(completed)
+			WriteOutCriterion(Path.Combine(CsvManager.PlayerSpecificPath, mUserName+"_Criterion.csv"), gm.SType);
 	}
 	
 	private void WriteOutSpatial(string filePath){
@@ -1055,7 +1058,7 @@ public class CsvManager {
 				if(eS.Completed){
 					newLine = " ,";
 					
-					if(eS.PlayerResponse ==null){
+					if(eS.Response ==null){
 							
 						newLine += index.ToString()+",";
 						
@@ -1077,13 +1080,13 @@ public class CsvManager {
 						
 						newLine += "False,";
 						
-						newLine += eS.PlayerResponse.ResponseTime.ToString()+",";
+						newLine += eS.Response.ResponseTime.ToString()+",";
 						
-						newLine += eS.PlayerResponse.TouchLocation.x.ToString()+ ";"+ eS.PlayerResponse.TouchLocation.y.ToString()+",";
+						newLine += eS.Response.TouchLocation.x.ToString()+ ";"+ eS.Response.TouchLocation.y.ToString()+",";
 						
-						newLine += eS.PlayerResponse.DistanceFromCenter.ToString()+",";
+						newLine += eS.Response.DistanceFromCenter.ToString()+",";
 					
-						if(eS.PlayerResponse.DotPressed ==1) newLine +=" Right,";
+						if(eS.Response.DotPressed ==1) newLine +=" Right,";
 						else newLine +=" Left,";
 					
 						if(eS.respondedCorrectly()) newLine +="1";
@@ -1106,7 +1109,7 @@ public class CsvManager {
 				if(eS.Completed){
 					newLine = " ,";
 					
-					if(eS.PlayerResponse ==null){
+					if(eS.Response ==null){
 							
 						newLine += index.ToString()+",";
 						
@@ -1128,13 +1131,13 @@ public class CsvManager {
 						
 						newLine += "False,";
 						
-						newLine += eS.PlayerResponse.ResponseTime.ToString()+",";
+						newLine += eS.Response.ResponseTime.ToString()+",";
 						
-						newLine += eS.PlayerResponse.TouchLocation.x.ToString()+ ";"+ eS.PlayerResponse.TouchLocation.y.ToString()+",";
+						newLine += eS.Response.TouchLocation.x.ToString()+ ";"+ eS.Response.TouchLocation.y.ToString()+",";
 						
-						newLine += eS.PlayerResponse.DistanceFromCenter.ToString()+",";
+						newLine += eS.Response.DistanceFromCenter.ToString()+",";
 					
-						if(eS.PlayerResponse.DotPressed ==1) newLine +=" Right,";
+						if(eS.Response.DotPressed ==1) newLine +=" Right,";
 						else newLine +=" Left,";
 					
 						if(eS.respondedCorrectly()) newLine +="1";
@@ -1672,6 +1675,236 @@ public class CsvManager {
 				index++;
 			}
 		}
+	}
+	
+	private void WriteOutCriterion(string criterionPath, GameManager.SessionType type){
+		
+		string[] lines = System.IO.File.ReadAllLines(criterionPath);
+		
+		int taskNum = int.Parse(sessionXML.Replace("task",""));
+		
+		string newLine = taskNum+",";
+		
+		bool practicePassed=false;
+		
+		float responseCount = 0;
+		float numberOfEarlyPresses=0;
+		int practiceCount=gm.Practice.Count;
+		
+		if(type == GameManager.SessionType.Spatial){
+			int totalResponseCount=0;
+			
+			foreach(SpatialEvent e in gm.Practice){
+				foreach(Response r in e.Responses ){
+					responseCount++;
+				
+					if(r.ResponseTime<.2f){
+						numberOfEarlyPresses++;
+					}
+				}
+				
+				totalResponseCount += e.Dots.Count;
+				
+				numberOfEarlyPresses += e.BadResponses.Count;
+				
+				responseCount += e.BadResponses.Count;
+			}
+		
+			if((responseCount/totalResponseCount)>.7f && (numberOfEarlyPresses/totalResponseCount)<.1f) practicePassed = true;
+		}
+		else if (type == GameManager.SessionType.Inhibition){
+			foreach(InhibitionEvent e in gm.Practice){
+				if(e.Response != null){
+					responseCount++;
+				
+					if(e.Response.ResponseTime<.2f){
+						numberOfEarlyPresses++;
+					}
+				}
+			}
+		
+			if((responseCount/gm.Practice.Count)>.7f && (numberOfEarlyPresses/gm.Practice.Count)<.1f) practicePassed = true;
+		}
+		else if (type == GameManager.SessionType.Star){
+			practiceCount=0;
+			
+			foreach(StarEvent e in gm.Practice){
+				practiceCount+= e.NumLittleStars;
+				foreach(Response r in e.Responses){
+					if(r.ResponseType ==0)
+						responseCount++;
+				}
+			}
+		
+			if((responseCount/practiceCount)>.7f) practicePassed = true;
+		}
+		else if (type == GameManager.SessionType.Implicit){
+			foreach(ImplicitEvent e in gm.Practice){
+				if(e.Response!= null){
+					responseCount++;
+				
+					if(e.Response.ResponseTime<.2f){
+						numberOfEarlyPresses++;
+					}
+				}
+			}
+		
+			if((responseCount/gm.Practice.Count)>.7f && (numberOfEarlyPresses/gm.Practice.Count)<.1f) practicePassed = true;
+		}
+		else if (type == GameManager.SessionType.Stopping){
+			foreach(StoppingEvent e in gm.Practice){
+				if(e.Response!= null){
+					responseCount++;
+				
+					if(e.Response.ResponseTime<.2f){
+						numberOfEarlyPresses++;
+					}
+				}
+			}
+		
+			if((responseCount/gm.Practice.Count)>.7f && (numberOfEarlyPresses/gm.Practice.Count)<.1f) practicePassed = true;
+		}
+		else if (type == GameManager.SessionType.Associate){
+			
+			float numResponses=0;
+			foreach(AssociateEvent e in gm.Practice){
+				foreach(Response r in e.Responses){
+					numResponses++;
+					
+					if(r.ResponseTime<.2f){
+						numberOfEarlyPresses++;
+					}
+				}
+			}
+		
+			if((numberOfEarlyPresses/numResponses)<.1f) practicePassed = true;
+		}
+		
+		int criterion = 0;
+		
+		float responseRate = 0;
+		responseCount = 0;
+		numberOfEarlyPresses=0;
+		
+		if(type == GameManager.SessionType.Spatial){
+			int totalResponseCount=0;
+			
+			foreach(SpatialEvent e in gm.Events){
+				foreach(Response r in e.Responses ){
+					responseCount++;
+					responseRate+= r.ResponseTime;
+				
+					if(r.ResponseTime<.2f){
+						numberOfEarlyPresses++;
+					}
+				}
+				
+				totalResponseCount += e.Dots.Count;
+				
+				numberOfEarlyPresses += e.BadResponses.Count;
+				
+				responseCount += e.BadResponses.Count;
+			}
+			
+			if(practicePassed && (responseCount/gm.Events.Count)>.7f && (numberOfEarlyPresses/gm.Events.Count)<.1f)	criterion = 1;
+		}
+		else if (type == GameManager.SessionType.Inhibition){
+			foreach(InhibitionEvent e in gm.Events){
+				if(e.Response != null){
+					responseCount++;
+					responseRate+= e.Response.ResponseTime;
+				
+					if(e.Response.ResponseTime<.2f){
+						numberOfEarlyPresses++;
+					}
+				}
+			}
+			
+			if(practicePassed && (responseCount/gm.Events.Count)>.7f && (numberOfEarlyPresses/gm.Events.Count)<.1f)	criterion = 1;
+		}
+		else if (type == GameManager.SessionType.Star){
+			int numLittleStars=0;
+			
+			foreach(StarEvent e in gm.Events){
+				numLittleStars+= e.NumLittleStars;
+				foreach(Response r in e.Responses){
+					if(r.ResponseType ==0){
+						responseRate += r.ResponseTime;
+						responseCount++;
+					}
+				}
+			}
+			
+			if(practicePassed && (responseCount/numLittleStars)>.7f)	criterion = 1;
+		}
+		else if (type == GameManager.SessionType.Implicit){
+			foreach(ImplicitEvent e in gm.Events){
+				if(e.Response!= null){
+					responseCount++;
+					responseRate+= e.Response.ResponseTime;
+				
+					if(e.Response.ResponseTime<.2f){
+						numberOfEarlyPresses++;
+					}
+				}
+			}
+		
+			if(practicePassed && (responseCount/gm.Events.Count)>.7f && (numberOfEarlyPresses/gm.Events.Count)<.1f)	criterion = 1;
+		}
+		else if (type == GameManager.SessionType.Stopping){
+			float correct=0;
+			
+			foreach(StoppingEvent e in gm.Events){
+				if(e.Response!= null){
+					
+					if(e.Go) correct++;
+					
+					responseCount++;
+					responseRate+= e.Response.ResponseTime;
+				
+					if(e.Response.ResponseTime<.2f){
+						numberOfEarlyPresses++;
+					}
+				}
+				else{
+					if(!e.Go) correct++;
+				}
+			}
+			
+			if(practicePassed && (correct/gm.Events.Count)>.7f && (numberOfEarlyPresses/gm.Events.Count)<.1f)	criterion = 1;
+		}
+		else if (type == GameManager.SessionType.Associate){
+			
+			foreach(AssociateEvent e in gm.Events){
+				foreach(Response r in e.Responses){
+					responseRate+= r.ResponseTime;
+					responseCount++;
+					if(r.ResponseTime<.2f){
+						numberOfEarlyPresses++;
+					}
+				}
+			}
+			
+			if(practicePassed && (numberOfEarlyPresses/gm.Events.Count)<.1f) criterion = 1;
+		}
+		
+		responseRate = responseRate/responseCount;
+		
+		newLine+= criterion + "," + practiceCount + ",";
+		
+		if(type == GameManager.SessionType.Star)
+			newLine += ".,.";
+		else
+			newLine += responseRate + "," + numberOfEarlyPresses;
+		
+		for(int i =1;i<lines.Length;i++){
+			if(lines[i].StartsWith(taskNum.ToString())){
+				lines[i] = newLine;
+				break;
+			}
+		}
+		
+		System.IO.File.WriteAllLines(criterionPath,lines);
 	}
 	
 	//Generates the time the file was written out, and writeout file name

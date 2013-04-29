@@ -20,7 +20,7 @@ public class InhibitionEvent: EventStats{
 	
 	//The player's response to this event
 	private Response response;
-	public Response PlayerResponse{
+	public Response Response{
 		get{return response;}
 		set{response = value;}
 	}

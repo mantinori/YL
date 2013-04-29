@@ -293,14 +293,14 @@ public class InhibitionManager : GameManager {
 			
 			state = GameState.Probe;
 			//Wait for either the player's response or the time limit
-			while(CurrentEvent.PlayerResponse == null && currentTime < 2.5f){
+			while(CurrentEvent.Response == null && currentTime < 2.5f){
 				currentTime+= Time.deltaTime;
 				yield return new WaitForFixedUpdate();
 			}
 			
 			if(currentTime>=2.5f) CurrentEvent.TimedOut = true;
 			
-			if(CurrentEvent.PlayerResponse != null) yield return new WaitForSeconds(.1f);
+			if(CurrentEvent.Response != null) yield return new WaitForSeconds(.1f);
 			
 			//ITI, black screen
 			state = GameState.ITI;
@@ -412,7 +412,7 @@ public class InhibitionManager : GameManager {
 				StartCoroutine(spot.fadeFinger(screenPos, d));
 				
 				//Add the response
-				CurrentEvent.PlayerResponse =r;
+				CurrentEvent.Response =r;
 			}
 		}
 	}
