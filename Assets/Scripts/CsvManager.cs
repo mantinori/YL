@@ -783,8 +783,9 @@ public class CsvManager {
 		else if (gm.SType == GameManager.SessionType.Associate) WriteOutAssociate(filePath);
 		else if (gm.SType == GameManager.SessionType.Stopping) WriteOutStopping(filePath);
 		
-		if(completed)
-			WriteOutCriterion(Path.Combine(CsvManager.PlayerSpecificPath, mUserName+"_Criterion.csv"), gm.SType);
+		if(completed){
+			WriteOutCriterion(Path.Combine(CsvManager.PlayerSpecificPath, mUserName+"_" + System.Environment.MachineName+"_Criterion.csv"), gm.SType);
+		}
 	}
 	
 	private void WriteOutSpatial(string filePath){
@@ -1921,7 +1922,7 @@ public class CsvManager {
 		
 		try{
 			//Regex noXML = new Regex(".xml", RegexOptions.IgnoreCase);
-			statsXML = mUserName + "_"+sessionXML+"_" + theTime;
+			statsXML = mUserName +"_" + System.Environment.MachineName + "_"+sessionXML+"_" + theTime;
 			
 			if(count>1 && sessionXML != "randomList")	statsXML += ("_try" + count.ToString());
 			
@@ -1929,7 +1930,7 @@ public class CsvManager {
 		} catch(ArgumentOutOfRangeException e) {
 			// If the player quits the game before a gameType is chosen
 			NeuroLog.Log(e.Message);
-			statsXML = mUserName +"_None_" + theTime + ".csv";
+			statsXML = mUserName +"_" + System.Environment.MachineName +"_None_" + theTime + ".csv";
 		}
 	}
 }

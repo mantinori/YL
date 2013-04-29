@@ -1384,7 +1384,7 @@ public class XmlManager {
 		
 		try{
 			//Regex noXML = new Regex(".xml", RegexOptions.IgnoreCase);
-			statsXML = mUserName + "_"+sessionXML+"_" + theTime;
+			statsXML = mUserName +"_" + System.Environment.MachineName + "_"+sessionXML+"_" + theTime;
 			
 			if(count>1 && sessionXML != "randomList")	statsXML += ("_try" + count.ToString());
 			
@@ -1392,7 +1392,7 @@ public class XmlManager {
 		} catch(ArgumentOutOfRangeException e) {
 			// If the player quits the game before a gameType is chosen
 			NeuroLog.Debug(e.Message);
-			statsXML = mUserName +"_None_" + theTime + ".xml";
+			statsXML = mUserName+ "_" + System.Environment.MachineName +"_None_" + theTime + ".xml";
 		}
 	}
 }

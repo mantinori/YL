@@ -21,6 +21,7 @@ public class ConfigManager : MonoBehaviour {
 	
 	//Only need the english checkbox
 	public UICheckbox english;
+	public UICheckbox spanish;
 	
 	//Other elements on the screen
 	public UITexture background;
@@ -45,8 +46,6 @@ public class ConfigManager : MonoBehaviour {
 	private bool configSaved=false;
 	
 	private string testName="";
-	
-	public TextAsset test;
 	
 	// Use this for initialization
 	void Start () {
@@ -78,6 +77,8 @@ public class ConfigManager : MonoBehaviour {
 		stateSelection.gameObject.SetActive(false);
 		subDivisionOne.gameObject.SetActive(false);
 		subDivisionTwo.gameObject.SetActive(false);
+		english.gameObject.SetActive(false);
+		spanish.gameObject.SetActive(false);
 		players.gameObject.SetActive(false);
 		
 		confirmButton.gameObject.SetActive(false);
@@ -327,7 +328,9 @@ public class ConfigManager : MonoBehaviour {
 					PlayerPrefs.SetString("-subregion", "n/a");
 				}
 				
-				using(StreamWriter writer = new StreamWriter(Path.Combine(CsvManager.PlayerSpecificPath, name+"_Criterion.csv"))){
+				Debug.Log(Path.Combine(CsvManager.PlayerSpecificPath, name+"_Criterion.csv"));
+				
+				using(StreamWriter writer = new StreamWriter(Path.Combine(CsvManager.PlayerSpecificPath, name+"_" + System.Environment.MachineName+"_Criterion.csv"))){
 					writer.WriteLine("TaskNum, CriterionScore, NumofPractice, ResponseRate, NumResponsesBasal");
 					
 					for(int i = 1;i<8;i++){
@@ -342,6 +345,8 @@ public class ConfigManager : MonoBehaviour {
 				configSaved = true;
 				//Hide the dropdown menus
 				stateSelection.gameObject.SetActive(false);
+				english.gameObject.SetActive(false);
+				spanish.gameObject.SetActive(false);
 				subDivisionOne.gameObject.SetActive(false);
 				subDivisionTwo.gameObject.SetActive(false);
 				players.gameObject.SetActive(false);
