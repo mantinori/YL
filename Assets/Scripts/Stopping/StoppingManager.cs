@@ -228,7 +228,9 @@ public class StoppingManager : GameManager {
 		
 		yield return StartCoroutine(tFinger.moveTo(tutDots));
 		
-		yield return new WaitForSeconds(1f);
+		yield return StartCoroutine(tFinger.moveTo(new List<Vector3>(){Vector3.zero}));
+		
+		yield return new WaitForSeconds(.6f);
 		
 		//screen.enabled = true;
 		stoppingStimulus.renderer.enabled = false;
@@ -273,6 +275,8 @@ public class StoppingManager : GameManager {
 		stoppingStimulus.renderer.material.color = new Color(1,.5f,0);
 		
 		yield return StartCoroutine(tFinger.moveTo(tutDots));
+		
+		yield return StartCoroutine(tFinger.moveTo(new List<Vector3>(){Vector3.zero}));
 		
 		yield return new WaitForSeconds(.6f);
 		
