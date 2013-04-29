@@ -198,13 +198,13 @@ public class StoppingManager : GameManager {
 		//Click 1st dot
 		stoppingStimulus.transform.position = new Vector3(stimPositions[0].x,-3.5f,stimPositions[0].y);
 		
-		screen.enabled = false;
+		//screen.enabled = false;
 		
 		yield return new WaitForSeconds(.15f);
 		
 		yield return StartCoroutine(tFinger.performAction(tutDots,null));
 		
-		screen.enabled = true;
+		//screen.enabled = true;
 		
 		yield return new WaitForSeconds(.05f);
 		
@@ -213,7 +213,7 @@ public class StoppingManager : GameManager {
 		
 		stoppingStimulus.transform.position =new Vector3(stimPositions[1].x,-3.5f,stimPositions[1].y);
 		
-		screen.enabled = false;
+		//screen.enabled = false;
 		
 		yield return new WaitForSeconds(.15f);
 		
@@ -227,7 +227,7 @@ public class StoppingManager : GameManager {
 		
 		yield return new WaitForSeconds(1f);
 		
-		screen.enabled = true;
+		//screen.enabled = true;
 		
 		stoppingStimulus.renderer.material.color = Color.blue;
 		
@@ -238,13 +238,13 @@ public class StoppingManager : GameManager {
 		
 		stoppingStimulus.transform.position =new Vector3(stimPositions[2].x,-3.5f,stimPositions[2].y);
 		
-		screen.enabled = false;
+		//screen.enabled = false;
 		
 		yield return new WaitForSeconds(.15f);
 		
 		yield return StartCoroutine(tFinger.performAction(tutDots,null));
 		
-		screen.enabled = true;
+		//screen.enabled = true;
 		
 		yield return new WaitForSeconds(.05f);
 		
@@ -255,7 +255,7 @@ public class StoppingManager : GameManager {
 		
 		stoppingStimulus.renderer.material.color = Color.blue;
 		
-		screen.enabled = false;
+		//screen.enabled = false;
 		
 		yield return new WaitForSeconds(.15f);
 		
@@ -271,7 +271,7 @@ public class StoppingManager : GameManager {
 		
 		yield return StartCoroutine(tFinger.exit());	
 		
-		screen.enabled = true;
+		//screen.enabled = true;
 
 		yield return new WaitForSeconds(.05f);
 	}
@@ -280,10 +280,12 @@ public class StoppingManager : GameManager {
 	protected override IEnumerator runSession(){
 		
 		//Show the tutorial
-		yield return StartCoroutine(runTutorial());
+		//yield return StartCoroutine(runTutorial());
 	
 		//Show Practice screen
 		yield return StartCoroutine(showTitle("Practice",3));
+		
+		screen.enabled = false;
 		
 		//Main Session
 		while(currentEventNum< events.Count){
@@ -304,7 +306,6 @@ public class StoppingManager : GameManager {
 				stoppingStimulus.transform.position = new Vector3(stimPositions[CurrentEvent.Dot-1].x, -3.5f,stimPositions[CurrentEvent.Dot-1].y);
 			}
 			
-			screen.enabled = false;
 			
 			startTime = Time.time;
 			
@@ -319,7 +320,7 @@ public class StoppingManager : GameManager {
 			}
 			
 			//Wait for either the player's response or the time limit
-			while(CurrentEvent.Response == null && currentTime < .7f){
+			while(CurrentEvent.Response == null && currentTime < 1f){
 				currentTime+= Time.deltaTime;
 				
 				if(!CurrentEvent.Go && currentTime> CurrentEvent.TurningTime && !changed)
@@ -330,9 +331,9 @@ public class StoppingManager : GameManager {
 			
 			//ITI, black screen
 			state = GameState.ITI;
-			screen.enabled = true;
+			//screen.enabled = true;
 			
-			if(currentTime>=.7f) CurrentEvent.TimedOut = true;
+			if(currentTime>=1f) CurrentEvent.TimedOut = true;
 			
 			if(CurrentEvent.Response == null && !practicing){
 				if(!CurrentEvent.Go){
@@ -347,7 +348,7 @@ public class StoppingManager : GameManager {
 				for(int i = 0;i<8;i++){
 					if(((StoppingEvent)events[i]).Response != null)
 						avgResponseTime += ((StoppingEvent)events[i]).Response.ResponseTime;
-					else avgResponseTime +=.7f;
+					else avgResponseTime +=1f;
 				}
 				
 				avgResponseTime = avgResponseTime/8;
@@ -370,7 +371,7 @@ public class StoppingManager : GameManager {
 				NeuroLog.Log("Total Correct Responded: " + numCorrect);
 				
 				//If the numCorrect is greater than 5, or played the practice 4 times, continue on 
-				if((numCorrect>=4 && secondPracticeStage) || practiceSessionCount>=3){
+				if((numCorrect>=4 && secondPracticeStage) ||  (secondPracticeStage && practiceSessionCount>=3)){
 					NeuroLog.Log("Continuing to MainSession");
 					
 					border.SetActive(false);
@@ -379,7 +380,7 @@ public class StoppingManager : GameManager {
 					
 					practicing = false;
 				}
-				else if(!secondPracticeStage && numCorrect>=3){
+				else if((!secondPracticeStage && numCorrect>=3) || practiceSessionCount>=3){
 					NeuroLog.Log("Moving to second practice stage");
 					
 					secondPracticeStage = true;
@@ -461,7 +462,7 @@ public class StoppingManager : GameManager {
 						float time = Time.time - startTime;
 						
 						//Make sure it was before the cutoff
-						if(time<=.7f){
+						if(time<=1f){
 							float x = ((stoppingStimulus.transform.position.x + 26.5f)/53f) * Screen.width;
 							
 							float y = ((stoppingStimulus.transform.position.z - 15f)/-30f) * Screen.height;

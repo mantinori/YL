@@ -187,7 +187,7 @@ public class ImplicitManager : GameManager {
 		//Click 1st dot
 		implicitStimulus.transform.position = new Vector3(stimPositions[0].x,-3.5f,stimPositions[0].y);
 		
-		screen.enabled = false;
+		//screen.enabled = false;
 		
 		yield return new WaitForSeconds(.15f);
 		
@@ -195,7 +195,7 @@ public class ImplicitManager : GameManager {
 		
 		yield return StartCoroutine(tFinger.exit());	
 		
-		screen.enabled = true;
+		//screen.enabled = true;
 		
 		yield return new WaitForSeconds(.1f);
 		
@@ -204,7 +204,7 @@ public class ImplicitManager : GameManager {
 		
 		implicitStimulus.transform.position =new Vector3(stimPositions[1].x,-3.5f,stimPositions[1].y);
 		
-		screen.enabled = false;
+		//screen.enabled = false;
 		
 		yield return new WaitForSeconds(.15f);
 		
@@ -212,7 +212,7 @@ public class ImplicitManager : GameManager {
 		
 		yield return StartCoroutine(tFinger.exit());	
 		
-		screen.enabled = true;
+		//screen.enabled = true;
 		
 		yield return new WaitForSeconds(.1f);
 		
@@ -221,7 +221,7 @@ public class ImplicitManager : GameManager {
 		
 		implicitStimulus.transform.position =new Vector3(stimPositions[2].x,-3.5f,stimPositions[2].y);
 		
-		screen.enabled = false;
+		//screen.enabled = false;
 		
 		yield return new WaitForSeconds(.15f);
 		
@@ -229,7 +229,7 @@ public class ImplicitManager : GameManager {
 		
 		yield return StartCoroutine(tFinger.exit());	
 		
-		screen.enabled = true;
+		//screen.enabled = true;
 		
 		yield return new WaitForSeconds(.1f);
 		
@@ -238,7 +238,7 @@ public class ImplicitManager : GameManager {
 		
 		implicitStimulus.transform.position =new Vector3(stimPositions[3].x,-3.5f,stimPositions[3].y);
 		
-		screen.enabled = false;
+		//screen.enabled = false;
 		
 		yield return new WaitForSeconds(.15f);
 		
@@ -246,7 +246,7 @@ public class ImplicitManager : GameManager {
 		
 		yield return StartCoroutine(tFinger.exit());	
 		
-		screen.enabled = true;
+		//screen.enabled = true;
 
 		yield return new WaitForSeconds(.1f);
 	}
@@ -259,6 +259,8 @@ public class ImplicitManager : GameManager {
 	
 		//Show Practice screen
 		yield return StartCoroutine(showTitle("Practice",3));
+		
+		screen.enabled = false;
 		
 		//Main Session
 		while(currentEventNum< events.Count){
@@ -277,26 +279,24 @@ public class ImplicitManager : GameManager {
 				implicitStimulus.transform.position = new Vector3(stimPositions[CurrentEvent.Dot-1].x, -3.5f,stimPositions[CurrentEvent.Dot-1].y);
 			}
 			
-			screen.enabled = false;
-			
 			startTime = Time.time;
 			
 			float currentTime =0;
 			
 			state = GameState.Probe;
 			//Wait for either the player's response or the time limit
-			while(CurrentEvent.Response == null && currentTime < .7f){
+			while(CurrentEvent.Response == null && currentTime < 1f){
 				currentTime+= Time.deltaTime;
 				yield return new WaitForFixedUpdate();
 			}
 			
-			if(currentTime>=.7f) CurrentEvent.TimedOut = true;
+			if(currentTime>=1f) CurrentEvent.TimedOut = true;
 			
 			if(CurrentEvent.Response != null) yield return new WaitForSeconds(.1f);
 			
 			//ITI, black screen
 			state = GameState.ITI;
-			screen.enabled = true;
+			//screen.enabled = true;
 			yield return new WaitForSeconds(.1f);
 			
 			//Get the next event
@@ -394,25 +394,28 @@ public class ImplicitManager : GameManager {
 						//Calculate the response time
 						float time = Time.time - startTime;
 						
-						float x = ((implicitStimulus.transform.position.x + 26.5f)/53f) * Screen.width;
-						
-						float y = ((implicitStimulus.transform.position.z - 15f)/-30f) * Screen.height;
-						
-						Vector2 targPos = new Vector2(x,y);
-						
-						//Create the respones
-						Response r = new Response(targPos, time,new Vector2(touchPos.x,touchPos.y));
-								
-						Vector2 screenPos = Vector2.zero;
-						
-						screenPos.x = ((touchPos.x/Screen.width) * 53) - 26.5f;
-						screenPos.y = ((touchPos.y/Screen.height) * -30) +15;
-						
-						//Start the fade spot
-						StartCoroutine(spot.fadeFinger(screenPos, -1));
-						
-						//Add the response
-						CurrentEvent.Response =r;
+						if(time<=1f){
+							
+							float x = ((implicitStimulus.transform.position.x + 26.5f)/53f) * Screen.width;
+							
+							float y = ((implicitStimulus.transform.position.z - 15f)/-30f) * Screen.height;
+							
+							Vector2 targPos = new Vector2(x,y);
+							
+							//Create the respones
+							Response r = new Response(targPos, time,new Vector2(touchPos.x,touchPos.y));
+									
+							Vector2 screenPos = Vector2.zero;
+							
+							screenPos.x = ((touchPos.x/Screen.width) * 53) - 26.5f;
+							screenPos.y = ((touchPos.y/Screen.height) * -30) +15;
+							
+							//Start the fade spot
+							StartCoroutine(spot.fadeFinger(screenPos, -1));
+							
+							//Add the response
+							CurrentEvent.Response =r;
+						}
 					}
 				}
 			}
