@@ -199,12 +199,14 @@ public class StoppingManager : GameManager {
 		stoppingStimulus.transform.position = new Vector3(stimPositions[0].x,-3.5f,stimPositions[0].y);
 		
 		//screen.enabled = false;
+		stoppingStimulus.renderer.enabled = true;
 		
 		yield return new WaitForSeconds(.15f);
 		
 		yield return StartCoroutine(tFinger.performAction(tutDots,null));
 		
 		//screen.enabled = true;
+		stoppingStimulus.renderer.enabled = false;
 		
 		yield return new WaitForSeconds(.05f);
 		
@@ -214,6 +216,7 @@ public class StoppingManager : GameManager {
 		stoppingStimulus.transform.position =new Vector3(stimPositions[1].x,-3.5f,stimPositions[1].y);
 		
 		//screen.enabled = false;
+		stoppingStimulus.renderer.enabled = true;
 		
 		yield return new WaitForSeconds(.15f);
 		
@@ -228,6 +231,7 @@ public class StoppingManager : GameManager {
 		yield return new WaitForSeconds(1f);
 		
 		//screen.enabled = true;
+		stoppingStimulus.renderer.enabled = false;
 		
 		stoppingStimulus.renderer.material.color = Color.blue;
 		
@@ -239,12 +243,14 @@ public class StoppingManager : GameManager {
 		stoppingStimulus.transform.position =new Vector3(stimPositions[2].x,-3.5f,stimPositions[2].y);
 		
 		//screen.enabled = false;
+		stoppingStimulus.renderer.enabled = true;
 		
 		yield return new WaitForSeconds(.15f);
 		
 		yield return StartCoroutine(tFinger.performAction(tutDots,null));
 		
 		//screen.enabled = true;
+		stoppingStimulus.renderer.enabled = false;
 		
 		yield return new WaitForSeconds(.05f);
 		
@@ -255,7 +261,8 @@ public class StoppingManager : GameManager {
 		
 		stoppingStimulus.renderer.material.color = Color.blue;
 		
-		//screen.enabled = false;
+		//screen.enabled = false;	
+		stoppingStimulus.renderer.enabled = true;
 		
 		yield return new WaitForSeconds(.15f);
 		
@@ -272,6 +279,7 @@ public class StoppingManager : GameManager {
 		yield return StartCoroutine(tFinger.exit());	
 		
 		//screen.enabled = true;
+		stoppingStimulus.renderer.enabled = false;
 
 		yield return new WaitForSeconds(.05f);
 	}
@@ -306,6 +314,7 @@ public class StoppingManager : GameManager {
 				stoppingStimulus.transform.position = new Vector3(stimPositions[CurrentEvent.Dot-1].x, -3.5f,stimPositions[CurrentEvent.Dot-1].y);
 			}
 			
+			stoppingStimulus.renderer.enabled = true;
 			
 			startTime = Time.time;
 			
@@ -332,6 +341,7 @@ public class StoppingManager : GameManager {
 			//ITI, black screen
 			state = GameState.ITI;
 			//screen.enabled = true;
+			stoppingStimulus.renderer.enabled = false;
 			
 			if(currentTime>=1f) CurrentEvent.TimedOut = true;
 			
@@ -354,7 +364,7 @@ public class StoppingManager : GameManager {
 				avgResponseTime = avgResponseTime/8;
 			}
 			
-			yield return new WaitForSeconds(.05f);
+			yield return new WaitForSeconds(.1f);
 			
 			//Get the next event
 			nextEvent();

@@ -175,7 +175,6 @@ public class ImplicitManager : GameManager {
 	//Method used to perform the tutorial
 	protected override  IEnumerator runTutorial(){
 		
-		
 		//Show title card
 		yield return StartCoroutine(showTitle("Tutorial",3));
 		
@@ -188,6 +187,7 @@ public class ImplicitManager : GameManager {
 		implicitStimulus.transform.position = new Vector3(stimPositions[0].x,-3.5f,stimPositions[0].y);
 		
 		//screen.enabled = false;
+		implicitStimulus.renderer.enabled = true;
 		
 		yield return new WaitForSeconds(.15f);
 		
@@ -196,6 +196,7 @@ public class ImplicitManager : GameManager {
 		yield return StartCoroutine(tFinger.exit());	
 		
 		//screen.enabled = true;
+		implicitStimulus.renderer.enabled = false;
 		
 		yield return new WaitForSeconds(.1f);
 		
@@ -205,6 +206,7 @@ public class ImplicitManager : GameManager {
 		implicitStimulus.transform.position =new Vector3(stimPositions[1].x,-3.5f,stimPositions[1].y);
 		
 		//screen.enabled = false;
+		implicitStimulus.renderer.enabled = true;
 		
 		yield return new WaitForSeconds(.15f);
 		
@@ -213,6 +215,7 @@ public class ImplicitManager : GameManager {
 		yield return StartCoroutine(tFinger.exit());	
 		
 		//screen.enabled = true;
+		implicitStimulus.renderer.enabled = false;
 		
 		yield return new WaitForSeconds(.1f);
 		
@@ -222,6 +225,7 @@ public class ImplicitManager : GameManager {
 		implicitStimulus.transform.position =new Vector3(stimPositions[2].x,-3.5f,stimPositions[2].y);
 		
 		//screen.enabled = false;
+		implicitStimulus.renderer.enabled = true;
 		
 		yield return new WaitForSeconds(.15f);
 		
@@ -230,6 +234,7 @@ public class ImplicitManager : GameManager {
 		yield return StartCoroutine(tFinger.exit());	
 		
 		//screen.enabled = true;
+		implicitStimulus.renderer.enabled = false;
 		
 		yield return new WaitForSeconds(.1f);
 		
@@ -239,6 +244,7 @@ public class ImplicitManager : GameManager {
 		implicitStimulus.transform.position =new Vector3(stimPositions[3].x,-3.5f,stimPositions[3].y);
 		
 		//screen.enabled = false;
+		implicitStimulus.renderer.enabled = true;
 		
 		yield return new WaitForSeconds(.15f);
 		
@@ -247,7 +253,8 @@ public class ImplicitManager : GameManager {
 		yield return StartCoroutine(tFinger.exit());	
 		
 		//screen.enabled = true;
-
+		implicitStimulus.renderer.enabled = false;
+		
 		yield return new WaitForSeconds(.1f);
 	}
 	
@@ -281,6 +288,8 @@ public class ImplicitManager : GameManager {
 			
 			startTime = Time.time;
 			
+			implicitStimulus.renderer.enabled = true;
+			
 			float currentTime =0;
 			
 			state = GameState.Probe;
@@ -297,6 +306,8 @@ public class ImplicitManager : GameManager {
 			//ITI, black screen
 			state = GameState.ITI;
 			//screen.enabled = true;
+			
+			implicitStimulus.renderer.enabled = false;
 			yield return new WaitForSeconds(.1f);
 			
 			//Get the next event
