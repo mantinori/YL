@@ -32,6 +32,7 @@ public class ConfigManager : MonoBehaviour {
 	//For testing purposes, allow someone to just write in a name
 	public UIInput testInput;
 	public UILabel testingLabel;
+	public UICheckbox testingCheckbox;
 	
 	//The actual dropdown list
 	GameObject ddL;
@@ -81,6 +82,7 @@ public class ConfigManager : MonoBehaviour {
 		english.gameObject.SetActive(false);
 		spanish.gameObject.SetActive(false);
 		players.gameObject.SetActive(false);
+		testingCheckbox.gameObject.SetActive(false);
 		
 		testingLabel.enabled = false;
 		confirmButton.gameObject.SetActive(false);
@@ -171,6 +173,8 @@ public class ConfigManager : MonoBehaviour {
 					players.gameObject.SetActive(true);
 					
 					testingLabel.enabled = true;
+					testingCheckbox.gameObject.SetActive(true);
+		
 					english.gameObject.SetActive(true);
 					spanish.gameObject.SetActive(true);
 				
@@ -281,13 +285,24 @@ public class ConfigManager : MonoBehaviour {
 			else{
 				
 				//Set up the task statuses
-				PlayerPrefs.SetString("-t1", "true");
-				PlayerPrefs.SetString("-t2", "true");
-				PlayerPrefs.SetString("-t3", "true");
-				PlayerPrefs.SetString("-t4", "true");
-				PlayerPrefs.SetString("-t5", "true");
-				PlayerPrefs.SetString("-t6", "true");
-				PlayerPrefs.SetString("-t7", "true");
+				if(testingCheckbox.isChecked){
+					PlayerPrefs.SetString("-t1", "true");
+					PlayerPrefs.SetString("-t2", "true");
+					PlayerPrefs.SetString("-t3", "true");
+					PlayerPrefs.SetString("-t4", "true");
+					PlayerPrefs.SetString("-t5", "true");
+					PlayerPrefs.SetString("-t6", "true");
+					PlayerPrefs.SetString("-t7", "true");
+				}
+				else{
+					PlayerPrefs.SetString("-t1", "false");
+					PlayerPrefs.SetString("-t2", "false");
+					PlayerPrefs.SetString("-t3", "false");
+					PlayerPrefs.SetString("-t4", "false");
+					PlayerPrefs.SetString("-t5", "false");
+					PlayerPrefs.SetString("-t6", "false");
+					PlayerPrefs.SetString("-t7", "false");
+				}
 				
 				if(english.isChecked){
 					PlayerPrefs.SetString("-language", "english");
@@ -355,6 +370,7 @@ public class ConfigManager : MonoBehaviour {
 				spanish.gameObject.SetActive(false);
 				subDivisionOne.gameObject.SetActive(false);
 				subDivisionTwo.gameObject.SetActive(false);
+				testingCheckbox.gameObject.SetActive(false);
 				players.gameObject.SetActive(false);
 				testInput.gameObject.SetActive(false);	
 				testingLabel.enabled = false;
