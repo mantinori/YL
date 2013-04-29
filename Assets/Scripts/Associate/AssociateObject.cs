@@ -93,7 +93,7 @@ public class AssociateObject : MonoBehaviour {
 			transform.rotation= Quaternion.Euler(0,rot,0);
 			
 			yield return new WaitForFixedUpdate();
-		}while(radian<Mathf.PI*4);
+		}while(radian<Mathf.PI*2);
 		
 		transform.rotation = Quaternion.identity;
 		transform.position = startPos;
