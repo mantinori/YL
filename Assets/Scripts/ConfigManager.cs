@@ -31,6 +31,7 @@ public class ConfigManager : MonoBehaviour {
 	
 	//For testing purposes, allow someone to just write in a name
 	public UIInput testInput;
+	public UILabel testingLabel;
 	
 	//The actual dropdown list
 	GameObject ddL;
@@ -81,6 +82,7 @@ public class ConfigManager : MonoBehaviour {
 		spanish.gameObject.SetActive(false);
 		players.gameObject.SetActive(false);
 		
+		testingLabel.enabled = false;
 		confirmButton.gameObject.SetActive(false);
 		confirmButton.GetComponent<ButtonResponder>().response = buttonPressed;
 		
@@ -167,6 +169,10 @@ public class ConfigManager : MonoBehaviour {
 					subDivisionOne.gameObject.SetActive(true);
 					subDivisionTwo.gameObject.SetActive(true);
 					players.gameObject.SetActive(true);
+					
+					testingLabel.enabled = true;
+					english.gameObject.SetActive(true);
+					spanish.gameObject.SetActive(true);
 				
 					background.color = Color.white;
 				}
@@ -350,7 +356,8 @@ public class ConfigManager : MonoBehaviour {
 				subDivisionOne.gameObject.SetActive(false);
 				subDivisionTwo.gameObject.SetActive(false);
 				players.gameObject.SetActive(false);
-				testInput.gameObject.SetActive(false);
+				testInput.gameObject.SetActive(false);	
+				testingLabel.enabled = false;
 			}
 		}
 	}
