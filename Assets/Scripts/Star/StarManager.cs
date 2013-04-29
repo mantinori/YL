@@ -665,6 +665,7 @@ public class StarManager : GameManager {
 			float endTime = 180;
 
 			if(practicing)	endTime = 30;
+			else arrow.SetActive(true);
 			
 			//Either setup the set positions of the objects, or randomize it
 			if(CurrentEvent.Objects.Count>0) setupPositions();
@@ -681,7 +682,6 @@ public class StarManager : GameManager {
 			//Loop until the skip arrow is pressed, the player gets all the stars, or the time limit is reached
 			while(Time.time - startTime<endTime && skipTrial==false && CurrentEvent.NumGoodTouches< CurrentEvent.NumLittleStars){
 				yield return new WaitForFixedUpdate();
-				if(!practicing && Time.time - startTime> 30 && !arrow.activeSelf) arrow.SetActive(true);
 			}
 			
 			state = GameState.Delay;
