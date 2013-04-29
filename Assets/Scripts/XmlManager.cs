@@ -7,12 +7,7 @@ using System.Xml;
 using System.Text.RegularExpressions;
 
 public class XmlManager {
-// Should only have to change these first two
-	public static string windowsRoot = @"C:\NeuroScouting\Dropbox";
-	public static string macRoot = @"/Users/margaretsheridan/Desktop";
-	public static string IOSRoot = Application.persistentDataPath;
-
-	public static string dashboardFolderName = "yl";
+	public static string dashboardFolderName = Path.Combine("YL_tasks", "yl_pilot");
 	
 	//Folder names
 	public static string logFilesFolderName = "log_files";
@@ -41,11 +36,13 @@ public class XmlManager {
 		get
 		{
 			if (Application.platform == RuntimePlatform.WindowsPlayer || Application.platform == RuntimePlatform.WindowsEditor) {
-				return windowsRoot;
+				string home = Environment.ExpandEnvironmentVariables("%HOMEDRIVE%%HOMEPATH%");
+				return Path.Combine(home, "Dropbox");
 			} else if (Application.platform == RuntimePlatform.OSXPlayer || Application.platform == RuntimePlatform.OSXEditor) {
-				return macRoot;
+				string home = Environment.GetEnvironmentVariable("HOME");
+				return Path.Combine(home, "Dropbox");
 			} else if (Application.platform == RuntimePlatform.IPhonePlayer) {
-				return IOSRoot;
+				return Application.persistentDataPath;
 			} else {
 				//In the default case, just return whatever persistent data path the platform has.
 				return Application.persistentDataPath;

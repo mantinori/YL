@@ -8,12 +8,8 @@ using System.Text.RegularExpressions;
 using LumenWorks.Framework.IO.Csv;
 
 public class CsvManager {
-// Should only have to change these first two
-	public static string windowsRoot = @"C:\NeuroScouting\Dropbox";
-	public static string macRoot = @"/Users/margaretsheridan/Desktop";
-	public static string IOSRoot = Application.persistentDataPath;
 
-	public static string dashboardFolderName = "yl";
+	public static string dashboardFolderName = Path.Combine("YL_tasks", "yl_pilot");
 	
 	//Folder names
 	public static string logFilesFolderName = "log_files";
@@ -37,16 +33,19 @@ public class CsvManager {
 	//The file name of the read in file
 	public string sessionXML = "randomList";
 
+	// Assumed to be under $HOME/Dropbox/YL_tasks/
 	public static string DropboxPath
 	{
 		get
 		{
 			if (Application.platform == RuntimePlatform.WindowsPlayer || Application.platform == RuntimePlatform.WindowsEditor) {
-				return windowsRoot;
+				string home = Environment.ExpandEnvironmentVariables("%HOMEDRIVE%%HOMEPATH%");
+				return Path.Combine(home, "Dropbox");
 			} else if (Application.platform == RuntimePlatform.OSXPlayer || Application.platform == RuntimePlatform.OSXEditor) {
-				return macRoot;
+				string home = Environment.GetEnvironmentVariable("HOME");
+				return Path.Combine(home, "Dropbox");
 			} else if (Application.platform == RuntimePlatform.IPhonePlayer) {
-				return IOSRoot;
+				return Application.persistentDataPath;
 			} else {
 				//In the default case, just return whatever persistent data path the platform has.
 				return Application.persistentDataPath;
