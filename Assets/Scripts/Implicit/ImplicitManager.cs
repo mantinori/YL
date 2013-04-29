@@ -167,7 +167,7 @@ public class ImplicitManager : GameManager {
 	
 		border.renderer.enabled = true;
 		
-		List<EventStats> newPractice = new List<EventStats>(){new ImplicitEvent(1,0),new ImplicitEvent(4,0),new ImplicitEvent(3,0),new ImplicitEvent(2,0)};
+		List<EventStats> newPractice = new List<EventStats>(){new ImplicitEvent(1,0),new ImplicitEvent(2,0),new ImplicitEvent(3,0),new ImplicitEvent(4,0)};
 
 		practice.AddRange(newPractice);
 	}
@@ -269,9 +269,9 @@ public class ImplicitManager : GameManager {
 				if(CurrentEvent.Dot==1)
 					implicitStimulus.transform.position = new Vector3(-20,-3.5f,10);
 				else if(CurrentEvent.Dot==2)
-					implicitStimulus.transform.position = new Vector3(20,-3.5f,10);
-				else if(CurrentEvent.Dot==3)
 					implicitStimulus.transform.position = new Vector3(-20,-3.5f,-10);
+				else if(CurrentEvent.Dot==3)
+					implicitStimulus.transform.position = new Vector3(20,-3.5f,10);
 				else
 					implicitStimulus.transform.position = new Vector3(20,-3.5f,-10);
 			}
