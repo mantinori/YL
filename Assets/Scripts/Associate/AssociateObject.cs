@@ -36,7 +36,8 @@ public class AssociateObject : MonoBehaviour {
 	
 	// Use this for initialization
 	public IEnumerator matchUp () {
-		Vector3 finalPos = new Vector3(4,-4,7.5f);
+		
+		Vector3 finalPos = new Vector3(4,transform.position.y,7.5f);
 		Vector3 startPos = transform.position;
 		
 		float totalDist = Vector3.Distance(finalPos,startPos);
