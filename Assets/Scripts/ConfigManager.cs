@@ -352,10 +352,10 @@ public class ConfigManager : MonoBehaviour {
 				Debug.Log(Path.Combine(CsvManager.PlayerSpecificPath, name+"_Criterion.csv"));
 				
 				using(StreamWriter writer = new StreamWriter(Path.Combine(CsvManager.PlayerSpecificPath, name+"_" + System.Environment.MachineName+"_Criterion.csv"))){
-					writer.WriteLine("TaskNum, CriterionScore, NumofPractice, ResponseRate, NumResponsesBasal");
+					writer.WriteLine("TaskNum, CriterionScore, NumofPractice, ResponseRate, NumResponsesBasal, NumResponses, MaxResponses");
 					
-					for(int i = 1;i<8;i++){
-						writer.WriteLine(i+", 0, ., ., .");
+					for(int i = 0;i<8;i++){
+						writer.WriteLine(i+", 0, ., ., ., ., .");
 					}
 				}
 				

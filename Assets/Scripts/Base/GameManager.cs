@@ -287,7 +287,7 @@ public class GameManager : MonoBehaviour {
 						}
 					}
 				}
-				
+				/*
 				//For debuging, will show swipe in scene screen
 				Color c = Color.white;
 				for(int i=0;i<dragPoints.Count;i++){
@@ -304,7 +304,7 @@ public class GameManager : MonoBehaviour {
 										new Vector3(((dragPoints[i+1].x/Screen.width)*53 - 26.5f), 8,((dragPoints[i+1].y/Screen.height)*30 - 15f)), c);
 					}
 				}
-				
+				*/
 			}
 		}
 		//If the player isn't touching the screen, reset the dragPoints

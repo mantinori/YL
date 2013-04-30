@@ -291,7 +291,6 @@ public class CsvManager {
 					eS = ReadAssociateEvents(csv);
 			}
 			
-			
 			if(exit){
 				sessionXML = "randomList";
 			
@@ -784,7 +783,12 @@ public class CsvManager {
 		else if (gm.SType == GameManager.SessionType.Stopping) WriteOutStopping(filePath);
 		
 		if(completed){
-			WriteOutCriterion(Path.Combine(CsvManager.PlayerSpecificPath, mUserName+"_" + System.Environment.MachineName+"_Criterion.csv"), gm.SType);
+			try{
+				WriteOutCriterion(Path.Combine(CsvManager.PlayerSpecificPath, mUserName+"_" + System.Environment.MachineName+"_Criterion.csv"), gm.SType);
+			}catch(Exception e){
+				NeuroLog.Log("Unable to update the player's Criterion file");
+				NeuroLog.Log(e.Message);
+			}
 		}
 	}
 	
@@ -1690,9 +1694,10 @@ public class CsvManager {
 		float responseCount = 0;
 		float numberOfEarlyPresses=0;
 		int practiceCount=gm.Practice.Count;
+		float totalResponseCount=0;
 		
 		if(type == GameManager.SessionType.Spatial){
-			int totalResponseCount=0;
+			totalResponseCount=0;
 			
 			foreach(SpatialEvent e in gm.Practice){
 				foreach(Response r in e.Responses ){
@@ -1785,9 +1790,9 @@ public class CsvManager {
 		float responseRate = 0;
 		responseCount = 0;
 		numberOfEarlyPresses=0;
+		totalResponseCount=0;
 		
 		if(type == GameManager.SessionType.Spatial){
-			int totalResponseCount=0;
 			
 			foreach(SpatialEvent e in gm.Events){
 				foreach(Response r in e.Responses ){
@@ -1809,6 +1814,8 @@ public class CsvManager {
 			if(practicePassed && (responseCount/gm.Events.Count)>.7f && (numberOfEarlyPresses/gm.Events.Count)<.1f)	criterion = 1;
 		}
 		else if (type == GameManager.SessionType.Inhibition){
+			
+			totalResponseCount = gm.Events.Count;
 			foreach(InhibitionEvent e in gm.Events){
 				if(e.Response != null){
 					responseCount++;
@@ -1833,11 +1840,14 @@ public class CsvManager {
 						responseCount++;
 					}
 				}
+				
+				totalResponseCount += e.NumLittleStars;
 			}
 			
 			if(practicePassed && (responseCount/numLittleStars)>.7f)	criterion = 1;
 		}
 		else if (type == GameManager.SessionType.Implicit){
+			totalResponseCount = gm.Events.Count;
 			foreach(ImplicitEvent e in gm.Events){
 				if(e.Response!= null){
 					responseCount++;
@@ -1853,6 +1863,8 @@ public class CsvManager {
 		}
 		else if (type == GameManager.SessionType.Stopping){
 			float correct=0;
+			
+			totalResponseCount = gm.Events.Count;
 			
 			foreach(StoppingEvent e in gm.Events){
 				if(e.Response!= null){
@@ -1885,23 +1897,85 @@ public class CsvManager {
 				}
 			}
 			
+			totalResponseCount = responseCount;
+			
 			if(practicePassed && (numberOfEarlyPresses/gm.Events.Count)<.1f) criterion = 1;
 		}
+		//7,1,4,1.444416,0,13, 13
 		
-		responseRate = responseRate/responseCount;
+		criterion = 1;
+		responseRate = 1.444416f;
+		responseCount = 13;
+		totalResponseCount = 13;
+		
+		//responseRate = responseRate/responseCount;
 		
 		newLine+= criterion + "," + practiceCount + ",";
 		
 		if(type == GameManager.SessionType.Star)
-			newLine += ".,.";
+			newLine += ".,.,";
 		else
-			newLine += responseRate + "," + numberOfEarlyPresses;
+			newLine += responseRate + "," + numberOfEarlyPresses +",";
 		
-		for(int i =1;i<lines.Length;i++){
+		newLine += responseCount+", " + totalResponseCount;
+		
+		bool acrossAll=true;
+					
+		float totalResponse=0;
+		float totalMaxResponse=0;
+		float totalEarlyResponse=0;
+		
+		practicePassed = true;
+		
+		for(int i =2;i<lines.Length;i++){
 			if(lines[i].StartsWith(taskNum.ToString())){
 				lines[i] = newLine;
-				break;
 			}
+			else if(acrossAll){
+				int count = 0;
+				
+				foreach(char c in lines[i]){
+					if(c=='.') count++;
+				}
+				
+				if(count==5) acrossAll = false;
+			}
+			
+			if(acrossAll){
+				
+				string line = lines[i].Replace(" " ,"");
+				
+				string[] values = line.Split(',');
+				
+				float tR = -1;
+				float tMR = -1;
+				float tER = -1;
+				
+				if(values[1] =="0") practicePassed = false;
+				
+				if(!float.TryParse(values[4],out tER)){
+					if(values[4]==".") tER = 0; 
+					else acrossAll = false;
+				}
+				if(!float.TryParse(values[5],out tR)) acrossAll = false;
+				if(!float.TryParse(values[6],out tMR)) acrossAll = false;
+				
+				if(acrossAll){
+					totalMaxResponse += tMR;
+					totalEarlyResponse += tER;
+					totalResponse += tR;
+				}
+			}	
+		}
+		
+		if(acrossAll){
+			
+			if(practicePassed && (totalResponse/totalMaxResponse)>.7f && (totalEarlyResponse/totalResponse)<.1f)	criterion = 1;
+			else criterion = 0;
+			
+			newLine = "0," + criterion + ",.,.,.,.,.";
+			
+			lines[1] = newLine;
 		}
 		
 		System.IO.File.WriteAllLines(criterionPath,lines);

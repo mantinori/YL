@@ -127,11 +127,17 @@ public class MenuController : MonoBehaviour {
 		}
 		
 		//If the player has completed all the tasks, change the "abort" button to the "done" button
-		if(latestTask==6){
+		if(latestTask==7){
 			abortButton.transform.GetComponentInChildren<UISlicedSprite>().color = Color.green;
-			abortButton.transform.GetComponentInChildren<UILabel>().text = "DONE";
-			abortButton.transform.localScale = new Vector3(1.5f,1.5f,1);
-			abortButton.transform.localPosition = new Vector3(-250,-310,0);
+			if(language == "spanish"){
+				abortButton.transform.GetComponentInChildren<UILabel>().text ="Terminar";
+				((BoxCollider)abortButton.collider).size = new Vector3(165,40,0);
+				abortButton.GetComponentInChildren<UISlicedSprite>().transform.localScale = new Vector3(150,35,1);
+			}
+			else
+				abortButton.transform.GetComponentInChildren<UILabel>().text = "Done";
+			abortButton.transform.localScale = new Vector3(1f,1f,1);
+			//abortButton.transform.localPosition = new Vector3(-250,-310,0);
 		}
 	}
 	
