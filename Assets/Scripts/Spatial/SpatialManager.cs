@@ -434,6 +434,8 @@ public class SpatialManager : GameManager {
 			}
 		}
 		
+		gameOver = true;
+		
 		//Writeout the log file
 		csv.WriteOut(true);
 		
@@ -478,21 +480,23 @@ public class SpatialManager : GameManager {
 			
 			//If the game state is either Probe or delay
 			if(state == GameState.Probe || state == GameState.Delay){
-
+				
+				Vector2 fixedPos = touchPos;
+				
 				//Inverse the y
-				touchPos.y = Screen.height - touchPos.y;
+				fixedPos.y = Screen.height - fixedPos.y;
 						
 				float time = Time.time - startTime;
 				
 				//Good Response
 				if(state == GameState.Probe){
 					
-					Response r = new Response(sType,time,new Vector2(touchPos.x,touchPos.y),0);	
+					Response r = new Response(sType,time,new Vector2(fixedPos.x,fixedPos.y),0);	
 					
 					Vector2 screenPos = Vector2.zero;
 					
-					screenPos.x = ((touchPos.x/Screen.width) * 53) - 26.5f;
-					screenPos.y = ((touchPos.y/Screen.height) * -30) +15;
+					screenPos.x = ((fixedPos.x/Screen.width) * 53) - 26.5f;
+					screenPos.y = ((fixedPos.y/Screen.height) * -30) +15;
 					
 					//Start fading circle
 					StartCoroutine(spot.fadeFinger(screenPos, r.DotPressed));
@@ -501,7 +505,7 @@ public class SpatialManager : GameManager {
 				}
 				//Bad Response, too early
 				else{
-					Response r = new Response(sType,time,new Vector2(touchPos.x,touchPos.y),1);
+					Response r = new Response(sType,time,new Vector2(fixedPos.x,fixedPos.y),1);
 					
 					CurrentEvent.AddResponse(r, false);
 				}

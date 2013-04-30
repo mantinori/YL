@@ -113,9 +113,13 @@ public class GameManager : MonoBehaviour {
 	
 	private float activeSlope;
 	
+	protected bool gameOver;
+	
 	// Use this for initialization
 	protected void Setup (SessionType s) {
 		main = this;
+		
+		gameOver = false;
 		
 		dragPoints = new List<Vector3>();
 		
@@ -206,14 +210,14 @@ public class GameManager : MonoBehaviour {
 					
 		yield return new WaitForSeconds(duration);
 		
-		if(title != "Session Over") screen.enabled = false;
+		if(t != "Session Over") screen.enabled = false;
 		
 		text.renderer.enabled = false;
 	}
 	
 	//Used to read in
 	void LateUpdate () {	
-		if(touching){
+		if(!gameOver && touching){
 			if(dragPoints.Count == 0){
 				dragPoints.Add(touchPos);
 			}
@@ -285,7 +289,6 @@ public class GameManager : MonoBehaviour {
 				}
 				
 				//For debuging, will show swipe in scene screen
-				/*
 				Color c = Color.white;
 				for(int i=0;i<dragPoints.Count;i++){
 					if(i==1) c = Color.red;
@@ -301,7 +304,7 @@ public class GameManager : MonoBehaviour {
 										new Vector3(((dragPoints[i+1].x/Screen.width)*53 - 26.5f), 8,((dragPoints[i+1].y/Screen.height)*30 - 15f)), c);
 					}
 				}
-				*/
+				
 			}
 		}
 		//If the player isn't touching the screen, reset the dragPoints

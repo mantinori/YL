@@ -765,6 +765,8 @@ public class StarManager : GameManager {
 			}
 		}
 		
+		gameOver = true;
+		
 		//Write out the Log file
 		csv.WriteOut(true);
 		
@@ -817,7 +819,10 @@ public class StarManager : GameManager {
 					}
 					//Otherwise
 					else{
-						touchPos.y = Screen.height - touchPos.y;
+						
+						Vector2 fixedPos = touchPos;
+						
+						fixedPos.y = Screen.height - fixedPos.y;
 					
 						float responseTime = Time.time - startTime;
 						
@@ -833,7 +838,7 @@ public class StarManager : GameManager {
 							//The star has not been touched yet
 							if(!hit.collider.renderer.material.name.Contains("Touched")){
 						
-								r = new Response(sType, responseTime,new Vector2(touchPos.x,touchPos.y),0);
+								r = new Response(sType, responseTime,new Vector2(fixedPos.x,fixedPos.y),0);
 							
 								hit.collider.renderer.material = materials[0];
 								
@@ -841,12 +846,12 @@ public class StarManager : GameManager {
 							}
 							//The star has been touched
 							else{
-								r = new Response(sType, responseTime,new Vector2(touchPos.x,touchPos.y),2);
+								r = new Response(sType, responseTime,new Vector2(fixedPos.x,fixedPos.y),2);
 							}
 						}
 						//Any other object
 						else{
-							r = new Response(sType, responseTime,new Vector2(touchPos.x,touchPos.y),1);
+							r = new Response(sType, responseTime,new Vector2(fixedPos.x,fixedPos.y),1);
 						}
 					
 						//Add the response

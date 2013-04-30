@@ -348,6 +348,8 @@ public class ImplicitManager : GameManager {
 			}
 		}
 		
+		gameOver = true;
+		
 		//Writeout 
 		csv.WriteOut(true);
 		
@@ -399,8 +401,10 @@ public class ImplicitManager : GameManager {
 					//Hit the Stimulus
 					if(hit.collider.name == "Stimulus"){
 				
+						Vector2 fixedPos = touchPos;
+						
 						//Reverts the y orientation
-						touchPos.y = Screen.height - touchPos.y;
+						fixedPos.y = Screen.height - fixedPos.y;
 						
 						//Calculate the response time
 						float time = Time.time - startTime;
@@ -414,12 +418,12 @@ public class ImplicitManager : GameManager {
 							Vector2 targPos = new Vector2(x,y);
 							
 							//Create the respones
-							Response r = new Response(targPos, time,new Vector2(touchPos.x,touchPos.y));
+							Response r = new Response(targPos, time,new Vector2(fixedPos.x,fixedPos.y));
 									
 							Vector2 screenPos = Vector2.zero;
 							
-							screenPos.x = ((touchPos.x/Screen.width) * 53) - 26.5f;
-							screenPos.y = ((touchPos.y/Screen.height) * -30) +15;
+							screenPos.x = ((fixedPos.x/Screen.width) * 53) - 26.5f;
+							screenPos.y = ((fixedPos.y/Screen.height) * -30) +15;
 							
 							//Start the fade spot
 							StartCoroutine(spot.fadeFinger(screenPos, -1));

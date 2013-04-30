@@ -551,6 +551,8 @@ public class AssociateManager : GameManager {
 			}
 		}
 		
+		gameOver = true;
+		
 		//Writeout 
 		csv.WriteOut(true);
 		
@@ -606,14 +608,16 @@ public class AssociateManager : GameManager {
 						if(getMatchingNum(CurrentEvent.TargetImage) == stimNum)
 							goodResponse = true;
 						
-						touchPos.y = Screen.height - touchPos.y;
+						Vector2 fixedPos = touchPos;
+						
+						fixedPos.y = Screen.height - fixedPos.y;
 					
 						float responseTime = Time.time - startTime;
 						
 						Vector2 screenPos = Vector2.zero;
 				
-						screenPos.x = ((touchPos.x/Screen.width) * 53) - 26.5f;
-						screenPos.y = ((touchPos.y/Screen.height) * -30) +15;
+						screenPos.x = ((fixedPos.x/Screen.width) * 53) - 26.5f;
+						screenPos.y = ((fixedPos.y/Screen.height) * -30) +15;
 						
 						//Convert the goodResponse to an int
 						int i = goodResponse ? 1 : 0;
@@ -622,7 +626,7 @@ public class AssociateManager : GameManager {
 						StartCoroutine(spot.fadeFinger(screenPos, i));
 						
 						Response r;
-						r = new Response(stimNum, responseTime,new Vector2(touchPos.x,touchPos.y));
+						r = new Response(stimNum, responseTime,new Vector2(fixedPos.x,fixedPos.y));
 						
 						//Add the response
 						CurrentEvent.Responses.Add(r);
