@@ -151,7 +151,7 @@ public class CsvManager {
 	//Base method used to start the read in process, returns true if successful
 	public List<EventStats> ReadInSession()
 	{
-		int tNum = 5;//PlayerPrefs.GetInt("-currentTask");
+		int tNum = PlayerPrefs.GetInt("-currentTask");
 		
 		//Check to see if the task number is in the correct range of 1-7
 		if(tNum<1 ||tNum>7){
@@ -1702,28 +1702,21 @@ public class CsvManager {
 		float responseCount = 0;
 		float numberOfEarlyPresses=0;
 		int practiceCount=gm.Practice.Count;
-		float totalResponseCount=0;
 		
 		if(type == GameManager.SessionType.Spatial){
-			totalResponseCount=0;
 			
 			foreach(SpatialEvent e in gm.Practice){
-				foreach(Response r in e.Responses ){
+				if(e.Responses.Count>=1){
 					responseCount++;
 				
-					if(r.ResponseTime<.2f){
-						numberOfEarlyPresses++;
+					foreach(Response r in e.Responses ){
+						if(r.ResponseTime<.2f)
+							numberOfEarlyPresses++;
 					}
 				}
-				
-				totalResponseCount += e.Dots.Count;
-				
-				numberOfEarlyPresses += e.BadResponses.Count;
-				
-				responseCount += e.BadResponses.Count;
 			}
 		
-			if((responseCount/totalResponseCount)>.7f && (numberOfEarlyPresses/totalResponseCount)<.1f) practicePassed = true;
+			if((responseCount/practiceCount)>.7f && (numberOfEarlyPresses/responseCount)<.1f) practicePassed = true;
 		}
 		else if (type == GameManager.SessionType.Inhibition){
 			foreach(InhibitionEvent e in gm.Practice){
@@ -1736,7 +1729,7 @@ public class CsvManager {
 				}
 			}
 		
-			if((responseCount/gm.Practice.Count)>.7f && (numberOfEarlyPresses/gm.Practice.Count)<.1f) practicePassed = true;
+			if((responseCount/practiceCount)>.7f && (numberOfEarlyPresses/responseCount)<.1f) practicePassed = true;
 		}
 		else if (type == GameManager.SessionType.Star){
 			practiceCount=0;
@@ -1756,38 +1749,32 @@ public class CsvManager {
 				if(e.Response!= null){
 					responseCount++;
 				
-					if(e.Response.ResponseTime<.2f){
-						numberOfEarlyPresses++;
-					}
+					if(e.Response.ResponseTime<.2f)	numberOfEarlyPresses++;
 				}
 			}
 		
-			if((responseCount/gm.Practice.Count)>.7f && (numberOfEarlyPresses/gm.Practice.Count)<.1f) practicePassed = true;
+			if((responseCount/practiceCount)>.7f && (numberOfEarlyPresses/responseCount)<.1f) practicePassed = true;
 		}
 		else if (type == GameManager.SessionType.Stopping){
+			float go = 0;
 			foreach(StoppingEvent e in gm.Practice){
+				if(e.Go) go++;
+				
 				if(e.Response!= null){
 					responseCount++;
 				
-					if(e.Response.ResponseTime<.2f){
-						numberOfEarlyPresses++;
-					}
+					if(e.Response.ResponseTime<.2f)	numberOfEarlyPresses++;
 				}
 			}
 		
-			if((responseCount/gm.Practice.Count)>.7f && (numberOfEarlyPresses/gm.Practice.Count)<.1f) practicePassed = true;
+			if((responseCount/go)>.7f && (numberOfEarlyPresses/responseCount)<.1f) practicePassed = true;
 		}
 		else if (type == GameManager.SessionType.Associate){
 			
-			float numResponses=0;
+			float numResponses=gm.Practice.Count;
+			
 			foreach(AssociateEvent e in gm.Practice){
-				foreach(Response r in e.Responses){
-					numResponses++;
-					
-					if(r.ResponseTime<.2f){
-						numberOfEarlyPresses++;
-					}
-				}
+				if(e.Responses[e.Responses.Count-1].ResponseTime<.2f || e.Responses[e.Responses.Count-1].ResponseTime>8f) numberOfEarlyPresses++;	
 			}
 		
 			if((numberOfEarlyPresses/numResponses)<.1f) practicePassed = true;
@@ -1795,149 +1782,124 @@ public class CsvManager {
 		
 		int criterion = 0;
 		
-		float responseRate = 0;
+		float correctResponse =0;
 		responseCount = 0;
 		numberOfEarlyPresses=0;
-		totalResponseCount=0;
+		float totalResponseCount = gm.Events.Count;
 		
 		if(type == GameManager.SessionType.Spatial){
 			
 			foreach(SpatialEvent e in gm.Events){
-				foreach(Response r in e.Responses ){
+				if(e.Responses.Count>=1){
 					responseCount++;
-					responseRate+= r.ResponseTime;
+					
+					if(e.respondedCorrectly()) correctResponse++;
 				
-					if(r.ResponseTime<.2f){
-						numberOfEarlyPresses++;
+					foreach(Response r in e.Responses ){
+						if(r.ResponseTime<.2f)
+							numberOfEarlyPresses++;
 					}
 				}
-				
-				totalResponseCount += e.Dots.Count;
-				
-				numberOfEarlyPresses += e.BadResponses.Count;
-				
-				responseCount += e.BadResponses.Count;
 			}
 			
-			if(practicePassed && (responseCount/gm.Events.Count)>.7f && (numberOfEarlyPresses/gm.Events.Count)<.1f)	criterion = 1;
+			if(practicePassed && (responseCount/gm.Events.Count)>.7f && (numberOfEarlyPresses/responseCount)<.1f)	criterion = 1;
 		}
 		else if (type == GameManager.SessionType.Inhibition){
-			
-			totalResponseCount = gm.Events.Count;
 			foreach(InhibitionEvent e in gm.Events){
 				if(e.Response != null){
 					responseCount++;
-					responseRate+= e.Response.ResponseTime;
+					
+					if(e.respondedCorrectly()) correctResponse++;
 				
-					if(e.Response.ResponseTime<.2f){
-						numberOfEarlyPresses++;
-					}
+					if(e.Response.ResponseTime<.2f)	numberOfEarlyPresses++;
 				}
 			}
 			
-			if(practicePassed && (responseCount/gm.Events.Count)>.7f && (numberOfEarlyPresses/gm.Events.Count)<.1f)	criterion = 1;
+			if(practicePassed && (responseCount/gm.Events.Count)>.7f && (numberOfEarlyPresses/responseCount)<.1f)	criterion = 1;
 		}
 		else if (type == GameManager.SessionType.Star){
 			int numLittleStars=0;
 			
 			foreach(StarEvent e in gm.Events){
 				numLittleStars+= e.NumLittleStars;
-				foreach(Response r in e.Responses){
-					if(r.ResponseType ==0){
-						responseRate += r.ResponseTime;
-						responseCount++;
+				for(int i = 0;i<e.Responses.Count;i++){
+					
+					float responseTime=e.Responses[i].ResponseTime;
+					if(i>0) responseTime = e.Responses[i].ResponseTime - e.Responses[i-1].ResponseTime;
+					if(responseTime<.2f || responseTime>8) numberOfEarlyPresses++;
+					
+					responseCount++;
+					if(e.Responses[i].ResponseType ==0){
+						correctResponse++;
 					}
 				}
 				
 				totalResponseCount += e.NumLittleStars;
 			}
 			
-			if(practicePassed && (responseCount/numLittleStars)>.7f)	criterion = 1;
+			if(practicePassed && correctResponse>10 && (numberOfEarlyPresses/responseCount)<.1f)	criterion = 1;
 		}
 		else if (type == GameManager.SessionType.Implicit){
-			totalResponseCount = gm.Events.Count;
 			foreach(ImplicitEvent e in gm.Events){
 				if(e.Response!= null){
 					responseCount++;
-					responseRate+= e.Response.ResponseTime;
+					
+					if(e.respondedCorrectly()) correctResponse++;
 				
-					if(e.Response.ResponseTime<.2f){
-						numberOfEarlyPresses++;
-					}
+					if(e.Response.ResponseTime<.2f) numberOfEarlyPresses++;
 				}
 			}
 		
-			if(practicePassed && (responseCount/gm.Events.Count)>.7f && (numberOfEarlyPresses/gm.Events.Count)<.1f)	criterion = 1;
+			if(practicePassed && (responseCount/gm.Events.Count)>.7f && (numberOfEarlyPresses/responseCount)<.1f)	criterion = 1;
 		}
 		else if (type == GameManager.SessionType.Stopping){
-			float correct=0;
-			
-			totalResponseCount = gm.Events.Count;
+			totalResponseCount = 0;
 			
 			foreach(StoppingEvent e in gm.Events){
-				if(e.Response!= null){
-					
-					if(e.Go) correct++;
-					
-					responseCount++;
-					responseRate+= e.Response.ResponseTime;
 				
-					if(e.Response.ResponseTime<.2f){
-						numberOfEarlyPresses++;
-					}
-				}
-				else{
-					if(!e.Go) correct++;
-				}
+				if(e.Go)totalResponseCount++;
+
+				if(e.Response!= null){
+						responseCount++;
+						
+					if(e.respondedCorrectly()) correctResponse++;
+					if(e.Response.ResponseTime<.2f) numberOfEarlyPresses++;
+				}	
 			}
 			
-			if(practicePassed && (correct/gm.Events.Count)>.7f && (numberOfEarlyPresses/gm.Events.Count)<.1f)	criterion = 1;
+			if(practicePassed && (responseCount/totalResponseCount)>.7f && (numberOfEarlyPresses/responseCount)<.1f)	criterion = 1;
+			totalResponseCount = gm.Events.Count;
 		}
 		else if (type == GameManager.SessionType.Associate){
 			
-			foreach(AssociateEvent e in gm.Events){
-				foreach(Response r in e.Responses){
-					responseRate+= r.ResponseTime;
-					responseCount++;
-					if(r.ResponseTime<.2f){
-						numberOfEarlyPresses++;
-					}
-				}
-			}
+			correctResponse = gm.Events.Count;
+			responseCount = correctResponse;
 			
-			totalResponseCount = responseCount;
+			foreach(AssociateEvent e in gm.Events){
+				if(e.Responses[e.Responses.Count-1].ResponseTime<.2f || e.Responses[e.Responses.Count-1].ResponseTime>8f) numberOfEarlyPresses++;	
+			}
 			
 			if(practicePassed && (numberOfEarlyPresses/gm.Events.Count)<.1f) criterion = 1;
 		}
-		//7,1,4,1.444416,0,13, 13
 		
-		criterion = 1;
-		responseRate = 1.444416f;
-		responseCount = 13;
-		totalResponseCount = 13;
+		float responseAccuracy = correctResponse/totalResponseCount;
+		float correctAccuracy = correctResponse/responseCount;
 		
-		//responseRate = responseRate/responseCount;
-		
-		newLine+= criterion + "," + practiceCount + ",";
-		
-		if(type == GameManager.SessionType.Star)
-			newLine += ".,.,";
-		else
-			newLine += responseRate + "," + numberOfEarlyPresses +",";
-		
-		newLine += responseCount+", " + totalResponseCount;
+		newLine+= criterion + "," + practiceCount + "," + totalResponseCount +"," + responseAccuracy + "," + correctAccuracy+"," + numberOfEarlyPresses;
 		
 		bool acrossAll=true;
 					
-		float totalResponse=0;
-		float totalMaxResponse=0;
+		float totalPracCount=0;
+		float totalEventCount=0;
+		float totalRightperPresented=0;
+		float totalRightperResponse=0;
 		float totalEarlyResponse=0;
 		
 		practicePassed = true;
 		
 		for(int i =2;i<lines.Length;i++){
 			if(lines[i].StartsWith(taskNum.ToString())){
-				lines[i] = newLine;
+				//lines[i] = newLine;
 			}
 			else if(acrossAll){
 				int count = 0;
@@ -1955,33 +1917,39 @@ public class CsvManager {
 				
 				string[] values = line.Split(',');
 				
-				float tR = -1;
-				float tMR = -1;
+				float tPC = -1;
+				float tEC = -1;
+				float tRP = -1;
+				float tRR = -1;
 				float tER = -1;
 				
 				if(values[1] =="0") practicePassed = false;
 				
-				if(!float.TryParse(values[4],out tER)){
-					if(values[4]==".") tER = 0; 
-					else acrossAll = false;
-				}
-				if(!float.TryParse(values[5],out tR)) acrossAll = false;
-				if(!float.TryParse(values[6],out tMR)) acrossAll = false;
+				if(!float.TryParse(values[2],out tPC)) acrossAll = false;
+				if(!float.TryParse(values[3],out tEC)) acrossAll = false;
+				if(!float.TryParse(values[4],out tRP)) acrossAll = false;
+				if(!float.TryParse(values[5],out tRR)) acrossAll = false;
+				if(!float.TryParse(values[6],out tER)) acrossAll = false;
 				
 				if(acrossAll){
-					totalMaxResponse += tMR;
+					totalPracCount += tPC;
+					totalEventCount += tEC;
+					totalRightperPresented += (tRP * tEC);
+					totalRightperResponse += ((tRP * tEC) * tRR);
 					totalEarlyResponse += tER;
-					totalResponse += tR;
 				}
 			}	
 		}
 		
 		if(acrossAll){
-			
-			if(practicePassed && (totalResponse/totalMaxResponse)>.7f && (totalEarlyResponse/totalResponse)<.1f)	criterion = 1;
+			if(practicePassed && (totalRightperPresented /totalEventCount)>.7f && (totalEarlyResponse/totalRightperPresented)<.1f)	criterion = 1;
 			else criterion = 0;
 			
-			newLine = "0," + criterion + ",.,.,.,.,.";
+			float totalRpR = totalRightperResponse/totalRightperPresented;
+			
+			float totalRpP = totalRightperResponse/totalEventCount;
+			
+			newLine= "0," +criterion + "," + totalPracCount + "," + totalEventCount +"," + totalRpP + "," + totalRpR +"," + totalEarlyResponse;
 			
 			lines[1] = newLine;
 		}
