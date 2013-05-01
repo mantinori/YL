@@ -145,7 +145,7 @@ public class StarManager : GameManager {
 	
 	//Generate the objects to fill the screen
 	private void generateObjects(int maxLS, int maxBS, int maxD, int maxT){
-				
+		
 		//Load in the Prefab
 		GameObject loadedObject = (GameObject)Resources.Load("Prefabs/Star/starItem");
 

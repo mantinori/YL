@@ -151,7 +151,7 @@ public class CsvManager {
 	//Base method used to start the read in process, returns true if successful
 	public List<EventStats> ReadInSession()
 	{
-		int tNum = PlayerPrefs.GetInt("-currentTask");
+		int tNum = 5;//PlayerPrefs.GetInt("-currentTask");
 		
 		//Check to see if the task number is in the correct range of 1-7
 		if(tNum<1 ||tNum>7){
@@ -530,6 +530,11 @@ public class CsvManager {
 					
 					block = b;
 					sE.Objects = objs;
+					
+					if(type == 0) lS--;
+					else if(type ==1) bS--;
+					else if(type ==2) d--;
+					else if(type ==3) t--;
 			
 					sE.NumBigStars = bS;
 					sE.NumLittleStars=lS;
@@ -542,6 +547,10 @@ public class CsvManager {
 					bS=0;
 					d=0;
 					t=0;
+					if(type == 0) lS++;
+					else if(type ==1) bS++;
+					else if(type ==2) d++;
+					else if(type ==3) t++;
 			
 					objs = new List<StarObject>();
 					
@@ -568,7 +577,6 @@ public class CsvManager {
 					
 			starEvents.Add(sE);
 		}
-	
 		
 		return starEvents;
 	}
