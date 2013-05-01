@@ -378,4 +378,24 @@ public class MenuController : MonoBehaviour {
 	private void quitbuttonPressed(GameObject o){
 		Application.Quit();
 	}
+	
+	//Check for escape button
+	void LateUpdate () {	
+		if(Input.GetKeyDown(KeyCode.Escape)){
+			if(Screen.fullScreen){
+				int width= Screen.currentResolution.width-200;
+				int height = Screen.currentResolution.height;
+		
+				height = Mathf.RoundToInt(width/1.77777778f);
+		
+				Screen.SetResolution(width,height,false);
+			}
+			else{
+				int width= 1366;
+				int height = 768;
+				
+				Screen.SetResolution(width,height,true);
+			}
+		}
+	}
 }

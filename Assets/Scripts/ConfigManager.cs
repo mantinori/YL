@@ -53,14 +53,7 @@ public class ConfigManager : MonoBehaviour {
 	void Start () {
 		
 		//Resize the window to fit the monitor
-		/*
-		int width= Screen.currentResolution.width-200;
-		int height = Screen.currentResolution.height;
-		
-		height = Mathf.RoundToInt(width/1.77777778f);
-		
-		Screen.SetResolution(width,height,false);
-		*/
+		if(!Screen.fullScreen) Screen.SetResolution(1366,768,true);
 		
 		//Have the static xmlmanager check to make sure the folders are properly set up
 		if(!CsvManager.CheckFolders()){
@@ -544,5 +537,24 @@ public class ConfigManager : MonoBehaviour {
 			}
 		}
 		else if(!players.isOpen) setDDL = false;
+		
+		
+		//Check for escape button
+		if(Input.GetKeyDown(KeyCode.Escape)){
+			if(Screen.fullScreen){
+				int width= Screen.currentResolution.width-200;
+				int height = Screen.currentResolution.height;
+		
+				height = Mathf.RoundToInt(width/1.77777778f);
+		
+				Screen.SetResolution(width,height,false);
+			}
+			else{
+				int width= 1366;
+				int height = 768;
+				
+				Screen.SetResolution(width,height,true);
+			}
+		}
 	}
 }

@@ -217,6 +217,23 @@ public class GameManager : MonoBehaviour {
 	
 	//Used to read in
 	void LateUpdate () {	
+		if(Input.GetKeyDown(KeyCode.Escape)){
+			if(Screen.fullScreen){
+				int width= Screen.currentResolution.width-200;
+				int height = Screen.currentResolution.height;
+		
+				height = Mathf.RoundToInt(width/1.77777778f);
+				
+				Screen.SetResolution(width,height,false);
+			}
+			else{
+				int width= 1366;
+				int height = 768;
+				
+				Screen.SetResolution(width,height,true);
+			}
+		}
+		
 		if(!gameOver && touching){
 			if(dragPoints.Count == 0){
 				dragPoints.Add(touchPos);
