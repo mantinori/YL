@@ -15,6 +15,12 @@ public class ImplicitManager : GameManager {
 		set{stimPositions = value;}
 	}
 	
+	//The ordered list of stimuli that will appear in the task
+	private List<ImplicitEvent> ordered;
+	
+	private List<ImplicitEvent> random;
+	
+	
 	//Returns the current Event for Implicit games
 	public ImplicitEvent CurrentEvent{
 		get{
@@ -63,14 +69,25 @@ public class ImplicitManager : GameManager {
 		
 		int i=0;
 		
-		//Generate events
-		for(i=0;i<210;i++){
+		ordered = new List<ImplicitEvent>();
+		
+		//Generate ordered list
+		for(i=0;i<7;i++){
+			ImplicitEvent e=null;
+			
+			e = new ImplicitEvent((int)((i%4f) + 1),2);
+			
+			ordered.Add(e);
+		}
+		random = new List<ImplicitEvent>();
+		//Generate random events
+		for(i=0;i<105;i++){
 			
 			ImplicitEvent e=null;
 			
 			e = new ImplicitEvent((int)((i%4f) + 1),(int)(Mathf.FloorToInt(i/35f) + 1));
 			
-			events.Add(e);
+			random.Add(e);
 		}	
 	}
 	
@@ -78,87 +95,118 @@ public class ImplicitManager : GameManager {
 	protected override void randomizeEvents(){
 		
 		System.Random rand = new System.Random();
-		
-		int s = 0;
-		
+
 		int i = 0;
 		
-		//Apply a base randomization
-		while(i<events.Count){
+		//Add base randomiztion to ordered list
+		for(i=0;i<ordered.Count;i++){
+			ImplicitEvent originalStats = ordered[i];
 			
-			for(i=s; i<s+35;i++){
-				if(i>=events.Count) break;
+			int spotToMove = rand.Next(i,ordered.Count);
+					
+			ordered[i] = ordered[spotToMove];
+			
+			ordered[spotToMove] = originalStats;
+		}
+		
+		int s =0;
+		
+		for(i = 0; i< 28;i++){
+			ImplicitEvent iE = new ImplicitEvent(ordered[s].Dot, 1);
+			
+			ordered.Add(iE);
 				
-				ImplicitEvent originalStats = (ImplicitEvent)events[i];
-			
-				int spotToMove = rand.Next(i,s+35);
-			
-				//If they share the same block number
-				if(((ImplicitEvent)events[i]).BlockNum == ((ImplicitEvent)events[spotToMove]).BlockNum){
+			s++;
 				
-					events[i] = events[spotToMove];
+			if(s>=7) s=0;
+		}
+		
+		for(i=0;i<random.Count;i++){
+			ImplicitEvent originalStats = random[i];
 			
-					events[spotToMove] = originalStats;
-				}	
-			}
-			s+=35;
+			int spotToMove = rand.Next(i,random.Count);
+					
+			random[i] = random[spotToMove];
+			
+			random[spotToMove] = originalStats;
 		}
 		
 		bool ok=true;
 		bool eventGood;
 			
-		s = 0;
-		i = 0;
+		int cycleCount = 0;
 		
-		//Loop to make sure there are no strings of 4 similiar dot colors
-		while(i<events.Count){
+		cycleCount = 0;
+		ok=true;
+		
+		//Randomize the random
+		do{	
+			ok=true;
 			
-			int cycleCount = 0;
+			for(i=2; i <random.Count;i++){
+
+				eventGood = true;
+				
+				if(random[i].Dot == random[i-1].Dot
+					&& random[i].Dot == random[i-2].Dot)
+					eventGood=false;
+				
+				//If there are three in a row, find another element that has a different color and swap the two
+				if(!eventGood){
+					ok = false;
+					
+					int start = i+1;
+					if(start>=random.Count) start = 0;
+					
+					for(int j =i+1;j<random.Count;j++){
+						eventGood=true;
+						if(random[j].Dot == random[i].Dot)
+							eventGood=false;
+						
+						if(eventGood){
+							
+							ImplicitEvent originalStats = random[i];
+				
+							random[i] = random[j];
 			
-			do{	
-				ok=true;
-				
-				for(i=s+3; i <s+35;i++){
-	
-					eventGood = true;
-					
-					if(((ImplicitEvent)events[i]).Dot == ((ImplicitEvent)events[i-1]).Dot
-						&& ((ImplicitEvent)events[i]).Dot == ((ImplicitEvent)events[i-2]).Dot
-						&& ((ImplicitEvent)events[i]).Dot  == ((ImplicitEvent)events[i-3]).Dot)
-						eventGood=false;
-					
-					//If there are three in a row, find another element that has a different color and swap the two
-					if(!eventGood){
-						ok = false;
+							random[j] = originalStats;
 						
-						int start = i+1;
-						if(start>=s+35) start = s;
-						
-						for(int j =i+1;j<s+35;j++){
-							eventGood=true;
-							if(((ImplicitEvent)events[j]).Dot == ((ImplicitEvent)events[i]).Dot ||((ImplicitEvent)events[i]).BlockNum != ((ImplicitEvent)events[j]).BlockNum)
-								eventGood=false;
-							
-							if(eventGood){
-								
-								ImplicitEvent originalStats = (ImplicitEvent)events[i];
-					
-								events[i] = events[j];
-				
-								events[j] = originalStats;
-							
-								break;
-							}
-							else if(j>=s+35) j=0;
+							break;
 						}
+						else if(j>=random.Count) j=0;
 					}
 				}
-				cycleCount++;
-				//Attempt 5 loops to fix any bad instances, after 5th proceed anyway
-				if(cycleCount>5)ok=true;
-			}while(!ok);
-			
-			s+=35;
+			}
+			cycleCount++;
+			//Attempt 5 loops to fix any bad instances, after 5th proceed anyway
+			if(cycleCount>5)ok=true;
+		}while(!ok);
+		
+		events = new List<EventStats>();
+		
+		for(i = 0; i <35; i++){
+			random[i].BlockNum = 1;
+			events.Add(random[i]);
+		}
+		for(i = 0; i <ordered.Count; i++){
+			ImplicitEvent iE = new ImplicitEvent(ordered[i].Dot, 2);
+			events.Add(iE);
+		}
+		for(i = 0; i <ordered.Count; i++){
+			ImplicitEvent iE = new ImplicitEvent(ordered[i].Dot, 3);
+			events.Add(iE);
+		}
+		for(i = 35; i <70; i++){
+			random[i].BlockNum = 4;
+			events.Add(random[i]);
+		}
+		for(i = 0; i <ordered.Count; i++){
+			ImplicitEvent iE = new ImplicitEvent(ordered[i].Dot, 5);
+			events.Add(iE);
+		}
+		for(i = 70; i <105; i++){
+			random[i].BlockNum = 6;
+			events.Add(random[i]);
 		}
 	}
 

@@ -15,6 +15,7 @@ public class ImplicitEvent: EventStats{
 	private int blockNum;
 	public int BlockNum{
 		get{return blockNum;}
+		set{blockNum = value;}
 	}
 	
 	//The list of responses that occurred within the probe(correct) period of the trial
