@@ -53,15 +53,17 @@ public class ConfigManager : MonoBehaviour {
 	void Start () {
 		
 		//Resize the window to fit the monitor
+		/*
 		int width= Screen.currentResolution.width-200;
 		int height = Screen.currentResolution.height;
 		
 		height = Mathf.RoundToInt(width/1.77777778f);
 		
 		Screen.SetResolution(width,height,false);
+		*/
 		
 		//Have the static xmlmanager check to make sure the folders are properly set up
-		if(!XmlManager.CheckFolders()){
+		if(!CsvManager.CheckFolders()){
 			//If a folder(s) is missing, exit out of the game
 			NeuroLog.Error("Unable to start program due to missing folder");
 			Application.Quit();
