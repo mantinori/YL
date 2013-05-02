@@ -6,18 +6,28 @@ using System.IO;
 using System.Xml;
 using LumenWorks.Framework.IO.Csv;
 
+
+
 //Config Controller
 public class ConfigManager : MonoBehaviour {
+	
+	//Struct for child info
+	private struct Child{
+		public string ID {get;set;}
+		public string Department {get;set;}
+		public string Province {get;set;}
+		public string District {get;set;}
+	}
 	
 	//The players file name
 	private string playersFile = "players";
 	private bool fileOnDropbox;
 	
 	//Popuplists on the screen
-	public UIPopupList stateSelection;
-	public UIPopupList subDivisionOne;
-	public UIPopupList subDivisionTwo;
-	public UIPopupList players;
+	public UIPopupList departmentSelection;
+	public UIPopupList provinceSelection;
+	public UIPopupList districtSelection;
+	public UIPopupList playerSelection;
 	
 	//Only need the english checkbox
 	public UICheckbox english;
@@ -38,19 +48,18 @@ public class ConfigManager : MonoBehaviour {
 	GameObject ddL;
 	bool setDDL=false;
 	
-	//The XmlDocument
-	private XmlDocument xml;
-	
-	//The final ok
-	private bool finalGo;
-	
 	//If the config was properly saved
 	private bool configSaved=false;
 	
 	private string testName="";
 	
+	//List of child info
+	private List<Child> demographics;
+	
 	// Use this for initialization
 	void Start () {
+		
+		demographics = new List<Child>();
 		
 		//Resize the window to fit the monitor
 		if(!Screen.fullScreen) Screen.SetResolution(1366,768,true);
@@ -69,14 +78,13 @@ public class ConfigManager : MonoBehaviour {
 		
 		bool foundFile = true;
 		
-		finalGo = false;
 		//Hide all the elements on the screen until were sure the files are set up
-		stateSelection.gameObject.SetActive(false);
-		subDivisionOne.gameObject.SetActive(false);
-		subDivisionTwo.gameObject.SetActive(false);
+		departmentSelection.gameObject.SetActive(false);
+		provinceSelection.gameObject.SetActive(false);
+		districtSelection.gameObject.SetActive(false);
 		english.gameObject.SetActive(false);
 		spanish.gameObject.SetActive(false);
-		players.gameObject.SetActive(false);
+		playerSelection.gameObject.SetActive(false);
 		testingCheckbox.gameObject.SetActive(false);
 		
 		testingLabel.enabled = false;
@@ -87,15 +95,13 @@ public class ConfigManager : MonoBehaviour {
 		
 		background.color = Color.black;
 		
-		//Set up the XmlDocument variable
-		xml = new XmlDocument();
-		
+		TextReader reader=null;
 		
 		//Try to load the players file. If it fails, exit out
 		try{
 			//Try on Dropbox
 			Debug.Log("Attempting to read from Dropbox folder");
-			xml.Load(Path.Combine(XmlManager.PlayerSpecificPath, playersFile+".xml"));
+			reader = new StreamReader(Path.Combine(XmlManager.PlayerSpecificPath, playersFile+".csv"));
 		}
 		catch{
 			NeuroLog.Error("Unable to find dropbox player file.");
@@ -103,9 +109,7 @@ public class ConfigManager : MonoBehaviour {
 			try{		
 				TextAsset sessionData = Resources.Load(playersFile) as TextAsset;
 				
-				TextReader reader = new StringReader(sessionData.text);
-			
-				xml.Load(reader);
+				reader = new StringReader(sessionData.text);
 			}
 			catch{
 				NeuroLog.Error("Unable to find local player file");
@@ -116,7 +120,7 @@ public class ConfigManager : MonoBehaviour {
 		
 		//If the program found the file
 		if(foundFile){
-			string p = PlayerPrefs.GetString("-player");
+			string p = PlayerPrefs.GetString("-childID");
 			
 			string testing = PlayerPrefs.GetString("-testing");
 			
@@ -131,41 +135,15 @@ public class ConfigManager : MonoBehaviour {
 				
 				NeuroLog.Log("Using Testing Player");
 			}
-			//Otherwise, first make sure the player hasn't been assigned to a different machine in the meantime
-			else{
-				XmlNode node = xml.SelectSingleNode("/players/"+PlayerPrefs.GetString("-state")+"/"+PlayerPrefs.GetString("-region")+"/"+PlayerPrefs.GetString("-subregion"));
-		
-				foreach(XmlNode x in node.ChildNodes){
-					if(x.Attributes["name"].Value == p){
-						node = x;
-						break;
-					}
-				}
-				
-				//If the player's saved device matches the current machine, we don't need to configure
-				if(node.Attributes["device"].Value == System.Environment.MachineName){
-					needConfig = false;
-					
-					NeuroLog.Log(p+ " set to this device.");
-				}
-				//Otherwise we do
-				else{
-					needConfig = true;
-					
-					PlayerPrefs.DeleteAll();
-					
-					NeuroLog.Error(p+ " set to a different device. Removing him from this device");
-				}
-			}
 			
 			//If the program needs to be configured, make all the GUI elements appear
 			if(needConfig){
 				//Set up the players file
-				if(SetupPlayersXML()){
-					stateSelection.gameObject.SetActive(true);
-					subDivisionOne.gameObject.SetActive(true);
-					subDivisionTwo.gameObject.SetActive(true);
-					players.gameObject.SetActive(true);
+				if(SetupPlayersCSV(reader)){
+					departmentSelection.gameObject.SetActive(true);
+					provinceSelection.gameObject.SetActive(true);
+					districtSelection.gameObject.SetActive(true);
+					playerSelection.gameObject.SetActive(true);
 					
 					testingLabel.enabled = true;
 					testingCheckbox.gameObject.SetActive(true);
@@ -200,18 +178,31 @@ public class ConfigManager : MonoBehaviour {
 	}
 	
 	//Make sure there is at least one sub division
-	public bool SetupPlayersXML()
+	public bool SetupPlayersCSV(TextReader reader)
 	{
-		XmlNode currentNode = (xml.SelectSingleNode("/players"));
-		
-		foreach(XmlNode node in currentNode.ChildNodes){
-			stateSelection.items.Add(node.Name);
+		try{
+			using (CsvReader csv = new CsvReader(reader,true)){
+				while (csv.ReadNextRecord()){
+					Child c = new Child();
+					c.Department = csv["department"];
+					c.Province = csv["province"];
+					c.District = csv["district"];
+					c.ID = csv["childID"];
+					
+					demographics.Add(c);
+					
+					if(!departmentSelection.items.Contains(c.Department)){
+						departmentSelection.items.Add(c.Department);
+					}	
+				}
+			}
+		}
+		catch{
+			return false;
 		}
 		
 		//Good Exit, found at least one subdivision
-		if(stateSelection.items.Count>1){
-			return true;
-		}
+		if(departmentSelection.items.Count>1) return true;
 		else return false;
 	}
 	
@@ -225,165 +216,91 @@ public class ConfigManager : MonoBehaviour {
 		}
 		//If the config hasn't been saved
 		else{
-			string prevDevice="";
-			XmlNode playerNode=null;
 			
+			//Set up the task statuses
+			if(testingCheckbox.isChecked){
+				PlayerPrefs.SetString("-t1", "true");
+				PlayerPrefs.SetString("-t2", "true");
+				PlayerPrefs.SetString("-t3", "true");
+				PlayerPrefs.SetString("-t4", "true");
+				PlayerPrefs.SetString("-t5", "true");
+				PlayerPrefs.SetString("-t6", "true");
+				PlayerPrefs.SetString("-t7", "true");
+			}
+			else{
+				PlayerPrefs.SetString("-t1", "false");
+				PlayerPrefs.SetString("-t2", "false");
+				PlayerPrefs.SetString("-t3", "false");
+				PlayerPrefs.SetString("-t4", "false");
+				PlayerPrefs.SetString("-t5", "false");
+				PlayerPrefs.SetString("-t6", "false");
+				PlayerPrefs.SetString("-t7", "false");
+			}
+			
+			if(english.isChecked) PlayerPrefs.SetString("-language", "english");
+			else PlayerPrefs.SetString("-language", "spanish");
+			
+			string name ="";
+			
+			//Save the player's info
 			if(testName==""){
-				//Reload the file to make sure there were no changes
-				if(File.Exists(Path.Combine(XmlManager.PlayerSpecificPath,playersFile + ".xml"))){
-					Debug.Log("Attempting to read from Dropbox folder");		
-					xml.Load(Path.Combine(XmlManager.PlayerSpecificPath,playersFile + ".xml"));
-				}
-				else{
-					Debug.Log("Attempting to read from local build folder");
-					try{
-						TextAsset sessionData = Resources.Load(playersFile) as TextAsset;
-		
-						TextReader reader = new StringReader(sessionData.text);
-			
-						xml.Load(reader);
-					}
-					catch{
-						NeuroLog.Error("Unable to find local task file");
 				
-						return;
-					}
-				}
-			
-				//Get the player's node
-				playerNode = (xml.SelectSingleNode("/players/"+stateSelection.selection+"/"+subDivisionOne.selection+"/"+subDivisionTwo.selection));
-			
-				foreach(XmlNode x in playerNode.ChildNodes){
-					if(x.Attributes["name"].Value == players.selection){
-						playerNode = x;
-						break;
-					}
-				}
-				prevDevice = playerNode.Attributes["device"].Value;
+				name = playerSelection.selection.Replace(" ", "");
+				PlayerPrefs.SetString("-childID", playerSelection.selection);
+				PlayerPrefs.SetString("-testing", "f");
+				PlayerPrefs.SetString("-department", departmentSelection.selection);
+				PlayerPrefs.SetString("-province", provinceSelection.selection);
+				PlayerPrefs.SetString("-district", districtSelection.selection);					
 			}
 			else{
-				NeuroLog.Log("Using testName");
+				testName = testName.Replace(" ", "");
+				
+				PlayerPrefs.SetString("-childID", testName);
+				PlayerPrefs.SetString("-testing", "t");
+				PlayerPrefs.SetString("-department", "n/a");
+				PlayerPrefs.SetString("-province", "n/a");
+				PlayerPrefs.SetString("-district", "n/a");
 			}
 			
-			//If the player has been previously assigned to a different device, show a warning before saving
-			if(!finalGo && prevDevice!= ""){
+			using(StreamWriter writer = new StreamWriter(Path.Combine(CsvManager.PlayerSpecificPath, name+"_" + System.Environment.MachineName+"_Criterion.csv"))){
+				writer.WriteLine("TaskNum, CriterionScore, NumofPractice, NumofEvents, AccuracyofPresented , AccuracyofResponses, NumResponsesBasal");
 				
-				message.text = players.selection + " already assigned to " + prevDevice+".\nSave Anyway?";
-				
-				confirmButton.gameObject.transform.localPosition = new Vector3(0,-50,0);
-								
-				buttonText.text = "YES";
-				
-				finalGo = true;
+				for(int i = 0;i<8;i++){
+					writer.WriteLine(i+", 0, ., ., ., ., .");
+				}
 			}
-			//If the warning has been shown or the player hasn't been set to a different device
-			else{
-				
-				//Set up the task statuses
-				if(testingCheckbox.isChecked){
-					PlayerPrefs.SetString("-t1", "true");
-					PlayerPrefs.SetString("-t2", "true");
-					PlayerPrefs.SetString("-t3", "true");
-					PlayerPrefs.SetString("-t4", "true");
-					PlayerPrefs.SetString("-t5", "true");
-					PlayerPrefs.SetString("-t6", "true");
-					PlayerPrefs.SetString("-t7", "true");
-				}
-				else{
-					PlayerPrefs.SetString("-t1", "false");
-					PlayerPrefs.SetString("-t2", "false");
-					PlayerPrefs.SetString("-t3", "false");
-					PlayerPrefs.SetString("-t4", "false");
-					PlayerPrefs.SetString("-t5", "false");
-					PlayerPrefs.SetString("-t6", "false");
-					PlayerPrefs.SetString("-t7", "false");
-				}
-				
-				if(english.isChecked){
-					PlayerPrefs.SetString("-language", "english");
-				}
-				else{
-					PlayerPrefs.SetString("-language", "spanish");
-				}
-				
-				string name ="";
-				
-				//Save the player's info
-				if(testName==""){
-					
-					name = players.selection.Replace(" ", "");
-					PlayerPrefs.SetString("-player", players.selection);
-					PlayerPrefs.SetString("-testing", "f");
-					PlayerPrefs.SetString("-state", stateSelection.selection);
-					PlayerPrefs.SetString("-region", subDivisionOne.selection);
-					PlayerPrefs.SetString("-subregion", subDivisionTwo.selection);
-				
 			
-					//Update the players file to say the player is assigned to this device
-					playerNode = (xml.SelectSingleNode("/players/"+stateSelection.selection+"/"+subDivisionOne.selection+"/"+subDivisionTwo.selection));
-				
-					foreach(XmlNode x in playerNode.ChildNodes){
-						if(x.Attributes["name"].Value == players.selection){
-							playerNode = x;
-							break;
-						}
-					}
+			message.text = "Config info saved!";
 			
-					playerNode.Attributes["device"].Value = System.Environment.MachineName;
-				
-					//Save the file
-					xml.Save(Path.Combine(XmlManager.PlayerSpecificPath, "players.xml"));
-				}
-				else{
-					name = testName.Replace(" ", "");
-					
-					PlayerPrefs.SetString("-player", testName);
-					PlayerPrefs.SetString("-testing", "t");
-					PlayerPrefs.SetString("-state", "n/a");
-					PlayerPrefs.SetString("-region", "n/a");
-					PlayerPrefs.SetString("-subregion", "n/a");
-				}
-				
-				Debug.Log(Path.Combine(CsvManager.PlayerSpecificPath, name+"_Criterion.csv"));
-				
-				using(StreamWriter writer = new StreamWriter(Path.Combine(CsvManager.PlayerSpecificPath, name+"_" + System.Environment.MachineName+"_Criterion.csv"))){
-					writer.WriteLine("TaskNum, CriterionScore, NumofPractice, NumofEvents, AccuracyofPresented , AccuracyofResponses, NumResponsesBasal");
-					
-					for(int i = 0;i<8;i++){
-						writer.WriteLine(i+", 0, ., ., ., ., .");
-					}
-				}
-				
-				message.text = "Config info saved!";
-				
-				buttonText.text = "CLOSE";
-				
-				configSaved = true;
-				//Hide the dropdown menus
-				stateSelection.gameObject.SetActive(false);
-				english.gameObject.SetActive(false);
-				spanish.gameObject.SetActive(false);
-				subDivisionOne.gameObject.SetActive(false);
-				subDivisionTwo.gameObject.SetActive(false);
-				testingCheckbox.gameObject.SetActive(false);
-				players.gameObject.SetActive(false);
-				testInput.gameObject.SetActive(false);	
-				testingLabel.enabled = false;
-			}
+			buttonText.text = "CLOSE";
+			
+			configSaved = true;
+			//Hide the dropdown menus
+			departmentSelection.gameObject.SetActive(false);
+			english.gameObject.SetActive(false);
+			spanish.gameObject.SetActive(false);
+			provinceSelection.gameObject.SetActive(false);
+			districtSelection.gameObject.SetActive(false);
+			testingCheckbox.gameObject.SetActive(false);
+			playerSelection.gameObject.SetActive(false);
+			testInput.gameObject.SetActive(false);	
+			testingLabel.enabled = false;
 		}
 	}
 		
 	//Update the region list if the state changes
 	void updateState(string selected){
-		subDivisionOne.items.Clear();
+		provinceSelection.items.Clear();
 		
 		if(selected != "Select State"){
-			subDivisionOne.items.Add("Select Region");
-			
-			XmlNode currentNode = (xml.SelectSingleNode("/players/"+stateSelection.selection));
+			provinceSelection.items.Add("Select Region");
 		
-			foreach(XmlNode node in currentNode.ChildNodes){
-				subDivisionOne.items.Add(node.Name);
+			foreach(Child c in demographics){
+				if(c.Department == departmentSelection.selection){
+					if(!provinceSelection.items.Contains(c.Province)){
+						provinceSelection.items.Add(c.Province);
+					}
+				}
 			}
 			
 			testName = "";
@@ -395,84 +312,83 @@ public class ConfigManager : MonoBehaviour {
 			message.enabled = false;
 		}
 		else{
-			subDivisionOne.items.Add("---");
+			provinceSelection.items.Add("---");
 		}
 			
-		subDivisionOne.selection = subDivisionOne.items[0];
+		provinceSelection.selection = provinceSelection.items[0];
 		
 		int scale=40;
-		int length = stateSelection.selection.Length;
+		int length = departmentSelection.selection.Length;
 		if(length>15){
 			scale -= (3*(length-15));
 		}
 		
-	 	stateSelection.textLabel.transform.localScale = new Vector3(scale,scale,1);
+	 	departmentSelection.textLabel.transform.localScale = new Vector3(scale,scale,1);
 	}
 	
 	//Update the subdivision list if the region changes
 	void updateRegion(string selected){
-		subDivisionTwo.items.Clear();
+		districtSelection.items.Clear();
 		
 		if(selected != "---" && selected != "Select Region"){
 			
-			subDivisionTwo.items.Add("Select SubRegion");
+			districtSelection.items.Add("Select SubRegion");
 			
-			XmlNode currentNode = (xml.SelectSingleNode("/players/"+stateSelection.selection+"/"+subDivisionOne.selection));
-		
-			foreach(XmlNode node in currentNode.ChildNodes){
-				subDivisionTwo.items.Add(node.Name);
+			foreach(Child c in demographics){
+				if(c.Department == departmentSelection.selection && c.Province == provinceSelection.selection){
+					if(!districtSelection.items.Contains(c.District)){
+						districtSelection.items.Add(c.District);
+					}
+				}
 			}
 		}
 		else{
-			subDivisionTwo.items.Add("---");
+			districtSelection.items.Add("---");
 		}
 			
-		subDivisionTwo.selection = subDivisionTwo.items[0];
+		districtSelection.selection = districtSelection.items[0];
 		
 		int scale=40;
-		int length = subDivisionOne.selection.Length;
+		int length = provinceSelection.selection.Length;
 		if(length>15){
 			scale -= (3*(length-15));
 		}
 		
-		subDivisionOne.textLabel.transform.localScale = new Vector3(scale,scale,1);
+		provinceSelection.textLabel.transform.localScale = new Vector3(scale,scale,1);
 	}
 	
 	//Update the player list if the subregion changes
 	void updateSubRegion(string selected){
-		players.items.Clear();
+		playerSelection.items.Clear();
 		
 		if(selected != "---" && selected != "Select SubRegion"){
-			players.items.Add("Select Player");
+			playerSelection.items.Add("Select Player");
 			
-			XmlNode currentNode = (xml.SelectSingleNode("/players/"+stateSelection.selection+"/"+subDivisionOne.selection+"/"+subDivisionTwo.selection));
-		
-			foreach(XmlNode node in currentNode.ChildNodes){
-					
-				string name = node.Attributes["name"].Value;
-			
-				players.items.Add(name);
+			foreach(Child c in demographics){
+				if(c.Department == departmentSelection.selection && c.Province == provinceSelection.selection && c.District == districtSelection.selection){
+					if(!playerSelection.items.Contains(c.ID)){
+						playerSelection.items.Add(c.ID);
+					}
+				}
 			}
 		}
 		else{
-			players.items.Add("---");
+			playerSelection.items.Add("---");
 		}
 			
-		players.selection = players.items[0];
+		playerSelection.selection = playerSelection.items[0];
 		
 		int scale=40;
-		int length = subDivisionTwo.selection.Length;
+		int length = districtSelection.selection.Length;
 		if(length>15){
 			scale -= (3*(length-15));
 		}
 		
-		subDivisionTwo.textLabel.transform.localScale = new Vector3(scale,scale,1);
+		districtSelection.textLabel.transform.localScale = new Vector3(scale,scale,1);
 	}
 	
 	//Either hide or show the save button if player gets set
 	void updatePlayer(string selected){	
-		finalGo = false;
-		
 		confirmButton.gameObject.transform.localPosition = new Vector3(0,-225,0);
 
 		buttonText.text = "Save";
@@ -481,7 +397,7 @@ public class ConfigManager : MonoBehaviour {
 			
 			confirmButton.gameObject.SetActive(true);
 		
-			message.text = "Save " + players.selection + " to this Device?";
+			message.text = "Save " + playerSelection.selection + " to this Device?";
 			
 			message.enabled = true;
 		}
@@ -496,19 +412,19 @@ public class ConfigManager : MonoBehaviour {
 		}
 		
 		int scale=40;
-		int length = players.selection.Length;
+		int length = playerSelection.selection.Length;
 		if(length>15){
 			scale -= (3*(length-15));
 		}
 		
-		players.textLabel.transform.localScale = new Vector3(scale,scale,1);
+		playerSelection.textLabel.transform.localScale = new Vector3(scale,scale,1);
 	}
 	
 	void OnSubmit(){
 		testName = testInput.text;
 		
 		if(testName !=""){
-			stateSelection.selection = stateSelection.items[0];
+			departmentSelection.selection = departmentSelection.items[0];
 			
 			confirmButton.gameObject.SetActive(true);
 		
@@ -520,7 +436,7 @@ public class ConfigManager : MonoBehaviour {
 	
 	//Update will make sure that no dropdown lists will appear outside the screen
 	void Update(){
-		if(players.isOpen && !setDDL){
+		if(playerSelection.isOpen && !setDDL){
 			if(ddL == null) ddL = GameObject.Find("Drop-down List");
 			else{			
 				float width =  ddL.transform.FindChild("Sprite").transform.localScale.x;
@@ -536,7 +452,7 @@ public class ConfigManager : MonoBehaviour {
 				}
 			}
 		}
-		else if(!players.isOpen) setDDL = false;
+		else if(!playerSelection.isOpen) setDDL = false;
 		
 		
 		//Check for escape button

@@ -165,7 +165,7 @@ public class CsvManager {
 		
 		//Set the user and session file
 		sessionXML = "task"+tNum.ToString();
-		mUserName = PlayerPrefs.GetString("-player").Replace(" ","");
+		mUserName = PlayerPrefs.GetString("-childID").Replace(" ","");
 		
 		//Add an xml extension
 		string fn = sessionXML;
