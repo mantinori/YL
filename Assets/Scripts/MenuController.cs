@@ -122,6 +122,8 @@ public class MenuController : MonoBehaviour {
 			else{
 				taskButtons[i].transform.GetComponentInChildren<UILabel>().color = new Color(1f,1f,1f,.5f);
 				
+				taskButtons[i].transform.GetComponentInChildren<UISlicedSprite>().color =  new Color(.75f,.75f,.75f,.25f);
+				
 				taskButtons[i].isEnabled = false;
 			}
 		}
