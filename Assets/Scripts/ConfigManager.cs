@@ -42,6 +42,7 @@ public class ConfigManager : MonoBehaviour {
 	//For testing purposes, allow someone to just write in a name
 	public UIInput testInput;
 	public UILabel testingLabel;
+	public UILabel testingSubscript;
 	public UICheckbox testingCheckbox;
 	
 	//The actual dropdown list
@@ -88,6 +89,7 @@ public class ConfigManager : MonoBehaviour {
 		testingCheckbox.gameObject.SetActive(false);
 		
 		testingLabel.enabled = false;
+		testingSubscript.enabled = false;
 		confirmButton.gameObject.SetActive(false);
 		confirmButton.GetComponent<ButtonResponder>().response = buttonPressed;
 		
@@ -146,6 +148,7 @@ public class ConfigManager : MonoBehaviour {
 					playerSelection.gameObject.SetActive(true);
 					
 					testingLabel.enabled = true;
+					testingSubscript.enabled =true;
 					testingCheckbox.gameObject.SetActive(true);
 		
 					english.gameObject.SetActive(true);
@@ -285,6 +288,7 @@ public class ConfigManager : MonoBehaviour {
 			playerSelection.gameObject.SetActive(false);
 			testInput.gameObject.SetActive(false);	
 			testingLabel.enabled = false;
+			testingSubscript.enabled =false;
 		}
 	}
 		
