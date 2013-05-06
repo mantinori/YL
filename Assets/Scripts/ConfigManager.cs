@@ -12,7 +12,7 @@ using LumenWorks.Framework.IO.Csv;
 public class ConfigManager : MonoBehaviour {
 	
 	//Struct for child info
-	private struct Child{
+	public struct Child{
 		public string ID {get;set;}
 		public string Department {get;set;}
 		public string Province {get;set;}
@@ -23,11 +23,8 @@ public class ConfigManager : MonoBehaviour {
 	private string playersFile = "players";
 	private bool fileOnDropbox;
 	
-	//Popuplists on the screen
-	public UIPopupList departmentSelection;
-	public UIPopupList provinceSelection;
-	public UIPopupList districtSelection;
-	public UIPopupList playerSelection;
+	//Tab controller
+	public Tab playerSelector;
 	
 	//Only need the english checkbox
 	public UICheckbox english;
@@ -44,11 +41,7 @@ public class ConfigManager : MonoBehaviour {
 	public UILabel testingLabel;
 	public UILabel testingSubscript;
 	public UICheckbox testingCheckbox;
-	
-	//The actual dropdown list
-	GameObject ddL;
-	bool setDDL=false;
-	
+
 	//If the config was properly saved
 	private bool configSaved=false;
 	
@@ -80,12 +73,9 @@ public class ConfigManager : MonoBehaviour {
 		bool foundFile = true;
 		
 		//Hide all the elements on the screen until were sure the files are set up
-		departmentSelection.gameObject.SetActive(false);
-		provinceSelection.gameObject.SetActive(false);
-		districtSelection.gameObject.SetActive(false);
 		english.gameObject.SetActive(false);
 		spanish.gameObject.SetActive(false);
-		playerSelection.gameObject.SetActive(false);
+		playerSelector.gameObject.SetActive(false);
 		testingCheckbox.gameObject.SetActive(false);
 		
 		testingLabel.enabled = false;
@@ -142,10 +132,8 @@ public class ConfigManager : MonoBehaviour {
 			if(needConfig){
 				//Set up the players file
 				if(SetupPlayersCSV(reader)){
-					departmentSelection.gameObject.SetActive(true);
-					provinceSelection.gameObject.SetActive(true);
-					districtSelection.gameObject.SetActive(true);
-					playerSelection.gameObject.SetActive(true);
+					playerSelector.setupTab(this,demographics);
+					playerSelector.gameObject.SetActive(true);
 					
 					testingLabel.enabled = true;
 					testingSubscript.enabled =true;
@@ -193,19 +181,16 @@ public class ConfigManager : MonoBehaviour {
 					c.ID = csv["childID"];
 					
 					demographics.Add(c);
-					
-					if(!departmentSelection.items.Contains(c.Department)){
-						departmentSelection.items.Add(c.Department);
-					}	
 				}
 			}
 		}
-		catch{
+		catch(Exception e){
+			NeuroLog.Log(e.Message);
 			return false;
 		}
 		
 		//Good Exit, found at least one subdivision
-		if(departmentSelection.items.Count>1) return true;
+		if(demographics.Count>1) return true;
 		else return false;
 	}
 	
@@ -248,12 +233,12 @@ public class ConfigManager : MonoBehaviour {
 			//Save the player's info
 			if(testName==""){
 				
-				name = playerSelection.selection.Replace(" ", "");
-				PlayerPrefs.SetString("-childID", playerSelection.selection);
+				name = playerSelector.SelectedPlayer.Replace(" ", "");
+				PlayerPrefs.SetString("-childID", playerSelector.SelectedPlayer);
 				PlayerPrefs.SetString("-testing", "f");
-				PlayerPrefs.SetString("-department", departmentSelection.selection);
-				PlayerPrefs.SetString("-province", provinceSelection.selection);
-				PlayerPrefs.SetString("-district", districtSelection.selection);					
+				PlayerPrefs.SetString("-department", playerSelector.SelectedDepartment);
+				PlayerPrefs.SetString("-province", playerSelector.SelectedProvince);
+				PlayerPrefs.SetString("-district", playerSelector.SelectedDistrict);					
 			}
 			else{
 				testName = testName.Replace(" ", "");
@@ -278,157 +263,40 @@ public class ConfigManager : MonoBehaviour {
 			buttonText.text = "CLOSE";
 			
 			configSaved = true;
-			//Hide the dropdown menus
-			departmentSelection.gameObject.SetActive(false);
 			english.gameObject.SetActive(false);
 			spanish.gameObject.SetActive(false);
-			provinceSelection.gameObject.SetActive(false);
-			districtSelection.gameObject.SetActive(false);
 			testingCheckbox.gameObject.SetActive(false);
-			playerSelection.gameObject.SetActive(false);
+			playerSelector.gameObject.SetActive(false);
 			testInput.gameObject.SetActive(false);	
 			testingLabel.enabled = false;
 			testingSubscript.enabled =false;
 		}
 	}
+	
+	//When the operator selects a player, show the button
+	public void askForConfirmation(){
+		confirmButton.gameObject.SetActive(true);
 		
-	//Update the region list if the state changes
-	void updateState(string selected){
-		provinceSelection.items.Clear();
+		message.text = "Save " + playerSelector.SelectedPlayer + " to this Device?";
 		
-		if(selected != "Select State"){
-			provinceSelection.items.Add("Select Region");
-		
-			foreach(Child c in demographics){
-				if(c.Department == departmentSelection.selection){
-					if(!provinceSelection.items.Contains(c.Province)){
-						provinceSelection.items.Add(c.Province);
-					}
-				}
-			}
-			
-			testName = "";
-			
-			testInput.text="";
-			
+		message.enabled = true;	
+	}
+	
+	//If the operator changes any setting in the selector, hide the message and button
+	public void hideConfirmation(){
+		if(message.enabled ==true){
 			confirmButton.gameObject.SetActive(false);
-			
-			message.enabled = false;
-		}
-		else{
-			provinceSelection.items.Add("---");
-		}
-			
-		provinceSelection.selection = provinceSelection.items[0];
-		
-		int scale=40;
-		int length = departmentSelection.selection.Length;
-		if(length>15){
-			scale -= (3*(length-15));
+			message.enabled = false;	
 		}
 		
-	 	departmentSelection.textLabel.transform.localScale = new Vector3(scale,scale,1);
-	}
-	
-	//Update the subdivision list if the region changes
-	void updateRegion(string selected){
-		districtSelection.items.Clear();
-		
-		if(selected != "---" && selected != "Select Region"){
-			
-			districtSelection.items.Add("Select SubRegion");
-			
-			foreach(Child c in demographics){
-				if(c.Department == departmentSelection.selection && c.Province == provinceSelection.selection){
-					if(!districtSelection.items.Contains(c.District)){
-						districtSelection.items.Add(c.District);
-					}
-				}
-			}
-		}
-		else{
-			districtSelection.items.Add("---");
-		}
-			
-		districtSelection.selection = districtSelection.items[0];
-		
-		int scale=40;
-		int length = provinceSelection.selection.Length;
-		if(length>15){
-			scale -= (3*(length-15));
-		}
-		
-		provinceSelection.textLabel.transform.localScale = new Vector3(scale,scale,1);
-	}
-	
-	//Update the player list if the subregion changes
-	void updateSubRegion(string selected){
-		playerSelection.items.Clear();
-		
-		if(selected != "---" && selected != "Select SubRegion"){
-			playerSelection.items.Add("Select Player");
-			
-			foreach(Child c in demographics){
-				if(c.Department == departmentSelection.selection && c.Province == provinceSelection.selection && c.District == districtSelection.selection){
-					if(!playerSelection.items.Contains(c.ID)){
-						playerSelection.items.Add(c.ID);
-					}
-				}
-			}
-		}
-		else{
-			playerSelection.items.Add("---");
-		}
-			
-		playerSelection.selection = playerSelection.items[0];
-		
-		int scale=40;
-		int length = districtSelection.selection.Length;
-		if(length>15){
-			scale -= (3*(length-15));
-		}
-		
-		districtSelection.textLabel.transform.localScale = new Vector3(scale,scale,1);
-	}
-	
-	//Either hide or show the save button if player gets set
-	void updatePlayer(string selected){	
-		confirmButton.gameObject.transform.localPosition = new Vector3(0,-225,0);
-
-		buttonText.text = "Save";
-			
-		if(selected != "---"&& selected != "Select Player"){
-			
-			confirmButton.gameObject.SetActive(true);
-		
-			message.text = "Save " + playerSelection.selection + " to this Device?";
-			
-			message.enabled = true;
-		}
-		else{ 
-			if(testInput.text==""){
-				confirmButton.gameObject.SetActive(false);
-			
-				message.enabled = false;
-				
-				testName = "";
-			}
-		}
-		
-		int scale=40;
-		int length = playerSelection.selection.Length;
-		if(length>15){
-			scale -= (3*(length-15));
-		}
-		
-		playerSelection.textLabel.transform.localScale = new Vector3(scale,scale,1);
+		testInput.text = "";
 	}
 	
 	void OnSubmit(){
 		testName = testInput.text;
 		
 		if(testName !=""){
-			departmentSelection.selection = departmentSelection.items[0];
+			playerSelector.Reset();
 			
 			confirmButton.gameObject.SetActive(true);
 		
@@ -440,25 +308,6 @@ public class ConfigManager : MonoBehaviour {
 	
 	//Update will make sure that no dropdown lists will appear outside the screen
 	void Update(){
-		if(playerSelection.isOpen && !setDDL){
-			if(ddL == null) ddL = GameObject.Find("Drop-down List");
-			else{			
-				float width =  ddL.transform.FindChild("Sprite").transform.localScale.x;
-				
-				if(width>210){
-	
-					Vector3 pos = ddL.transform.localPosition;
-					
-					pos.x -= width-210;
-	
-					ddL.transform.localPosition = pos;
-					setDDL = true;
-				}
-			}
-		}
-		else if(!playerSelection.isOpen) setDDL = false;
-		
-		
 		//Check for escape button
 		if(Input.GetKeyDown(KeyCode.Escape)){
 			if(Screen.fullScreen){
