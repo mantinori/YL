@@ -16,6 +16,12 @@ public class Tab: MonoBehaviour {
 	public UIScrollBar districtScroll;
 	public UIScrollBar playerScroll;
 	
+	//The backgrounds for each category
+	public UITexture departmentBackground;
+	public UITexture provinceBackground;
+	public UITexture districtBackground;
+	public UITexture playerBackground;
+	
 	//Lists of the uilabels for each category
 	public List<UILabel> departmentLabels;
 	public List<UILabel> provinceLabels;
@@ -48,6 +54,9 @@ public class Tab: MonoBehaviour {
 	private List<string> provinces;
 	private List<string> districts;
 	private List<string> players;
+	
+	public Texture scrollBarTab;
+	public Texture standardTab;
 	
 	//The main camera
 	private Camera cam;
@@ -165,11 +174,13 @@ public class Tab: MonoBehaviour {
 		departmentScroll.scrollValue = 0;
 		if(departments.Count<=9){
 			departmentScroll.barSize = 1;
-			departmentScroll.alpha =.25f;
+			departmentScroll.alpha =0f;
+			departmentBackground.mainTexture = standardTab;
 			departmentScroll.enabled = false;
 		}
 		else{
 			departmentScroll.alpha =1f;
+			departmentBackground.mainTexture = scrollBarTab;
 			departmentScroll.barSize = 1f/(departments.Count-8f);
 			departmentScroll.enabled = true;
 		}
@@ -177,36 +188,42 @@ public class Tab: MonoBehaviour {
 		provinceScroll.scrollValue = 0;
 		if(provinces.Count<=9){
 			provinceScroll.barSize = 1;
-			provinceScroll.alpha =.25f;
+			provinceScroll.alpha =0f;
+			provinceBackground.mainTexture = standardTab;
 			provinceScroll.enabled = false;
 		}
 		else{
 			provinceScroll.alpha =1f;
 			provinceScroll.barSize = 1f/(provinces.Count-8f);
+			provinceBackground.mainTexture = scrollBarTab;
 			provinceScroll.enabled = true;
 		}
 		
 		districtScroll.scrollValue = 0;
 		if(districts.Count<=9){
 			districtScroll.barSize = 1;
-			districtScroll.alpha =.25f;
+			districtScroll.alpha =0f;
+			districtBackground.mainTexture = standardTab;
 			districtScroll.enabled = false;
 		}
 		else{
 			districtScroll.alpha =1f;
 			districtScroll.barSize = 1f/(districts.Count-8f);
+			districtBackground.mainTexture = scrollBarTab;
 			districtScroll.enabled = true;
 		}
 		
 		playerScroll.scrollValue = 0;
 		if(players.Count<=9){
 			playerScroll.barSize = 1;
-			playerScroll.alpha =.25f;
+			playerScroll.alpha =0f;
+			playerBackground.mainTexture = standardTab;
 			playerScroll.enabled = false;
 		}
 		else{
 			playerScroll.alpha =1f;
 			playerScroll.barSize = 1f/(players.Count-8f);
+			playerBackground.mainTexture = scrollBarTab;
 			playerScroll.enabled = true;
 		}
 		

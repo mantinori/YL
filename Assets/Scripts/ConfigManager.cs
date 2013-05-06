@@ -32,6 +32,7 @@ public class ConfigManager : MonoBehaviour {
 	
 	//Other elements on the screen
 	public UITexture background;
+	public UIButton customIDButton;
 	public UIButton confirmButton;
 	public UILabel buttonText;
 	public UILabel message;
@@ -39,7 +40,6 @@ public class ConfigManager : MonoBehaviour {
 	//For testing purposes, allow someone to just write in a name
 	public UIInput testInput;
 	public UILabel testingLabel;
-	public UILabel testingSubscript;
 	public UICheckbox testingCheckbox;
 
 	//If the config was properly saved
@@ -79,9 +79,11 @@ public class ConfigManager : MonoBehaviour {
 		testingCheckbox.gameObject.SetActive(false);
 		
 		testingLabel.enabled = false;
-		testingSubscript.enabled = false;
 		confirmButton.gameObject.SetActive(false);
 		confirmButton.GetComponent<ButtonResponder>().response = buttonPressed;
+		
+		customIDButton.GetComponent<ButtonResponder>().response = showInputField;
+		customIDButton.gameObject.SetActive(false);
 		
 		message.enabled = false;
 		
@@ -135,8 +137,9 @@ public class ConfigManager : MonoBehaviour {
 					playerSelector.setupTab(this,demographics);
 					playerSelector.gameObject.SetActive(true);
 					
-					testingLabel.enabled = true;
-					testingSubscript.enabled =true;
+					
+					customIDButton.gameObject.SetActive(true);
+					
 					testingCheckbox.gameObject.SetActive(true);
 		
 					english.gameObject.SetActive(true);
@@ -268,8 +271,8 @@ public class ConfigManager : MonoBehaviour {
 			testingCheckbox.gameObject.SetActive(false);
 			playerSelector.gameObject.SetActive(false);
 			testInput.gameObject.SetActive(false);	
+			customIDButton.gameObject.SetActive(false);
 			testingLabel.enabled = false;
-			testingSubscript.enabled =false;
 		}
 	}
 	
@@ -289,7 +292,32 @@ public class ConfigManager : MonoBehaviour {
 			message.enabled = false;	
 		}
 		
+		hideInputField();
+	}
+	
+	//If the player presses the customIDButton, show the input field
+	void showInputField(GameObject o){
+		if(message.enabled ==true){
+			confirmButton.gameObject.SetActive(false);
+			message.enabled = false;	
+		}
+		
+		testInput.gameObject.SetActive(true);
+		testingLabel.enabled = true;
+		
+		customIDButton.gameObject.SetActive(false);
+		
+		playerSelector.Reset();
+	}
+	
+	//Hides the input field
+	void hideInputField(){
 		testInput.text = "";
+		
+		testInput.gameObject.SetActive(false);
+		testingLabel.enabled = false;
+		
+		customIDButton.gameObject.SetActive(true);
 	}
 	
 	void OnSubmit(){
