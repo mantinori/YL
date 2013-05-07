@@ -376,6 +376,9 @@ public class SpatialManager : GameManager {
 			
 			yield return new WaitForSeconds(CurrentEvent.Delay);
 				
+			float timeLimit = 3;
+			if(practicing) timeLimit = 4;
+			
 			//Probe
 			screen.material.color = Color.gray;
 			
@@ -383,12 +386,12 @@ public class SpatialManager : GameManager {
 			
 			float currentTime=0;
 			
-			while(CurrentEvent.Responses.Count<CurrentEvent.Dots.Count && currentTime < 3){
+			while(CurrentEvent.Responses.Count<CurrentEvent.Dots.Count && currentTime < timeLimit){
 				currentTime+= Time.deltaTime;
 				yield return new WaitForFixedUpdate();
 			}
 			
-			if(currentTime>=3) CurrentEvent.TimedOut = true; 
+			if(currentTime>=timeLimit) CurrentEvent.TimedOut = true; 
 			
 			if(CurrentEvent.Responses.Count==CurrentEvent.Dots.Count) yield return new WaitForSeconds(.1f);
 			
