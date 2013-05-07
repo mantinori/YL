@@ -829,7 +829,7 @@ public class CsvManager {
 			
 	   		writer.WriteLine(newLine);
 			
-			newLine = "Practice, TrialNum, ShownDots, Delay, TimeOut,  EarlyResponse, DotPressed, ReactionTime, TouchPosition, DistanceFromCenter";
+			newLine = "Practice, TrialNum, NumDots, ShownDots, Delay, TimeOut,  EarlyResponse, DotPressed, ReactionTime, TouchPosition, DistanceFromCenter";
 	   		
 			writer.WriteLine(newLine);
 			
@@ -841,7 +841,8 @@ public class CsvManager {
 					if(eS.Responses.Count ==0 && eS.BadResponses.Count ==0){
 						newLine = " ,";
 							
-						newLine += index.ToString()+",";
+						newLine += index.ToString()+"," + eS.Dots.Count.ToString() + ",";
+						
 						if(eS.Dots.Count>2)
 							newLine += eS.Dots[0].ToString()+";"+eS.Dots[1].ToString()+";"+eS.Dots[2].ToString()+",";
 						else if(eS.Dots.Count>1)
@@ -860,7 +861,7 @@ public class CsvManager {
 							
 							newLine = " ,";
 							
-							newLine += index.ToString()+",";
+							newLine += index.ToString()+"," + eS.Dots.Count.ToString() + ",";
 							if(eS.Dots.Count>2)
 								newLine += eS.Dots[0].ToString()+";"+eS.Dots[1].ToString()+";"+eS.Dots[2].ToString()+",";
 							else if(eS.Dots.Count>1)
@@ -889,7 +890,7 @@ public class CsvManager {
 							
 							newLine = " ,";
 							
-							newLine += index.ToString()+",";
+							newLine += index.ToString()+"," + eS.Dots.Count.ToString() + ",";;
 							if(eS.Dots.Count>2)
 								newLine += eS.Dots[0].ToString()+";"+eS.Dots[1].ToString()+";"+eS.Dots[2].ToString()+",";
 							else if(eS.Dots.Count>1)
@@ -918,7 +919,7 @@ public class CsvManager {
 							while(i<eS.Dots.Count){
 								newLine = " ,";
 							
-								newLine += index.ToString()+",";
+								newLine += index.ToString()+"," + eS.Dots.Count.ToString() + ",";
 								if(eS.Dots.Count>2)
 									newLine += eS.Dots[0].ToString()+";"+eS.Dots[1].ToString()+";"+eS.Dots[2].ToString()+",";
 								else if(eS.Dots.Count>1)
@@ -940,7 +941,7 @@ public class CsvManager {
 				index++;
 			}
 			
-			newLine = "Task, TrialNum, ShownDots, Delay, TimeOut, EarlyResponse, DotPressed, ReactionTime, TouchPosition, DistanceFromCenter";
+			newLine = "Task, TrialNum, NumDots, ShownDots, Delay, TimeOut, EarlyResponse, DotPressed, ReactionTime, TouchPosition, DistanceFromCenter";
 		   		
 			writer.WriteLine(newLine);
 				
@@ -951,8 +952,8 @@ public class CsvManager {
 				if(eS.Completed){
 					if(eS.Responses.Count ==0 && eS.BadResponses.Count ==0){
 						newLine = " ,";
-							
-						newLine += index.ToString()+",";
+						
+						newLine += index.ToString()+"," + eS.Dots.Count.ToString() +",";
 						if(eS.Dots.Count>2)
 							newLine += eS.Dots[0].ToString()+";"+eS.Dots[1].ToString()+";"+eS.Dots[2].ToString()+",";
 						else if(eS.Dots.Count>1)
@@ -971,7 +972,7 @@ public class CsvManager {
 							
 							newLine = " ,";
 							
-							newLine += index.ToString()+",";
+							newLine += index.ToString()+"," + eS.Dots.Count.ToString() + ",";
 							if(eS.Dots.Count>2)
 								newLine += eS.Dots[0].ToString()+";"+eS.Dots[1].ToString()+";"+eS.Dots[2].ToString()+",";
 							else if(eS.Dots.Count>1)
@@ -1000,7 +1001,7 @@ public class CsvManager {
 							
 							newLine = " ,";
 							
-							newLine += index.ToString()+",";
+							newLine += index.ToString()+"," + eS.Dots.Count.ToString() + ",";
 							if(eS.Dots.Count>2)
 								newLine += eS.Dots[0].ToString()+";"+eS.Dots[1].ToString()+";"+eS.Dots[2].ToString()+",";
 							else if(eS.Dots.Count>1)
@@ -1029,7 +1030,7 @@ public class CsvManager {
 							while(i<eS.Dots.Count){
 								newLine = " ,";
 							
-								newLine += index.ToString()+",";
+								newLine += index.ToString()+"," + eS.Dots.Count.ToString() + ",";
 								if(eS.Dots.Count>2)
 									newLine += eS.Dots[0].ToString()+";"+eS.Dots[1].ToString()+";"+eS.Dots[2].ToString()+",";
 								else if(eS.Dots.Count>1)
