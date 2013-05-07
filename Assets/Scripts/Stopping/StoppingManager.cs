@@ -288,7 +288,7 @@ public class StoppingManager : GameManager {
 	protected override IEnumerator runSession(){
 		
 		//Show the tutorial
-		//yield return StartCoroutine(runTutorial());
+		yield return StartCoroutine(runTutorial());
 	
 		//Show Practice screen
 		yield return StartCoroutine(showTitle("Practice",3));
