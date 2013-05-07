@@ -132,7 +132,7 @@ public class MenuController : MonoBehaviour {
 		if(latestTask==7){
 			abortButton.transform.GetComponentInChildren<UISlicedSprite>().color = Color.green;
 			if(language == "spanish"){
-				abortButton.transform.GetComponentInChildren<UILabel>().text ="Terminar";
+				abortButton.transform.GetComponentInChildren<UILabel>().text ="Cambiar ID";
 				((BoxCollider)abortButton.collider).size = new Vector3(165,40,0);
 				abortButton.GetComponentInChildren<UISlicedSprite>().transform.localScale = new Vector3(150,35,1);
 			}

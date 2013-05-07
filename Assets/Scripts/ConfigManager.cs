@@ -30,12 +30,21 @@ public class ConfigManager : MonoBehaviour {
 	public UICheckbox english;
 	public UICheckbox spanish;
 	
+	private bool currentlyEnglish;
+	
 	//Other elements on the screen
 	public UITexture background;
 	public UIButton customIDButton;
+	public UISlicedSprite customBackground;
+	public UILabel customIDLabel;
 	public UIButton confirmButton;
+	public UISlicedSprite confirmBackground;
 	public UILabel buttonText;
 	public UILabel message;
+	
+	public UILabel departmentLabel;
+	public UILabel provinceLabel;
+	public UILabel districtLabel;
 	
 	//For testing purposes, allow someone to just write in a name
 	public UIInput testInput;
@@ -52,6 +61,8 @@ public class ConfigManager : MonoBehaviour {
 	
 	// Use this for initialization
 	void Start () {
+		
+		currentlyEnglish = true;
 		
 		demographics = new List<Child>();
 		
@@ -261,9 +272,16 @@ public class ConfigManager : MonoBehaviour {
 				}
 			}
 			
-			message.text = "Config info saved!";
+			if(currentlyEnglish){
+				message.text = "Config info saved!";
 			
-			buttonText.text = "CLOSE";
+				buttonText.text = "CLOSE";
+			}
+			else{
+				message.text = "La configuración ha sido guardada!";
+				buttonText.text = "CERRAR";
+				confirmBackground.transform.localScale = new Vector3(225,60,1);
+			}
 			
 			configSaved = true;
 			english.gameObject.SetActive(false);
@@ -280,7 +298,10 @@ public class ConfigManager : MonoBehaviour {
 	public void askForConfirmation(){
 		confirmButton.gameObject.SetActive(true);
 		
-		message.text = "Save " + playerSelector.SelectedPlayer + " to this Device?";
+		if(currentlyEnglish)
+			message.text = "Save " + playerSelector.SelectedPlayer + " to this Device?";
+		else
+			message.text = "Asignar "+playerSelector.SelectedPlayer+ " a este PC";
 		
 		message.enabled = true;	
 	}
@@ -328,7 +349,10 @@ public class ConfigManager : MonoBehaviour {
 			
 			confirmButton.gameObject.SetActive(true);
 		
-			message.text = "Save " + testName + " to this Device?";
+			if(currentlyEnglish)
+				message.text = "Save " + testName + " to this Device?";
+			else 
+				message.text = "Asignar "+testName+ " a este PC";
 			
 			message.enabled = true;
 		}
@@ -352,6 +376,39 @@ public class ConfigManager : MonoBehaviour {
 				
 				Screen.SetResolution(width,height,true);
 			}
+		}
+		
+		if(spanish.isChecked && currentlyEnglish){
+			currentlyEnglish = false;
+			customIDLabel.text = "ID no se encuentra en la lista, escribirla a mano";
+			customBackground.transform.localScale = new Vector3(575,40,1);
+			((BoxCollider)customIDButton.collider).size = new Vector3(575,40,0);
+			testingLabel.text = "Escribir ID a mano:";
+			departmentLabel.text = "Departamento";
+			provinceLabel.text = "Provincia";
+			districtLabel.text ="Distrito";
+			testingCheckbox.GetComponentInChildren<UILabel>().text = "Modo de Prueba";
+			if(testName!="")
+				message.text = "Asignar "+testName+ " a este PC";
+			else
+				message.text = "Asignar "+playerSelector.SelectedPlayer+ " a este PC";
+			buttonText.text ="Salvar";
+		}
+		else if(english.isChecked && !currentlyEnglish){
+			currentlyEnglish = true;
+			customIDLabel.text = "Can't find ID, enter it by hand";
+			customBackground.transform.localScale = new Vector3(400,40,1);
+			((BoxCollider)customIDButton.collider).size = new Vector3(400,40,0);
+			testingLabel.text = "Input ID by hand:";
+			departmentLabel.text = "Department";
+			provinceLabel.text = "Province";
+			districtLabel.text ="District";
+			testingCheckbox.GetComponentInChildren<UILabel>().text = "Testing Mode";
+			if(testName!="")
+				message.text = "Save "+testName+ " to this Device?";
+			else
+				message.text = "Save "+playerSelector.SelectedPlayer+ " to this Device?";
+			buttonText.text ="Save";
 		}
 	}
 }
