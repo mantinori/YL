@@ -313,12 +313,12 @@ public class GameManager : MonoBehaviour {
 					else if (i == 3) c = Color.blue;
 					
 					if(i+ 1 == dragPoints.Count){
-						Debug.DrawLine(new Vector3(((dragPoints[i].x/Screen.width)*53 - 26.5f), 8,((dragPoints[i].y/Screen.height)*30 - 15f)),
-										new Vector3(((touchPos.x/Screen.width)*53 - 26.5f), 8,((touchPos.y/Screen.height)*30 - 15f)), c);
+						Debug.DrawLine(new Vector3(((dragPoints[i].x/Screen.width)*53.4 - 26.7f), 8,((dragPoints[i].y/Screen.height)*30 - 15f)),
+										new Vector3(((touchPos.x/Screen.width)*53.4 - 26.7f), 8,((touchPos.y/Screen.height)*30 - 15f)), c);
 					}
 					else{
-						Debug.DrawLine(new Vector3(((dragPoints[i].x/Screen.width)*53 - 26.5f), 8,((dragPoints[i].y/Screen.height)*30 - 15f)),
-										new Vector3(((dragPoints[i+1].x/Screen.width)*53 - 26.5f), 8,((dragPoints[i+1].y/Screen.height)*30 - 15f)), c);
+						Debug.DrawLine(new Vector3(((dragPoints[i].x/Screen.width)*53.4 - 26.7f), 8,((dragPoints[i].y/Screen.height)*30 - 15f)),
+										new Vector3(((dragPoints[i+1].x/Screen.width)*53.4 - 26.7f), 8,((dragPoints[i+1].y/Screen.height)*30 - 15f)), c);
 					}
 				}
 				*/

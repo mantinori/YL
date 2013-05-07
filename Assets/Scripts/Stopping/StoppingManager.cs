@@ -477,7 +477,7 @@ public class StoppingManager : GameManager {
 						
 						//Make sure it was before the cutoff
 						if(time<=1f){
-							float x = ((stoppingStimulus.transform.position.x + 26.5f)/53f) * Screen.width;
+							float x = ((stoppingStimulus.transform.position.x + 26.7f)/53.4f) * Screen.width;
 							
 							float y = ((stoppingStimulus.transform.position.z - 15f)/-30f) * Screen.height;
 							
@@ -488,7 +488,7 @@ public class StoppingManager : GameManager {
 									
 							Vector2 screenPos = Vector2.zero;
 							
-							screenPos.x = ((fixedPos.x/Screen.width) * 53) - 26.5f;
+							screenPos.x = ((fixedPos.x/Screen.width) * 53.4f) - 26.7f;
 							screenPos.y = ((fixedPos.y/Screen.height) * -30) +15;
 							
 							//Start the fade spot

@@ -409,7 +409,7 @@ public class InhibitionManager : GameManager {
 						
 				Vector2 screenPos = Vector2.zero;
 				
-				screenPos.x = ((fixedPos.x/Screen.width) * 53) - 26.5f;
+				screenPos.x = ((fixedPos.x/Screen.width) * 53.4f) - 26.7f;
 				screenPos.y = ((fixedPos.y/Screen.height) * -30) +15;
 				
 				//Start the fade spot

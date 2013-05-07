@@ -459,7 +459,7 @@ public class ImplicitManager : GameManager {
 						
 						if(time<=1f){
 							
-							float x = ((implicitStimulus.transform.position.x + 26.5f)/53f) * Screen.width;
+							float x = ((implicitStimulus.transform.position.x + 26.7f)/53.4f) * Screen.width;
 							
 							float y = ((implicitStimulus.transform.position.z - 15f)/-30f) * Screen.height;
 							
@@ -470,7 +470,7 @@ public class ImplicitManager : GameManager {
 									
 							Vector2 screenPos = Vector2.zero;
 							
-							screenPos.x = ((fixedPos.x/Screen.width) * 53) - 26.5f;
+							screenPos.x = ((fixedPos.x/Screen.width) * 53.4f) - 26.7f;
 							screenPos.y = ((fixedPos.y/Screen.height) * -30) +15;
 							
 							//Start the fade spot

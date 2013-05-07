@@ -1340,7 +1340,7 @@ public class CsvManager {
 			Vector2[] pos = ((ImplicitManager)gm).StimPositions;
 			
 			for(int i = 0;i<pos.Length;i++){
-				pos[i].x = ((pos[i].x + 26.5f)/53f) * Screen.width;
+				pos[i].x = ((pos[i].x + 26.7f)/53.4f) * Screen.width;
 						
 				pos[i].y = ((pos[i].y - 15f)/-30f) * Screen.height;
 			}
@@ -1494,7 +1494,7 @@ public class CsvManager {
 			Vector2[] pos = ((StoppingManager)gm).StimPositions;
 			
 			for(int i = 0;i<pos.Length;i++){
-				pos[i].x = ((pos[i].x + 26.5f)/53f) * Screen.width;
+				pos[i].x = ((pos[i].x + 26.7f)/53.4f) * Screen.width;
 						
 				pos[i].y = ((pos[i].y - 15f)/-30f) * Screen.height;
 			}
