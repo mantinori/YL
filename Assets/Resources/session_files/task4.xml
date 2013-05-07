@@ -190,42 +190,5 @@
 			<event dot = "1"/>
 			<event dot = "4"/>
 		</trial>
-		<trial>
-			<event dot = "4"/>
-			<event dot = "1"/>
-			<event dot = "4"/>
-			<event dot = "4"/>
-			<event dot = "1"/>
-			<event dot = "4"/>
-			<event dot = "1"/>
-			<event dot = "2"/>
-			<event dot = "3"/>
-			<event dot = "3"/>
-			<event dot = "2"/>
-			<event dot = "4"/>
-			<event dot = "3"/>
-			<event dot = "2"/>
-			<event dot = "1"/>
-			<event dot = "4"/>
-			<event dot = "3"/>
-			<event dot = "1"/>
-			<event dot = "2"/>
-			<event dot = "3"/>
-			<event dot = "4"/>
-			<event dot = "2"/>
-			<event dot = "1"/>
-			<event dot = "2"/>
-			<event dot = "1"/>
-			<event dot = "4"/>
-			<event dot = "1"/>
-			<event dot = "4"/>
-			<event dot = "1"/>
-			<event dot = "4"/>
-			<event dot = "2"/>
-			<event dot = "2"/>
-			<event dot = "1"/>
-			<event dot = "2"/>
-			<event dot = "4"/>
-		</trial>
 	</events>
 </session>

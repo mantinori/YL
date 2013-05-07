@@ -1,158 +1,66 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<!--type == Which game type should be loaded for this task. As of 3/22/13 0=Spatial, 1=Inhibition, 2=Star, 3 = Implicit, 4 = Associate, 5 = Stopping -->
-<session type="5">
-	<!--event:
-			type(int): Which dot will this event be. Should be between 1-4
-			go(bool): Whether the player should respond to the event(true) or not(false)
-	-->	
+<session type="1">
     <events>
-		<event dot = "1" go = "true" />
-		<event dot = "1" go = "true" />
-		<event dot = "2" go = "true" />
-		<event dot = "2" go = "true" />
-		<event dot = "3" go = "true" />
-		<event dot = "3" go = "true" />
-		<event dot = "4" go = "true" />
-		<event dot = "4" go = "true" />
-		<event dot = "1" go = "true" />
-		<event dot = "1" go = "true" />
-		<event dot = "1" go = "true" />
-		<event dot = "1" go = "true" />
-		<event dot = "1" go = "true" />
-		<event dot = "1" go = "true" />
-		<event dot = "1" go = "true" />
-		<event dot = "1" go = "true" />
-		<event dot = "1" go = "true" />
-		<event dot = "1" go = "true" />
-		<event dot = "1" go = "true" />
-		<event dot = "1" go = "true" />
-		<event dot = "1" go = "true" />
-		<event dot = "1" go = "true" />
-		<event dot = "1" go = "true" />
-		<event dot = "1" go = "true" />
-		<event dot = "1" go = "true" />
-		<event dot = "1" go = "true" />
-		<event dot = "1" go = "true" />
-		<event dot = "1" go = "true" />
-		<event dot = "1" go = "true" />
-		<event dot = "2" go = "true" />
-		<event dot = "2" go = "true" />
-		<event dot = "2" go = "true" />
-		<event dot = "2" go = "true" />
-		<event dot = "2" go = "true" />
-		<event dot = "2" go = "true" />
-		<event dot = "2" go = "true" />
-		<event dot = "2" go = "true" />
-		<event dot = "2" go = "true" />
-		<event dot = "2" go = "true" />
-		<event dot = "2" go = "true" />
-		<event dot = "2" go = "true" />
-		<event dot = "2" go = "true" />
-		<event dot = "2" go = "true" />
-		<event dot = "2" go = "true" />
-		<event dot = "2" go = "true" />
-		<event dot = "2" go = "true" />
-		<event dot = "2" go = "true" />
-		<event dot = "2" go = "true" />
-		<event dot = "2" go = "true" />
-		<event dot = "2" go = "true" />
-		<event dot = "3" go = "true" />
-		<event dot = "3" go = "true" />
-		<event dot = "3" go = "true" />
-		<event dot = "3" go = "true" />
-		<event dot = "3" go = "true" />
-		<event dot = "3" go = "true" />
-		<event dot = "3" go = "true" />
-		<event dot = "3" go = "true" />
-		<event dot = "3" go = "true" />
-		<event dot = "3" go = "true" />
-		<event dot = "3" go = "true" />
-		<event dot = "3" go = "true" />
-		<event dot = "3" go = "true" />
-		<event dot = "3" go = "true" />
-		<event dot = "3" go = "true" />
-		<event dot = "3" go = "true" />
-		<event dot = "3" go = "true" />
-		<event dot = "3" go = "true" />
-		<event dot = "3" go = "true" />
-		<event dot = "3" go = "true" />
-		<event dot = "3" go = "true" />
-		<event dot = "4" go = "true" />
-		<event dot = "4" go = "true" />
-		<event dot = "4" go = "true" />
-		<event dot = "4" go = "true" />
-		<event dot = "4" go = "true" />
-		<event dot = "4" go = "true" />
-		<event dot = "4" go = "true" />
-		<event dot = "4" go = "true" />
-		<event dot = "4" go = "true" />
-		<event dot = "4" go = "true" />
-		<event dot = "4" go = "true" />
-		<event dot = "4" go = "true" />
-		<event dot = "4" go = "true" />
-		<event dot = "4" go = "true" />
-		<event dot = "4" go = "true" />
-		<event dot = "4" go = "true" />
-		<event dot = "4" go = "true" />
-		<event dot = "4" go = "true" />
-		<event dot = "4" go = "true" />
-		<event dot = "4" go = "true" />
-		<event dot = "4" go = "true" />
-		<event dot = "1" go = "false" />
-		<event dot = "1" go = "false" />
-		<event dot = "1" go = "false" />
-		<event dot = "1" go = "false" />
-		<event dot = "1" go = "false" />
-		<event dot = "1" go = "false" />
-		<event dot = "1" go = "false" />
-		<event dot = "1" go = "false" />
-		<event dot = "1" go = "false" />
-		<event dot = "1" go = "false" />
-		<event dot = "1" go = "false" />
-		<event dot = "1" go = "false" />
-		<event dot = "1" go = "false" />
-		<event dot = "1" go = "false" />
-		<event dot = "2" go = "false" />
-		<event dot = "2" go = "false" />
-		<event dot = "2" go = "false" />
-		<event dot = "2" go = "false" />
-		<event dot = "2" go = "false" />
-		<event dot = "2" go = "false" />
-		<event dot = "2" go = "false" />
-		<event dot = "2" go = "false" />
-		<event dot = "2" go = "false" />
-		<event dot = "2" go = "false" />
-		<event dot = "2" go = "false" />
-		<event dot = "2" go = "false" />
-		<event dot = "2" go = "false" />
-		<event dot = "2" go = "false" />
-		<event dot = "3" go = "false" />
-		<event dot = "3" go = "false" />
-		<event dot = "3" go = "false" />
-		<event dot = "3" go = "false" />
-		<event dot = "3" go = "false" />
-		<event dot = "3" go = "false" />
-		<event dot = "3" go = "false" />
-		<event dot = "3" go = "false" />
-		<event dot = "3" go = "false" />
-		<event dot = "3" go = "false" />
-		<event dot = "3" go = "false" />
-		<event dot = "3" go = "false" />
-		<event dot = "3" go = "false" />
-		<event dot = "3" go = "false" />
-		<event dot = "4" go = "false" />
-		<event dot = "4" go = "false" />
-		<event dot = "4" go = "false" />
-		<event dot = "4" go = "false" />
-		<event dot = "4" go = "false" />
-		<event dot = "4" go = "false" />
-		<event dot = "4" go = "false" />
-		<event dot = "4" go = "false" />
-		<event dot = "4" go = "false" />
-		<event dot = "4" go = "false" />
-		<event dot = "4" go = "false" />
-		<event dot = "4" go = "false" />
-		<event dot = "4" go = "false" />
-		<event dot = "4" go = "false" />
+		<event side="r" color="yellow" />
+		<event side="r" color="purple" />
+		<event side="l" color="purple" />
+		<event side="l" color="yellow" />
+		<event side="l" color="purple" />
+		<event side="r" color="yellow" />
+		<event side="r" color="purple" />
+		<event side="l" color="purple" />
+		<event side="r" color="yellow" />
+		<event side="l" color="purple" />
+		<event side="l" color="yellow" />
+		<event side="r" color="purple" />
+		<event side="l" color="yellow" />
+		<event side="r" color="yellow" />
+		<event side="r" color="purple" />
+		<event side="r" color="yellow" />
+		<event side="l" color="yellow" />
+		<event side="r" color="purple" />
+		<event side="l" color="yellow" />
+		<event side="l" color="purple" />
+		<event side="r" color="yellow" />
+		<event side="r" color="purple" />
+		<event side="l" color="purple" />
+		<event side="l" color="yellow" />
+		<event side="r" color="purple" />
+		<event side="l" color="purple" />
+		<event side="r" color="yellow" />
+		<event side="r" color="yellow" />
+		<event side="l" color="purple" />
+		<event side="l" color="purple" />
+		<event side="l" color="yellow" />
+		<event side="l" color="yellow" />
+		<event side="r" color="purple" />
+		<event side="r" color="yellow" />
+		<event side="r" color="purple" />
+		<event side="l" color="yellow" />
+		<event side="l" color="yellow" />
+		<event side="r" color="purple" />
+		<event side="r" color="yellow" />
+		<event side="l" color="yellow" />
+		<event side="r" color="purple" />
+		<event side="r" color="yellow" />
+		<event side="l" color="yellow" />
+		<event side="l" color="purple" />
+		<event side="l" color="yellow" />
+		<event side="r" color="purple" />
+		<event side="r" color="yellow" />
+		<event side="r" color="purple" />
+		<event side="l" color="purple" />
+		<event side="r" color="yellow" />
+		<event side="l" color="purple" />
+		<event side="r" color="yellow" />
+		<event side="r" color="purple" />
+		<event side="l" color="purple" />
+		<event side="l" color="yellow" />
+		<event side="l" color="yellow" />
+		<event side="l" color="purple" />
+		<event side="r" color="purple" />
+		<event side="r" color="yellow" />
+		<event side="l" color="purple" />
 	</events>
 </session>
+
