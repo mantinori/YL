@@ -1161,7 +1161,7 @@ public class XmlManager {
 		float avgCorrectBlue=0;
 		float orangeCount=0;
 		float avgCorrectOrange=0;
-		float avgTurningTime=0;
+		//float avgTurningTime=0;
 		
 		//Loop through all the events and write them out
 		foreach(StoppingEvent eS in gm.Practice){
@@ -1171,12 +1171,12 @@ public class XmlManager {
 				XmlElement trial = xml.CreateElement("event");
 				
 				trial.SetAttribute("TurnedOrange", (!eS.Go).ToString());
-				trial.SetAttribute("TurningTime", eS.TurningTime.ToString());
+				//trial.SetAttribute("TurningTime", eS.TurningTime.ToString());
 				
 				if(eS.Go) blueCount++;
 				else orangeCount++;
 				
-				avgTurningTime += eS.TurningTime;
+				//avgTurningTime += eS.TurningTime;
 				
 				if((eS.Response==null && !eS.Go) || (eS.Response!=null && eS.Go)){
 					trial.SetAttribute("Correct", "true");
@@ -1207,7 +1207,7 @@ public class XmlManager {
 		practice.SetAttribute("AvgDistanceFromCenter", (avgDist / (responseCount==0? 1 : responseCount)).ToString());
 		practice.SetAttribute("AvgResponseTime", (avgTime / (responseCount==0? 1 : responseCount)).ToString());
 		practice.SetAttribute("StopPercentCorrect", (avgCorrectOrange/(orangeCount==0? 1 : orangeCount)).ToString());
-		practice.SetAttribute("AvgTurningTime", (avgTurningTime/(orangeCount==0? 1 : orangeCount)).ToString());
+		//practice.SetAttribute("AvgTurningTime", (avgTurningTime/(orangeCount==0? 1 : orangeCount)).ToString());
 		
 		session.AppendChild(practice);
 		
@@ -1221,7 +1221,7 @@ public class XmlManager {
 		avgCorrectBlue=0;
 		orangeCount=0;
 		avgCorrectOrange=0;
-		avgTurningTime=0;
+		//avgTurningTime=0;
 		
 		//Loop through all the events and write them out
 		foreach(StoppingEvent eS in gm.Events){
@@ -1231,12 +1231,12 @@ public class XmlManager {
 				XmlElement trial = xml.CreateElement("event");
 				
 				trial.SetAttribute("TurnedOrange", (!eS.Go).ToString());
-				trial.SetAttribute("TurningTime", eS.TurningTime.ToString());
+				//trial.SetAttribute("TurningTime", eS.TurningTime.ToString());
 				
 				if(eS.Go) blueCount++;
 				else orangeCount++;
 				
-				avgTurningTime += eS.TurningTime;
+				//avgTurningTime += eS.TurningTime;
 				
 				if((eS.Response==null && !eS.Go) || (eS.Response!=null && eS.Go)){
 					trial.SetAttribute("Correct", "true");
@@ -1267,7 +1267,7 @@ public class XmlManager {
 		trials.SetAttribute("AvgDistanceFromCenter", (avgDist / (responseCount==0? 1 : responseCount)).ToString());
 		trials.SetAttribute("AvgResponseTime", (avgTime / (responseCount==0? 1 : responseCount)).ToString());
 		trials.SetAttribute("StopPercentCorrect", (avgCorrectOrange/(orangeCount==0? 1 : orangeCount)).ToString());
-		trials.SetAttribute("AvgTurningTime", (avgTurningTime/(orangeCount==0? 1 : orangeCount)).ToString());
+		//trials.SetAttribute("AvgTurningTime", (avgTurningTime/(orangeCount==0? 1 : orangeCount)).ToString());
 		session.AppendChild(trials);	
 	}
 	

@@ -18,11 +18,13 @@ public class StoppingEvent: EventStats{
 	}
 	
 	//When did the object turn colors, 0 if go is true
+	/* XXX- NOT NEEDED SINCE GAME UPDATE 5/7/13
 	private float turningTime;
 	public float TurningTime{
 		get{return turningTime;}
 		set{turningTime = value;}
 	}
+	*/
 	
 	//The list of responses that occurred within the probe(correct) period of the trial
 	private Response response;
@@ -53,7 +55,7 @@ public class StoppingEvent: EventStats{
 	public StoppingEvent(int d, bool g){
 		dot = d;
 		go = g;
-		turningTime = 0;
+		//turningTime = 0;
 		response = null;
 	}
 }

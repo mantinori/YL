@@ -8,7 +8,7 @@ public class StoppingManager : GameManager {
 	//The Stopping ball
 	private GameObject stoppingStimulus;
 	
-	private float avgResponseTime = .6f;
+	//private float avgResponseTime = .6f;
 	
 	private bool secondPracticeStage;
 	
@@ -39,7 +39,7 @@ public class StoppingManager : GameManager {
 		
 		stoppingStimulus = GameObject.Find("Stimulus");
 		
-		stoppingStimulus.renderer.material.color = Color.yellow;
+		stoppingStimulus.renderer.material.color = new Color(.125f,.5f,0,1);
 		
 		stimPositions = new Vector2[4]{new Vector2(-15,10), new Vector2(5,5), new Vector2(15,-10), new Vector2(-10,-5)};
 		
@@ -79,11 +79,11 @@ public class StoppingManager : GameManager {
 		}
 			
 		//Generate the rest of the events
-		for(i=0;i<140;i++){
+		for(i=0;i<92;i++){
 			
 			StoppingEvent e=null;
 			
-			e = new StoppingEvent((int)((i%4f) + 1),i<56? false:true);
+			e = new StoppingEvent((int)((i%4f) + 1),i<30? false:true);
 			
 			events.Add(e);
 		}	
@@ -198,6 +198,8 @@ public class StoppingManager : GameManager {
 		//Click 1st dot
 		stoppingStimulus.transform.position = new Vector3(stimPositions[0].x,-3.5f,stimPositions[0].y);
 		
+		stoppingStimulus.renderer.material.color = new Color(.125f,.5f,0,1);
+		
 		//screen.enabled = false;
 		stoppingStimulus.renderer.enabled = true;
 		
@@ -210,23 +212,21 @@ public class StoppingManager : GameManager {
 		
 		yield return new WaitForSeconds(.05f);
 		
-		//Click 2nd dot
+		//Don't Click 2nd dot
 		tutDots = new List<Vector3>(){new Vector3(stimPositions[1].x,0,stimPositions[1].y)};
 		
 		stoppingStimulus.transform.position =new Vector3(stimPositions[1].x,-3.5f,stimPositions[1].y);
 		
+		stoppingStimulus.renderer.material.color = new Color(1,.5f,0);
+		
 		//screen.enabled = false;
 		stoppingStimulus.renderer.enabled = true;
 		
-		yield return new WaitForSeconds(.15f);
+		yield return new WaitForSeconds(.1f);
 		
 		Vector3 halfWay = new Vector3((stimPositions[1].x + stimPositions[0].x)/2,0,(stimPositions[1].y +stimPositions[0].y)/2 );
 		
 		yield return StartCoroutine(tFinger.moveTo(new List<Vector3>(){halfWay}));
-		
-		stoppingStimulus.renderer.material.color = new Color(1,.5f,0);
-		
-		yield return StartCoroutine(tFinger.moveTo(tutDots));
 		
 		yield return StartCoroutine(tFinger.moveTo(new List<Vector3>(){Vector3.zero}));
 		
@@ -235,7 +235,7 @@ public class StoppingManager : GameManager {
 		//screen.enabled = true;
 		stoppingStimulus.renderer.enabled = false;
 		
-		stoppingStimulus.renderer.material.color = Color.yellow;
+		stoppingStimulus.renderer.material.color = new Color(.125f,.5f,0,1);
 		
 		yield return new WaitForSeconds(.05f);
 		
@@ -261,7 +261,7 @@ public class StoppingManager : GameManager {
 		
 		stoppingStimulus.transform.position =new Vector3(stimPositions[3].x,-3.5f,stimPositions[3].y);
 		
-		stoppingStimulus.renderer.material.color = Color.yellow;
+		stoppingStimulus.renderer.material.color = new Color(1,.5f,0);
 		
 		//screen.enabled = false;	
 		stoppingStimulus.renderer.enabled = true;
@@ -271,10 +271,6 @@ public class StoppingManager : GameManager {
 		halfWay = new Vector3((stimPositions[3].x + stimPositions[2].x)/2,0,(stimPositions[3].y +stimPositions[2].y)/2 );
 		
 		yield return StartCoroutine(tFinger.moveTo(new List<Vector3>(){halfWay}));
-		
-		stoppingStimulus.renderer.material.color = new Color(1,.5f,0);
-		
-		yield return StartCoroutine(tFinger.moveTo(tutDots));
 		
 		yield return StartCoroutine(tFinger.moveTo(new List<Vector3>(){Vector3.zero}));
 		
@@ -302,7 +298,10 @@ public class StoppingManager : GameManager {
 		//Main Session
 		while(currentEventNum< events.Count){
 			
-			stoppingStimulus.renderer.material.color = Color.yellow;
+			if(CurrentEvent.Go)
+				stoppingStimulus.renderer.material.color = new Color(.125f,.5f,0,1);
+			else
+				stoppingStimulus.renderer.material.color = new Color(1,.5f,0);
 			
 			if(practicing){
 				if(CurrentEvent.Dot==1)
@@ -324,20 +323,18 @@ public class StoppingManager : GameManager {
 			
 			float currentTime =0;
 			
-			bool changed = false;
+			//bool changed = false;
 			
 			state = GameState.Probe;
 			
+			/*
 			if(!CurrentEvent.Go){
 				CurrentEvent.TurningTime = (avgResponseTime/2f);
-			}
+			}*/
 			
 			//Wait for either the player's response or the time limit
-			while(CurrentEvent.Response == null && currentTime < 1f){
+			while(CurrentEvent.Response == null && currentTime < 1.9f){
 				currentTime+= Time.deltaTime;
-				
-				if(!CurrentEvent.Go && currentTime> CurrentEvent.TurningTime && !changed)
-					stoppingStimulus.renderer.material.color = new Color(1,.5f,0);
 					
 				yield return new WaitForFixedUpdate();
 			}
@@ -348,14 +345,13 @@ public class StoppingManager : GameManager {
 			stoppingStimulus.renderer.enabled = false;
 			
 			if(currentTime>=1f) CurrentEvent.TimedOut = true;
-			
+			/*
 			if(CurrentEvent.Response == null && !practicing){
 				if(!CurrentEvent.Go){
 					avgResponseTime+=.025f;
 					Mathf.Clamp(avgResponseTime,0,1.4f);
 				}
 			}
-			
 			//Calculate the avgResponseTime of the first 8
 			if(currentEventNum==7){
 				avgResponseTime = 0;
@@ -367,7 +363,7 @@ public class StoppingManager : GameManager {
 				
 				avgResponseTime = avgResponseTime/8;
 			}
-			
+			*/
 			yield return new WaitForSeconds(.1f);
 			
 			//Get the next event
@@ -507,11 +503,13 @@ public class StoppingManager : GameManager {
 							CurrentEvent.Response =r;
 							
 							//If were in the real game
+							/*
 							if(currentEventNum>7 && !CurrentEvent.Go){
 								avgResponseTime-=.025f;
 									
 								Mathf.Clamp(avgResponseTime,0,1.4f);
-							}	
+							}
+							*/	
 						}
 					}
 				}

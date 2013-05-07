@@ -1460,7 +1460,7 @@ public class CsvManager {
 		float avgCorrectBlue=0;
 		float orangeCount=0;
 		float avgCorrectOrange=0;
-		float avgTurningTime=0;
+		//float avgTurningTime=0;
 		
 		//Loop through all the events and get averages/percentages
 		foreach(StoppingEvent eS in gm.Events){
@@ -1468,7 +1468,7 @@ public class CsvManager {
 				if(eS.Go) blueCount++;
 				else orangeCount++;
 				
-				avgTurningTime += eS.TurningTime;
+				//avgTurningTime += eS.TurningTime;
 				
 				if((eS.Response==null && !eS.Go) || (eS.Response!=null && eS.Go)){
 					if(eS.Go)
@@ -1510,11 +1510,11 @@ public class CsvManager {
 						+ ", AvgDistanceFromCenter: " + (avgDist / (responseCount==0? 1 : responseCount)).ToString()
 						+ ", AvgResponseTime: " + (avgTime / (responseCount==0? 1 : responseCount)).ToString()
 						+ ", StopPercentCorrect: " + (avgCorrectOrange/(orangeCount==0? 1 : orangeCount)).ToString()
-						+ ", AvgTurningTime: " + (avgTurningTime/(orangeCount==0? 1 : orangeCount)).ToString();
+						/*+ ", AvgTurningTime: " + (avgTurningTime/(orangeCount==0? 1 : orangeCount)).ToString()*/;
 			
 			writer.WriteLine(newLine);
 			
-			newLine = "Practice, TrialNum, TurnedOrange, TurningTime, Correct, ReactionTime, TouchPosition, DistanceFromCenter";
+			newLine = "Practice, TrialNum, TurnedOrange, Correct, ReactionTime, TouchPosition, DistanceFromCenter";
 	   	
 			writer.WriteLine(newLine);
 			
@@ -1526,7 +1526,7 @@ public class CsvManager {
 				newLine =", " +index +", ";
 				
 				if(eS.Completed){
-					newLine += (!eS.Go).ToString()+", "+ eS.TurningTime.ToString()+", ";
+					newLine += (!eS.Go).ToString()+", "/*+ eS.TurningTime.ToString()+", "*/;
 					
 					if((eS.Response==null && !eS.Go) || (eS.Response!=null && eS.Go))
 						newLine += "True,";
@@ -1556,7 +1556,7 @@ public class CsvManager {
 				newLine =", " +index +", ";
 				
 				if(eS.Completed){
-					newLine += (!eS.Go).ToString()+", "+ eS.TurningTime.ToString()+", ";
+					newLine += (!eS.Go).ToString()+", "/*+ eS.TurningTime.ToString()+", "*/;
 					
 					if((eS.Response==null && !eS.Go) || (eS.Response!=null && eS.Go))
 						newLine += "True,";
