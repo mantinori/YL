@@ -246,10 +246,10 @@ public class AssociateManager : GameManager {
 	protected override  void generatePractice(){
 		List<EventStats> newPractice = new List<EventStats>();
 		
-		newPractice.Add(new AssociateEvent(-1,new List<int>(){-3,-2,-4,-1}));
-		newPractice.Add(new AssociateEvent(-4,new List<int>(){-2,-3,-1,-4}));
-		newPractice.Add(new AssociateEvent(-2,new List<int>(){-3,-4,-1,-2}));
-		newPractice.Add(new AssociateEvent(-3,new List<int>(){-4,-1,-2,-3}));
+		newPractice.Add(new AssociateEvent(-1,new List<int>(){-4,-3,-2,-5}));
+		newPractice.Add(new AssociateEvent(-4,new List<int>(){-5,-2,-1,-3}));
+		newPractice.Add(new AssociateEvent(-2,new List<int>(){-3,-1,-5,-4}));
+		newPractice.Add(new AssociateEvent(-3,new List<int>(){-4,-5,-1,-2}));
 		
 		System.Random rand = new System.Random();
 		
@@ -285,6 +285,7 @@ public class AssociateManager : GameManager {
 		stimuli[0].renderer.material.mainTexture = pracImages[3];
 		stimuli[1].renderer.material.mainTexture = pracImages[1];
 		stimuli[2].renderer.material.mainTexture = pracImages[2];
+		stimuli[3].renderer.material.mainTexture = pracImages[4];
 		
 		yield return StartCoroutine(startEvent());
 		
@@ -292,9 +293,9 @@ public class AssociateManager : GameManager {
 		
 		yield return StartCoroutine(tFinger.moveTo(tutDots));
 		
-		yield return new WaitForSeconds(1.25f);
+		yield return new WaitForSeconds(1f);
 		
-		tutDots = new List<Vector3>(){new Vector3(-15f,-5f,-7.5f)};
+		tutDots = new List<Vector3>(){new Vector3(-18f,-5f,-7.5f)};
 		
 		yield return StartCoroutine(tFinger.performAction(tutDots,null));
 		
@@ -302,14 +303,14 @@ public class AssociateManager : GameManager {
 		
 		yield return new WaitForSeconds(.75f);
 		
-		tutDots = new List<Vector3>(){new Vector3(15f,-5f,-7.5f)};
+		tutDots = new List<Vector3>(){new Vector3(6f,-5f,-7.5f)};
 		
 		yield return StartCoroutine(tFinger.performAction(tutDots,null));
 		StartCoroutine(spot.fadeFinger(new Vector2(tFinger.transform.position.x,tFinger.transform.position.z),0));
 		
 		yield return new WaitForSeconds(.5f);
 		
-		tutDots = new List<Vector3>(){new Vector3(0f,-5f,-7.5f)};
+		tutDots = new List<Vector3>(){new Vector3(-6f,-5f,-7.5f)};
 		
 		yield return StartCoroutine(tFinger.performAction(tutDots,null));
 		StartCoroutine(spot.fadeFinger(new Vector2(tFinger.transform.position.x,tFinger.transform.position.z),1));
@@ -325,7 +326,8 @@ public class AssociateManager : GameManager {
 		target.renderer.material.mainTexture = pracImages[1];
 		stimuli[0].renderer.material.mainTexture = pracImages[0];
 		stimuli[1].renderer.material.mainTexture = pracImages[3];
-		stimuli[2].renderer.material.mainTexture = pracImages[2];
+		stimuli[2].renderer.material.mainTexture = pracImages[4];
+		stimuli[3].renderer.material.mainTexture = pracImages[2];
 		
 		yield return StartCoroutine(startEvent());
 		
@@ -335,7 +337,7 @@ public class AssociateManager : GameManager {
 		
 		yield return new WaitForSeconds(.5f);
 		
-		tutDots = new List<Vector3>(){new Vector3(-15f,-5f,-7.5f)};
+		tutDots = new List<Vector3>(){new Vector3(-18f,-5f,-7.5f)};
 		
 		yield return StartCoroutine(tFinger.performAction(tutDots,null));
 		StartCoroutine(spot.fadeFinger(new Vector2(tFinger.transform.position.x,tFinger.transform.position.z),1));
@@ -351,9 +353,10 @@ public class AssociateManager : GameManager {
 		
 		target.renderer.material.mainTexture = pracImages[2];
 		
-		stimuli[0].renderer.material.mainTexture = pracImages[0];
+		stimuli[0].renderer.material.mainTexture = pracImages[4];
 		stimuli[1].renderer.material.mainTexture = pracImages[1];
 		stimuli[2].renderer.material.mainTexture = pracImages[3];
+		stimuli[3].renderer.material.mainTexture = pracImages[0];
 		
 		yield return StartCoroutine(startEvent());
 		
@@ -363,14 +366,14 @@ public class AssociateManager : GameManager {
 		
 		yield return new WaitForSeconds(1f);
 		
-		tutDots = new List<Vector3>(){new Vector3(-15f,-5f,-7.5f)};
+		tutDots = new List<Vector3>(){new Vector3(-18f,-5f,-7.5f)};
 		
 		yield return StartCoroutine(tFinger.performAction(tutDots,null));
 		StartCoroutine(spot.fadeFinger(new Vector2(tFinger.transform.position.x,tFinger.transform.position.z),0));
 		
 		yield return new WaitForSeconds(.5f);
 		
-		tutDots = new List<Vector3>(){new Vector3(15f,-5f,-7.5f)};
+		tutDots = new List<Vector3>(){new Vector3(6f,-5f,-7.5f)};
 		
 		yield return StartCoroutine(tFinger.performAction(tutDots,null));
 		StartCoroutine(spot.fadeFinger(new Vector2(tFinger.transform.position.x,tFinger.transform.position.z),1));
@@ -384,9 +387,10 @@ public class AssociateManager : GameManager {
 		//Confidant second pair
 		tutDots = new List<Vector3>(){new Vector3(0f,-5f,0f)};
 		target.renderer.material.mainTexture = pracImages[3];
-		stimuli[0].renderer.material.mainTexture = pracImages[2];
-		stimuli[1].renderer.material.mainTexture = pracImages[1];
+		stimuli[0].renderer.material.mainTexture = pracImages[1];
+		stimuli[1].renderer.material.mainTexture = pracImages[4];
 		stimuli[2].renderer.material.mainTexture = pracImages[0];
+		stimuli[3].renderer.material.mainTexture = pracImages[2];
 		
 		yield return StartCoroutine(startEvent());
 		
@@ -396,14 +400,14 @@ public class AssociateManager : GameManager {
 		
 		yield return new WaitForSeconds(.5f);
 		
-		tutDots = new List<Vector3>(){new Vector3(-15f,-5f,-7.5f)};
+		tutDots = new List<Vector3>(){new Vector3(18f,-5f,-7.5f)};
 		
 		yield return StartCoroutine(tFinger.performAction(tutDots,null));
 		StartCoroutine(spot.fadeFinger(new Vector2(tFinger.transform.position.x,tFinger.transform.position.z),1));
 		
 		StartCoroutine(tFinger.exit());	
 		
-		yield return StartCoroutine(endEvent(0));
+		yield return StartCoroutine(endEvent(3));
 		
 		yield return new WaitForSeconds(.25f);
 	}
@@ -414,20 +418,11 @@ public class AssociateManager : GameManager {
 		//Move the box into the scene
 		box.Reset();
 		
-		int max = 4;
-		if(practicing){
-			max = 3;
-		
-			for(int i = 0;i<max; i++){
-				stimuli[i].transform.position = new Vector3(-15 +(i*15), 0,-20);
-			}
-		}
-		
 		//Move all objects on the screen
 		do{
 			target.transform.Translate(new Vector3(0,0,-.5f));
 			
-			for(int i = 0;i<max;i++){
+			for(int i = 0;i<4;i++){
 				stimuli[i].transform.Translate(new Vector3(0,0,.5f));
 			}
 			
@@ -449,16 +444,13 @@ public class AssociateManager : GameManager {
 		while(target.Dancing && stimuli[correct].Dancing){
 			yield return new WaitForFixedUpdate();
 		}
-			
-		int max = 4;
-		if(practicing) max = 3;
 		
 		//Move all objects off the screen
 		do{
 			target.transform.Translate(new Vector3(0,0,.5f));
 			box.transform.Translate(new Vector3(0,0,.5f));
 			
-			for(int i = 0; i<max;i++){
+			for(int i = 0; i<4;i++){
 				if(stimuli[i].Num == correct+1)
 					stimuli[i].transform.Translate(new Vector3(0,0,.5f));
 				else
