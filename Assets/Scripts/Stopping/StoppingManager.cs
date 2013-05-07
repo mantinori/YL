@@ -288,7 +288,7 @@ public class StoppingManager : GameManager {
 	protected override IEnumerator runSession(){
 		
 		//Show the tutorial
-		yield return StartCoroutine(runTutorial());
+		//yield return StartCoroutine(runTutorial());
 	
 		//Show Practice screen
 		yield return StartCoroutine(showTitle("Practice",3));
@@ -466,7 +466,7 @@ public class StoppingManager : GameManager {
 				if(Physics.Raycast(ray, out hit)) {
 					//Hit the Stimulus
 					if(hit.collider.name == "Stimulus"){
-				
+						
 						Vector2 fixedPos = touchPos;
 						
 						//Reverts the y orientation
@@ -476,7 +476,7 @@ public class StoppingManager : GameManager {
 						float time = Time.time - startTime;
 						
 						//Make sure it was before the cutoff
-						if(time<=1f){
+						if(time<=1.9f){
 							float x = ((stoppingStimulus.transform.position.x + 26.7f)/53.4f) * Screen.width;
 							
 							float y = ((stoppingStimulus.transform.position.z - 15f)/-30f) * Screen.height;

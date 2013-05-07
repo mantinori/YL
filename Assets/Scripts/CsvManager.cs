@@ -1622,7 +1622,23 @@ public class CsvManager {
 		avgBadTouch = avgBadTouch/(float)gm.Events.Count;
 		
 		using(StreamWriter writer = new StreamWriter(filePath)){
-			string newLine = "Calculations, AvgNumBadTouch:" + avgBadTouch.ToString()
+			
+			float[] xPos = new float[4];
+			
+			float yPos = ((-7.5f - 15f)/-30f) * Screen.height;
+			
+			for(int i = 0;i<4;i++){
+				xPos[i] = (((-18+(12*i)) + 26.7f)/53.4f) * Screen.width;
+			}
+			
+			string newLine = "Stim Locations, Stim1: (" + xPos[0].ToString() + "; " + yPos.ToString()
+								+ "), Stim2: (" + xPos[1].ToString() + "; " + yPos.ToString()
+								+ "), Stim3: (" + xPos[2].ToString() + "; " + yPos.ToString()
+								+ "), Stim4: (" + xPos[3].ToString() + "; " + yPos.ToString()+")";
+			
+			writer.WriteLine(newLine);
+			
+			newLine = "Calculations, AvgNumBadTouch:" + avgBadTouch.ToString()
 						+ ", LearningRateItems "+ (indexOfLastSpike==-1? "NaN" : (indexOfLastSpike+1).ToString())
 						+ ", AvgProbabilityCorrectCategory: " + Mathf.Round(probabilityCorrectTouch *100).ToString() 
 						+"%, LearningRateCategory: " + (indexOfFiftyPercent==-1 ? "NaN" : (indexOfFiftyPercent+1).ToString());
@@ -1631,18 +1647,17 @@ public class CsvManager {
 				
 			index = 1;
 			
-			newLine = "Practice, TrialNum, NumBadTouches, Score";
+			newLine = "Practice, TrialNum, TargetID, Stimuli, TouchedID, TouchPosition, NumBadTouches, Score";
 			
 			writer.WriteLine(newLine);
 			
 			//Loop through all the practice trials
 			foreach(AssociateEvent eS in gm.Practice){
 				if(eS.Completed){
-					newLine=", " + index + ", " +(eS.Responses.Count-1).ToString()+", ";
-					int score = 0;	
+					int score = 0;
+					int target=eS.TargetImage;
+					string availableStim=Mathf.Abs(eS.Stimuli[0]) +";" +Mathf.Abs(eS.Stimuli[1]) +";" +Mathf.Abs(eS.Stimuli[2]) +";" +Mathf.Abs(eS.Stimuli[3]);
 					if(eS.Responses.Count>1){
-						int target = eS.TargetImage;
-						
 						if(target<7){
 							if(eS.Responses[0].DotPressed>=7) score =1;
 							else score =2;
@@ -1652,26 +1667,28 @@ public class CsvManager {
 							else score =1;
 						}
 					}
-					newLine+=score;
+					foreach(Response r in eS.Responses){
+						newLine=", " + index + ", " + target +", " + availableStim+ ", " + Mathf.Abs(r.DotPressed) +", "
+							+ r.TouchLocation.x +";" + r.TouchLocation.y+", " +(eS.Responses.Count-1).ToString()+", " + score;
 					
-					writer.WriteLine(newLine);
+						writer.WriteLine(newLine);
+					}
 				}
 				index++;
 			}
 			
 			index =1;
 			
-			newLine = "Task, TrialNum, NumBadTouches, Score";
+			newLine = "Task, TrialNum, TargetID, Stimuli, TouchedID, TouchPosition, NumBadTouches, Score";
 			
 			writer.WriteLine(newLine);
-			//Loop through all the practice trials
+			//Loop through all the real trials
 			foreach(AssociateEvent eS in gm.Events){
 				if(eS.Completed){
-					newLine=", " + index + ", " +(eS.Responses.Count-1).ToString()+", ";
-					int score = 0;	
+					int score = 0;
+					int target=eS.TargetImage;
+					string availableStim=eS.Stimuli[0] +";" +eS.Stimuli[1] +";" +eS.Stimuli[2] +";" +eS.Stimuli[3];
 					if(eS.Responses.Count>1){
-						int target = eS.TargetImage;
-						
 						if(target<7){
 							if(eS.Responses[0].DotPressed>=7) score =1;
 							else score =2;
@@ -1681,9 +1698,12 @@ public class CsvManager {
 							else score =1;
 						}
 					}
-					newLine+=score;
+					foreach(Response r in eS.Responses){
+						newLine=", " + index + ", " + target +", " + availableStim+ ", " + Mathf.Abs(r.DotPressed) +", "
+							+ r.TouchLocation.x +";" + r.TouchLocation.y+", " +(eS.Responses.Count-1).ToString()+", " + score;
 					
-					writer.WriteLine(newLine);
+						writer.WriteLine(newLine);
+					}
 				}
 				index++;
 			}
