@@ -344,7 +344,7 @@ public class StoppingManager : GameManager {
 			//screen.enabled = true;
 			stoppingStimulus.renderer.enabled = false;
 			
-			if(currentTime>=1f) CurrentEvent.TimedOut = true;
+			if(currentTime>=1.9f) CurrentEvent.TimedOut = true;
 			/*
 			if(CurrentEvent.Response == null && !practicing){
 				if(!CurrentEvent.Go){
