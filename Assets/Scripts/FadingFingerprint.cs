@@ -20,12 +20,16 @@ public class FadingFingerprint : MonoBehaviour {
 		//Otherwise
 		else{
 			//Make the spot reappear where the player touched the screen
-			renderer.material.color = Color.black;
+			if(GameManager.main.SType == GameManager.SessionType.Spatial)
+				renderer.material.color = Color.white;
+			else
+				renderer.material.color = Color.black;
+			
 			transform.position = new Vector3(pos.x, 2f, pos.y);
 			renderer.enabled = true;
 			float a = 1;
 			
-			Color c = Color.black;
+			Color c = renderer.material.color;
 			
 			float p =1;
 			
