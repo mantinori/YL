@@ -39,7 +39,7 @@ public class ImplicitManager : GameManager {
 		
 		implicitStimulus = GameObject.Find("Stimulus");
 		
-		implicitStimulus.renderer.material.color = Color.blue;
+		implicitStimulus.renderer.material.color = new Color(.125f,.5f,0,1);
 		
 		stimPositions = new Vector2[4]{new Vector2(-15,10), new Vector2(5,5), new Vector2(15,-10), new Vector2(-10,-5)};
 		
