@@ -286,7 +286,7 @@ public class SpatialManager : GameManager {
 		yield return new WaitForSeconds(.1f);
 			
 		//Probe
-		screen.material.color = Color.gray;
+		screen.material.color = new Color(.2f,.2f,.2f,1);
 		
 		List<Vector3> posToPress = new List<Vector3>(){dots[3].transform.position};
 			
@@ -329,7 +329,7 @@ public class SpatialManager : GameManager {
 		yield return new WaitForSeconds(3f);
 			
 		//Probe
-		screen.material.color = Color.gray;
+		screen.material.color = new Color(.2f,.2f,.2f,1);
 			
 		posToPress = new List<Vector3>(){dots[1].transform.position,dots[5].transform.position, dots[6].transform.position};
 		
@@ -380,7 +380,7 @@ public class SpatialManager : GameManager {
 			if(practicing) timeLimit = 4;
 			
 			//Probe
-			screen.material.color = Color.gray;
+			screen.material.color = new Color(.2f,.2f,.2f,1);
 			
 			state = GameState.Probe;
 			
