@@ -10,8 +10,6 @@ public class StoppingManager : GameManager {
 	
 	//private float avgResponseTime = .6f;
 	
-	private bool secondPracticeStage;
-	
 	//Positions of the game's stimuli
 	private Vector2[] stimPositions;
 	public Vector2[] StimPositions{
@@ -34,8 +32,6 @@ public class StoppingManager : GameManager {
 	// Use this for initialization
 	void Awake () {
 		base.Setup(GameManager.SessionType.Stopping);
-		
-		secondPracticeStage = false;
 		
 		stoppingStimulus = GameObject.Find("Stimulus");
 		
@@ -179,7 +175,7 @@ public class StoppingManager : GameManager {
 	
 		border.renderer.enabled = true;
 		
-		List<EventStats> newPractice = new List<EventStats>(){new StoppingEvent(1,true),new StoppingEvent(4,secondPracticeStage? false:true),new StoppingEvent(3,secondPracticeStage? false:true),new StoppingEvent(2,true)};
+		List<EventStats> newPractice = new List<EventStats>(){new StoppingEvent(1,true),new StoppingEvent(4,false),new StoppingEvent(3,false),new StoppingEvent(2,true)};
 
 		practice.AddRange(newPractice);
 	}
@@ -381,7 +377,7 @@ public class StoppingManager : GameManager {
 				NeuroLog.Log("Total Correct Responded: " + numCorrect);
 				
 				//If the numCorrect is greater than 5, or played the practice 4 times, continue on 
-				if((numCorrect>=4 && secondPracticeStage) ||  (secondPracticeStage && practiceSessionCount>=3)){
+				if(numCorrect>=4 ||  practiceSessionCount>=3){
 					NeuroLog.Log("Continuing to MainSession");
 					
 					border.SetActive(false);
@@ -390,20 +386,11 @@ public class StoppingManager : GameManager {
 					
 					practicing = false;
 				}
-				else if((!secondPracticeStage && numCorrect>=3) || practiceSessionCount>=3){
-					NeuroLog.Log("Moving to second practice stage");
-					
-					secondPracticeStage = true;
-					
-					generatePractice();
-				}
 				//Otherwise retry the practice
 				else{
 					practiceSessionCount++;
 					
 					NeuroLog.Log("Redo Practice");
-					
-					secondPracticeStage = false;
 					
 					generatePractice();
 					
