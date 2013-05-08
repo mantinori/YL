@@ -11,6 +11,9 @@ public class MenuController : MonoBehaviour {
 	//List of the task button in the scene(Should be 6)
 	public List<UIButton> taskButtons;
 	
+	public UIPanel menu;
+	public UIPanel brightness;
+	
 	//List of other buttons on the screen by default
 	public ButtonResponder abortButton;
 	public ButtonResponder quitButton;
@@ -24,11 +27,32 @@ public class MenuController : MonoBehaviour {
 	//Name of the current player
 	public UILabel userName;
 	
+	public UIScrollBar gammaBar;
+	private Color ambience;
+	
+	public UILabel brightnessText;
+	public ButtonResponder brightnessButton;
+	
+	public UILabel returnText;
+	public ButtonResponder returnButton;
+	
 	//What language should be shown
 	private string language ="english";
 	
 	// Use this for initialization
 	void Start () {
+		
+		if(PlayerPrefs.HasKey("-ambience")){
+			float val = PlayerPrefs.GetFloat("-ambience");
+			
+			ambience.b = val;
+			ambience.r= val;
+			ambience.g = val;
+			
+			gammaBar.scrollValue = val;
+			
+			RenderSettings.ambientLight = ambience;
+		}
 		
 		if(PlayerPrefs.HasKey("-language"))
 			language = PlayerPrefs.GetString("-language");
@@ -41,6 +65,8 @@ public class MenuController : MonoBehaviour {
 		}
 		quitButton.response = quitbuttonPressed;
 		abortButton.response = displayWarning;
+		returnButton.response = returnToMenu;
+		brightnessButton.response = goToBirghtness;
 		
 		if(language == "spanish"){
 			abortButton.GetComponentInChildren<UILabel>().text = "Cambiar usuario"; 
@@ -49,6 +75,8 @@ public class MenuController : MonoBehaviour {
 			warning.text = " La sesión actual será borrada,\nesta seguro que quiere continuar?";
 			((BoxCollider)abortButton.collider).size = new Vector3(200,40,0);
 			abortButton.GetComponentInChildren<UISlicedSprite>().transform.localScale = new Vector3(215,35,1);
+			returnText.text = "Volver";
+			brightnessText.text = "Brillo";
 		}
 		
 		yesButton.response = resetDevice;
@@ -60,6 +88,20 @@ public class MenuController : MonoBehaviour {
 		
 		//Set up the scene
 		setupScene();
+	}
+	
+	private void returnToMenu(GameObject go){
+		menu.gameObject.SetActive(true);
+		brightness.gameObject.SetActive(false);
+		
+		PlayerPrefs.SetFloat("-ambience", ambience.b);
+	}
+	
+	private void goToBirghtness(GameObject go){
+		menu.gameObject.SetActive(false);
+		brightness.gameObject.SetActive(true);
+		
+		gammaBar.scrollValue = ambience.b;
 	}
 	
 	//Sets up the scene based on the saved PlayerPrefs
@@ -301,6 +343,7 @@ public class MenuController : MonoBehaviour {
 		
 		quitButton.gameObject.SetActive(false);
 		abortButton.gameObject.SetActive(false);
+		brightnessButton.gameObject.SetActive(false);
 	}
 	
 	//Hides the warning, and resets the scene
@@ -317,6 +360,7 @@ public class MenuController : MonoBehaviour {
 		
 		quitButton.gameObject.SetActive(true);
 		abortButton.gameObject.SetActive(true);
+		brightnessButton.gameObject.SetActive(true);
 	}
 	
 	//Reset PlayerPrefs and shut down
@@ -353,6 +397,13 @@ public class MenuController : MonoBehaviour {
 				
 				Screen.SetResolution(width,height,true);
 			}
+		}
+		if(ambience.b!= gammaBar.scrollValue){
+			ambience.b = gammaBar.scrollValue;
+			ambience.r = gammaBar.scrollValue;
+			ambience.g = gammaBar.scrollValue;
+			
+			RenderSettings.ambientLight = ambience;
 		}
 	}
 }

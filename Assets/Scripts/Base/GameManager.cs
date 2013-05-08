@@ -119,6 +119,12 @@ public class GameManager : MonoBehaviour {
 	protected void Setup (SessionType s) {
 		main = this;
 		
+		if(PlayerPrefs.HasKey("-ambience")){
+			float val = PlayerPrefs.GetFloat("-ambience");
+			
+			RenderSettings.ambientLight = new Color(val,val,val,1);
+		}
+		
 		gameOver = false;
 		
 		dragPoints = new List<Vector3>();
@@ -130,8 +136,6 @@ public class GameManager : MonoBehaviour {
 		sType = s;
 		
 		activeSlope =0;
-		
-		//xml = new XmlManager();
 		
 		csv = new CsvManager();
 		

@@ -143,6 +143,9 @@ public class ConfigManager : MonoBehaviour {
 			
 			//If the program needs to be configured, make all the GUI elements appear
 			if(needConfig){
+
+				PlayerPrefs.DeleteKey("-ambience");
+				
 				//Set up the players file
 				if(SetupPlayersCSV(reader)){
 					playerSelector.setupTab(this,demographics);
