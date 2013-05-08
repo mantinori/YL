@@ -54,6 +54,21 @@ public class ConfigManager : MonoBehaviour {
 	//If the config was properly saved
 	private bool configSaved=false;
 	
+	//Custom keyboard
+	private bool windowsTab = false;
+	private bool displayKeyboard =false;
+	private bool shifting = false;
+	public UIPanel keyboard;
+	public UITexture shiftLight;
+	public ButtonResponder back;
+	public UILabel inputLabel;
+	//If the player is currently touching the screen
+	protected bool touching=false;
+	private Camera cam;
+	
+	//Where did the player touch the screen
+	protected Vector3 touchPos = Vector3.zero;	
+	
 	private string testName="";
 	
 	//List of child info
@@ -62,7 +77,14 @@ public class ConfigManager : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		
+		cam = Camera.main;
+		
 		currentlyEnglish = true;
+		
+		if(Application.platform == RuntimePlatform.WindowsPlayer || Application.platform == RuntimePlatform.WindowsEditor){
+			windowsTab = true;
+			testInput.collider.enabled =false;
+		}
 		
 		demographics = new List<Child>();
 		
@@ -83,6 +105,9 @@ public class ConfigManager : MonoBehaviour {
 		
 		bool foundFile = true;
 		
+		playerSelector.gameObject.SetActive(true);
+		keyboard.gameObject.SetActive(false);
+		
 		//Hide all the elements on the screen until were sure the files are set up
 		english.gameObject.SetActive(false);
 		spanish.gameObject.SetActive(false);
@@ -95,6 +120,8 @@ public class ConfigManager : MonoBehaviour {
 		
 		customIDButton.GetComponent<ButtonResponder>().response = showInputField;
 		customIDButton.gameObject.SetActive(false);
+		
+		back.response = showPlayerSelector;
 		
 		message.enabled = false;
 		
@@ -258,7 +285,7 @@ public class ConfigManager : MonoBehaviour {
 				PlayerPrefs.SetString("-district", playerSelector.SelectedDistrict);					
 			}
 			else{
-				testName = testName.Replace(" ", "");
+				//testName = testName.Replace(" ", "");
 				
 				PlayerPrefs.SetString("-childID", testName);
 				PlayerPrefs.SetString("-testing", "t");
@@ -291,6 +318,7 @@ public class ConfigManager : MonoBehaviour {
 			spanish.gameObject.SetActive(false);
 			testingCheckbox.gameObject.SetActive(false);
 			playerSelector.gameObject.SetActive(false);
+			keyboard.gameObject.SetActive(false);
 			testInput.gameObject.SetActive(false);	
 			customIDButton.gameObject.SetActive(false);
 			testingLabel.enabled = false;
@@ -332,11 +360,37 @@ public class ConfigManager : MonoBehaviour {
 		customIDButton.gameObject.SetActive(false);
 		
 		playerSelector.Reset();
+		
+		if(windowsTab){
+			testInput.text ="|";
+			keyboard.gameObject.SetActive(true);
+			playerSelector.gameObject.SetActive(false);
+			displayKeyboard=true;
+		}
 	}
 	
 	//Hides the input field
 	void hideInputField(){
 		testInput.text = "";
+		
+		testInput.gameObject.SetActive(false);
+		testingLabel.enabled = false;
+		
+		customIDButton.gameObject.SetActive(true);
+	}
+	
+	//If the player presses the back button on the keyboard screen
+	void showPlayerSelector(GameObject go){
+		
+		if(message.enabled ==true){
+			confirmButton.gameObject.SetActive(false);
+			message.enabled = false;	
+		}
+		
+		displayKeyboard=false;
+		
+		playerSelector.gameObject.SetActive(true);
+		keyboard.gameObject.SetActive(false);
 		
 		testInput.gameObject.SetActive(false);
 		testingLabel.enabled = false;
@@ -412,6 +466,114 @@ public class ConfigManager : MonoBehaviour {
 			else
 				message.text = "Save "+playerSelector.SelectedPlayer+ " to this Device?";
 			buttonText.text ="Save";
+		}
+		
+		if(windowsTab && displayKeyboard){
+			if(testInput.selected){
+				if(testInput.text.Length >0){
+					if(testInput.text[testInput.text.Length-1] =='|')
+						testInput.text = testInput.text.Substring(0,testInput.text.Length-1);
+				}
+				inputLabel.color = new Color(.95f,1f,0f,1);
+			}
+			
+			if(testName !=  ""  && testName != testInput.text){
+				testName = "";
+				
+				if(message.enabled ==true){
+					confirmButton.gameObject.SetActive(false);
+					message.enabled = false;	
+				}
+			}
+			
+			bool currentTouch =false;
+			//Get the touch location based on the platform
+			if(SystemInfo.deviceType == DeviceType.Handheld){
+				if(Input.touchCount>0){
+					touchPos = Input.touches[0].position;
+			
+					currentTouch = true;
+				}
+				else currentTouch =false;		
+			}
+			else{
+				if(Input.GetMouseButton(0)){
+					touchPos = Input.mousePosition;
+			
+					currentTouch = true;
+				}
+				else currentTouch =false;
+			}		
+			
+			//Not Touching
+			if(!currentTouch)
+				touching = false;
+			//If a player has touched the screen, not holding
+			else if(!touching && currentTouch){	
+				touching = true;
+				Ray ray = cam.ScreenPointToRay(touchPos);
+				RaycastHit hit = new RaycastHit();
+				//If the raycast of the touch hit something
+				if(Physics.Raycast(ray, out hit)) {
+					//Hit the Stimulus
+					if(hit.collider.name.Contains("Key")){
+						
+						inputLabel.color = Color.black;
+						
+						string keyChar = hit.collider.name.Replace("Key","");
+						
+						if(keyChar =="shift") shifting = !shifting;
+						else{
+							if(keyChar == "enter"){
+								if(testInput.text.Length>0){
+									if(testInput.text[testInput.text.Length-1] =='|')
+										testInput.text= testInput.text.Substring(0,testInput.text.Length-1);
+									
+									OnSubmit();
+								}
+							}
+							else{
+								if(message.enabled ==true){
+									confirmButton.gameObject.SetActive(false);
+									message.enabled = false;	
+								}
+								
+								if(keyChar =="space"){
+									if(testInput.text.Length==0)
+										testInput.text =" |";
+									if(testInput.text[testInput.text.Length-1] !='|')
+										testInput.text += " |";
+									else
+										testInput.text= testInput.text.Substring(0,testInput.text.Length-1) + " |";
+								}
+								else if(keyChar =="backspace"){
+									if(testInput.text.Length==0)
+										testInput.text ="|";
+									else if(testInput.text[testInput.text.Length-1] !='|')
+										testInput.text = testInput.text.Substring(0,testInput.text.Length-1) + "|";
+								 	else if(testInput.text.Length>1)
+										testInput.text = testInput.text.Substring(0,testInput.text.Length-2) + "|";
+								}
+								else{
+									if(shifting) keyChar = keyChar.ToUpper();
+							
+									if(testInput.text.Length==0)
+										testInput.text = (keyChar+"|");
+									else if(testInput.text[testInput.text.Length-1] !='|')
+										testInput.text += (keyChar+"|");
+									else
+										testInput.text = testInput.text.Substring(0,testInput.text.Length-1) + keyChar +"|"; 
+								}
+							}
+							
+							shifting = false;
+						}
+						
+						if(shifting) shiftLight.color = Color.green;
+						else shiftLight.color = new Color(.2f,.2f,.2f,1);
+					}
+				}
+			}
 		}
 	}
 }
