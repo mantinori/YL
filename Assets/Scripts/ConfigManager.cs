@@ -384,6 +384,8 @@ public class ConfigManager : MonoBehaviour {
 	void showPlayerSelector(GameObject go){
 		
 		if(message.enabled ==true){
+			testInput.text = "";
+			
 			confirmButton.gameObject.SetActive(false);
 			message.enabled = false;	
 		}
@@ -400,7 +402,13 @@ public class ConfigManager : MonoBehaviour {
 	}
 	
 	void OnSubmit(){
-		testName = testInput.text;
+		
+		if(testInput.text.Length>0){
+			if(testInput.text[testInput.text.Length-1] =='|'){
+				testName = testInput.text.Substring(0,testInput.text.Length-1);
+			}
+			else testName = testInput.text;
+		}
 		
 		if(testName !=""){
 			playerSelector.Reset();
@@ -471,6 +479,22 @@ public class ConfigManager : MonoBehaviour {
 			backText.text = "Back";
 		}
 		
+		//Show the save button if the test input ever changes
+		if(testName != testInput.text){
+			
+			if(testInput.text!= "" && testInput.text!= "|" && testName != testInput.text){
+				testName = testInput.text;
+				
+				OnSubmit();
+			}
+			else if(testInput.text== "" || testInput.text== "|"){
+				testName = "";
+				
+				confirmButton.gameObject.SetActive(false);
+				message.enabled = false;
+			}
+		}
+		
 		if(windowsTab && displayKeyboard){
 			if(testInput.selected){
 				if(testInput.text.Length >0){
@@ -478,15 +502,6 @@ public class ConfigManager : MonoBehaviour {
 						testInput.text = testInput.text.Substring(0,testInput.text.Length-1);
 				}
 				inputLabel.color = new Color(.95f,1f,0f,1);
-			}
-			
-			if(testName !=  ""  && testName != testInput.text){
-				testName = "";
-				
-				if(message.enabled ==true){
-					confirmButton.gameObject.SetActive(false);
-					message.enabled = false;	
-				}
 			}
 			
 			bool currentTouch =false;
@@ -536,11 +551,6 @@ public class ConfigManager : MonoBehaviour {
 								}
 							}
 							else{
-								if(message.enabled ==true){
-									confirmButton.gameObject.SetActive(false);
-									message.enabled = false;	
-								}
-								
 								if(keyChar =="space"){
 									if(testInput.text.Length==0)
 										testInput.text =" |";
