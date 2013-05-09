@@ -61,6 +61,7 @@ public class ConfigManager : MonoBehaviour {
 	public UIPanel keyboard;
 	public UITexture shiftLight;
 	public ButtonResponder back;
+	public UILabel backText;
 	public UILabel inputLabel;
 	//If the player is currently touching the screen
 	protected bool touching=false;
@@ -450,6 +451,7 @@ public class ConfigManager : MonoBehaviour {
 			else
 				message.text = "Asignar "+playerSelector.SelectedPlayer+ " a este PC";
 			buttonText.text ="Salvar";
+			backText.text = "Volver";
 		}
 		else if(english.isChecked && !currentlyEnglish){
 			currentlyEnglish = true;
@@ -466,6 +468,7 @@ public class ConfigManager : MonoBehaviour {
 			else
 				message.text = "Save "+playerSelector.SelectedPlayer+ " to this Device?";
 			buttonText.text ="Save";
+			backText.text = "Back";
 		}
 		
 		if(windowsTab && displayKeyboard){
