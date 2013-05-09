@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
@@ -304,12 +304,12 @@ public class ConfigManager : MonoBehaviour {
 			}
 			
 			if(currentlyEnglish){
-				message.text = "Config info saved!";
+				message.text = "Config info saved";
 			
 				buttonText.text = "CLOSE";
 			}
 			else{
-				message.text = "La configuración ha sido guardada!";
+				message.text = "La configuración ha sido guardada";
 				buttonText.text = "CERRAR";
 				confirmBackground.transform.localScale = new Vector3(225,60,1);
 			}
