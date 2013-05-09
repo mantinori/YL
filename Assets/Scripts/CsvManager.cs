@@ -808,7 +808,7 @@ public class CsvManager {
 			
 			for(float i =1; i<10;i++){
 			
-				newValue = " Dot " + i+": ";
+				newValue = " Dot " + i+", ";
 				
 				Vector2 dotPos = Vector2.zero;
 				
@@ -820,7 +820,7 @@ public class CsvManager {
 				else if(i/3f>1) dotPos.y = Screen.height*(3f/6f);
 				else dotPos.y = Screen.height/6f;
 				
-				newValue += "( "+dotPos.x +"; "+dotPos.y+")";
+				newValue += dotPos.x +"; "+dotPos.y;
 				
 				newLine += newValue;
 				if(i<9)
@@ -1056,8 +1056,8 @@ public class CsvManager {
 	
 	private void WriteOutInhibition(string filePath){
 		using(StreamWriter writer = new StreamWriter(filePath)){
-			string newLine = "Dot Locations, Left: " + (Screen.width/4f).ToString() +";"+(Screen.height/2f).ToString()+
-								", Right: " +(Screen.width*.75f).ToString() +";"+(Screen.height/2f).ToString();
+			string newLine = "Dot Locations, Left, " + (Screen.width/4f).ToString() +";"+(Screen.height/2f).ToString()+
+								", Right, " +(Screen.width*.75f).ToString() +";"+(Screen.height/2f).ToString();
 			
 			writer.WriteLine(newLine);
 			
@@ -1233,19 +1233,19 @@ public class CsvManager {
 			
 			int eventIndex = 1;
 			int responseIndex = 1;
-			string newLine ="Global Averages, AvgGoodTouches: " + avggood.ToString() + ", AvgBadTouches: " + avgbad.ToString() + ", AvgRepeats: "
-							+ avgrepeat.ToString() + ", AvgTimePerTarget: " + avgtimetarget.ToString() + ", AvgStandardDeviation: " + avgstd.ToString() 
-							+ ", AvgTimePerAction: " + avgtimeaction.ToString() + ", AvgTargetsPerArea: " + avgArea + ", AvgLocation: " + avglocation.ToString()
-							+ ", AvgFirstTen: " +  avgfirst.ToString() + ", AvgLastTen: " + avglast.ToString() +", AvgDistancePerTarget:"+ avgdist.ToString();
+			string newLine ="Global Averages, AvgGoodTouches, " + avggood.ToString() + ", AvgBadTouches, " + avgbad.ToString() + ", AvgRepeats, "
+							+ avgrepeat.ToString() + ", AvgTimePerTarget, " + avgtimetarget.ToString() + ", AvgStandardDeviation, " + avgstd.ToString() 
+							+ ", AvgTimePerAction, " + avgtimeaction.ToString() + ", AvgTargetsPerArea, " + avgArea + ", AvgLocation, " + avglocation.ToString()
+							+ ", AvgFirstTen, " +  avgfirst.ToString() + ", AvgLastTen, " + avglast.ToString() +", AvgDistancePerTarget,"+ avgdist.ToString();
 			writer.WriteLine(newLine);
 			
 			foreach(StarEvent eS in gm.Practice){
 				responseIndex = 1;
 				if(eS.Completed){
-					newLine = "Practice " +eventIndex+", EndCondition: "+ eS.EndCondition+ ", Duration: " + eS.Duration.ToString()
-						+ ", NumGoodTouches: " + eS.NumGoodTouches.ToString() + ", NumBadTouches: " + eS.NumBadTouches.ToString()
-							+ ", NumRepeats: " + eS.RepeatTouches.ToString() + ", AvgTimePerTarget: " + eS.AvgTimePerTarget().ToString()
-							+ ", StandardDeviation: " + eS.StD().ToString() + ", AvgTimePerAction: " + eS.AvgTimePerAction().ToString();
+					newLine = "Practice " +eventIndex+", EndCondition, "+ eS.EndCondition+ ", Duration, " + eS.Duration.ToString()
+						+ ", NumGoodTouches, " + eS.NumGoodTouches.ToString() + ", NumBadTouches, " + eS.NumBadTouches.ToString()
+							+ ", NumRepeats, " + eS.RepeatTouches.ToString() + ", AvgTimePerTarget, " + eS.AvgTimePerTarget().ToString()
+							+ ", StandardDeviation, " + eS.StD().ToString() + ", AvgTimePerAction, " + eS.AvgTimePerAction().ToString() + ", AvgTargetsPerArea";
 					
 					List<int> perArea = eS.correctPerArea();
 					string pArea=", (";
@@ -1255,8 +1255,8 @@ public class CsvManager {
 						else pArea+="),";
 					}
 					
-					newLine += (pArea + " AvgLocation: " + eS.AvgDistanceofTargets().ToString() + ", AvgFirstTen: " +eS.AvgTimeStart().ToString()
-						+", AvgLastTen: " +  eS.AvgTimeLast().ToString() + ", AvgDistancePerTarget: " + eS.AvgDistance().ToString());
+					newLine += (pArea + " AvgLocation, " + eS.AvgDistanceofTargets().ToString() + ", AvgFirstTen, " +eS.AvgTimeStart().ToString()
+						+", AvgLastTen, " +  eS.AvgTimeLast().ToString() + ", AvgDistancePerTarget, " + eS.AvgDistance().ToString());
 					
 					writer.WriteLine(newLine);
 					
@@ -1291,10 +1291,10 @@ public class CsvManager {
 			foreach(StarEvent eS in gm.Events){
 				responseIndex = 1;
 				if(eS.Completed){
-					newLine = "Task " +eventIndex+", EndCondition: "+ eS.EndCondition+ ", Duration: " + eS.Duration.ToString()
-						+ ", NumGoodTouches: " + eS.NumGoodTouches.ToString() + ", NumBadTouches: " + eS.NumBadTouches.ToString()
-							+ ", NumRepeats: " + eS.RepeatTouches.ToString() + ", AvgTimePerTarget: " + eS.AvgTimePerTarget().ToString()
-							+ ", StandardDeviation: " + eS.StD().ToString() + ", AvgTimePerAction: " + eS.AvgTimePerAction().ToString();
+					newLine = "Task " +eventIndex+", EndCondition, "+ eS.EndCondition+ ", Duration, " + eS.Duration.ToString()
+						+ ", NumGoodTouches, " + eS.NumGoodTouches.ToString() + ", NumBadTouches, " + eS.NumBadTouches.ToString()
+							+ ", NumRepeats, " + eS.RepeatTouches.ToString() + ", AvgTimePerTarget, " + eS.AvgTimePerTarget().ToString()
+							+ ", StandardDeviation, " + eS.StD().ToString() + ", AvgTimePerAction, " + eS.AvgTimePerAction().ToString() + ", AvgTargetsPerArea";
 					
 					List<int> perArea = eS.correctPerArea();
 					string pArea=", (";
@@ -1304,8 +1304,8 @@ public class CsvManager {
 						else pArea+="),";
 					}
 					
-					newLine += (pArea + " AvgLocation: " + eS.AvgDistanceofTargets().ToString() + ", AvgFirstTen: " +eS.AvgTimeStart().ToString()
-						+", AvgLastTen: " +  eS.AvgTimeLast().ToString() + ", AvgDistancePerTarget: " + eS.AvgDistance().ToString());
+					newLine += (pArea + " AvgLocation, " + eS.AvgDistanceofTargets().ToString() + ", AvgFirstTen, " +eS.AvgTimeStart().ToString()
+						+", AvgLastTen, " +  eS.AvgTimeLast().ToString() + ", AvgDistancePerTarget, " + eS.AvgDistance().ToString());
 					
 					writer.WriteLine(newLine);
 					
@@ -1346,10 +1346,10 @@ public class CsvManager {
 			}
 			
 			
-			string newLine = "Dot Locations, Dot1: (" + pos[0].x.ToString() + "; " + pos[0].y.ToString()
-								+ "), Dot2: (" + pos[1].x.ToString() + "; " + pos[1].y.ToString()
-								+ "), Dot3: (" + pos[2].x.ToString() + "; " + pos[2].y.ToString()
-								+ "), Dot4: (" + pos[3].x.ToString() + "; " + pos[3].y.ToString()+")";
+			string newLine = "Dot Locations, Dot1, " + pos[0].x.ToString() + "; " + pos[0].y.ToString()
+								+ ", Dot2, " + pos[1].x.ToString() + "; " + pos[1].y.ToString()
+								+ ", Dot3, " + pos[2].x.ToString() + "; " + pos[2].y.ToString()
+								+ ", Dot4, " + pos[3].x.ToString() + "; " + pos[3].y.ToString();
 			
 			writer.WriteLine(newLine);
 			
@@ -1419,8 +1419,8 @@ public class CsvManager {
 				avgDist = avgDist / (responseCount==0? 1 : responseCount);
 				responseCount = (responseCount / (float)iEs.Count) *100;
 			
-				newLine = "Block " + blockInt +" Calculations, PercentCorrect: " + responseCount +"%, AvgDistanceFromCenter: "
-						+ avgDist.ToString()+", AvgResponseTime: " + avgTime.ToString();
+				newLine = "Block " + blockInt +" Calculations, PercentCorrect, " + responseCount +"%, AvgDistanceFromCenter, "
+						+ avgDist.ToString()+", AvgResponseTime, " + avgTime.ToString();
 			
 				writer.WriteLine(newLine);
 				
@@ -1500,17 +1500,17 @@ public class CsvManager {
 			}
 			
 			
-			string newLine = "Dot Locations, Dot1: (" + pos[0].x.ToString() + "; " + pos[0].y.ToString()
-								+ "), Dot2: (" + pos[1].x.ToString() + "; " + pos[1].y.ToString()
-								+ "), Dot3: (" + pos[2].x.ToString() + "; " + pos[2].y.ToString()
-								+ "), Dot4: (" + pos[3].x.ToString() + "; " + pos[3].y.ToString()+")";
+			string newLine = "Dot Locations, Dot1, " + pos[0].x.ToString() + "; " + pos[0].y.ToString()
+								+ ", Dot2, " + pos[1].x.ToString() + "; " + pos[1].y.ToString()
+								+ ", Dot3, " + pos[2].x.ToString() + "; " + pos[2].y.ToString()
+								+ ", Dot4, " + pos[3].x.ToString() + "; " + pos[3].y.ToString();
 			
 			writer.WriteLine(newLine);
 			
-			newLine = "Calculations, GoPercentCorrect: " + (avgCorrectBlue/(blueCount==0? 1 :blueCount)).ToString()
-						+ ", AvgDistanceFromCenter: " + (avgDist / (responseCount==0? 1 : responseCount)).ToString()
-						+ ", AvgResponseTime: " + (avgTime / (responseCount==0? 1 : responseCount)).ToString()
-						+ ", StopPercentCorrect: " + (avgCorrectOrange/(orangeCount==0? 1 : orangeCount)).ToString()
+			newLine = "Calculations, GoPercentCorrect, " + (avgCorrectBlue/(blueCount==0? 1 :blueCount)).ToString()
+						+ ", AvgDistanceFromCenter, " + (avgDist / (responseCount==0? 1 : responseCount)).ToString()
+						+ ", AvgResponseTime, " + (avgTime / (responseCount==0? 1 : responseCount)).ToString()
+						+ ", StopPercentCorrect, " + (avgCorrectOrange/(orangeCount==0? 1 : orangeCount)).ToString()
 						/*+ ", AvgTurningTime: " + (avgTurningTime/(orangeCount==0? 1 : orangeCount)).ToString()*/;
 			
 			writer.WriteLine(newLine);
@@ -1631,17 +1631,17 @@ public class CsvManager {
 				xPos[i] = (((-18+(12*i)) + 26.7f)/53.4f) * Screen.width;
 			}
 			
-			string newLine = "Stim Locations, Stim1: (" + xPos[0].ToString() + "; " + yPos.ToString()
-								+ "), Stim2: (" + xPos[1].ToString() + "; " + yPos.ToString()
-								+ "), Stim3: (" + xPos[2].ToString() + "; " + yPos.ToString()
-								+ "), Stim4: (" + xPos[3].ToString() + "; " + yPos.ToString()+")";
+			string newLine = "Stim Locations, Stim1, " + xPos[0].ToString() + "; " + yPos.ToString()
+								+ ", Stim2, " + xPos[1].ToString() + "; " + yPos.ToString()
+								+ ", Stim3, " + xPos[2].ToString() + "; " + yPos.ToString()
+								+ ", Stim4, " + xPos[3].ToString() + "; " + yPos.ToString();
 			
 			writer.WriteLine(newLine);
 			
-			newLine = "Calculations, AvgNumBadTouch:" + avgBadTouch.ToString()
-						+ ", LearningRateItems "+ (indexOfLastSpike==-1? "NaN" : (indexOfLastSpike+1).ToString())
-						+ ", AvgProbabilityCorrectCategory: " + Mathf.Round(probabilityCorrectTouch *100).ToString() 
-						+"%, LearningRateCategory: " + (indexOfFiftyPercent==-1 ? "NaN" : (indexOfFiftyPercent+1).ToString());
+			newLine = "Calculations, AvgNumBadTouch," + avgBadTouch.ToString()
+						+ ", LearningRateItems, "+ (indexOfLastSpike==-1? "NaN" : (indexOfLastSpike+1).ToString())
+						+ ", AvgProbabilityCorrectCategory, " + Mathf.Round(probabilityCorrectTouch *100).ToString() 
+						+"%, LearningRateCategory, " + (indexOfFiftyPercent==-1 ? "NaN" : (indexOfFiftyPercent+1).ToString());
 			
 			writer.WriteLine(newLine);
 				
