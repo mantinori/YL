@@ -329,7 +329,7 @@ public class StoppingManager : GameManager {
 			}*/
 			
 			//Wait for either the player's response or the time limit
-			while(CurrentEvent.Response == null && currentTime < 1.9f){
+			while(CurrentEvent.Response == null && currentTime < 1f){
 				currentTime+= Time.deltaTime;
 					
 				yield return new WaitForFixedUpdate();
@@ -340,7 +340,7 @@ public class StoppingManager : GameManager {
 			//screen.enabled = true;
 			stoppingStimulus.renderer.enabled = false;
 			
-			if(currentTime>=1.9f) CurrentEvent.TimedOut = true;
+			if(currentTime>=1f) CurrentEvent.TimedOut = true;
 			/*
 			if(CurrentEvent.Response == null && !practicing){
 				if(!CurrentEvent.Go){
@@ -463,7 +463,7 @@ public class StoppingManager : GameManager {
 						float time = Time.time - startTime;
 						
 						//Make sure it was before the cutoff
-						if(time<=1.9f){
+						if(time<=1f){
 							float x = ((stoppingStimulus.transform.position.x + 26.7f)/53.4f) * Screen.width;
 							
 							float y = ((stoppingStimulus.transform.position.z - 15f)/-30f) * Screen.height;
