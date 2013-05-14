@@ -7,7 +7,7 @@ using System.Xml;
 using System.Text.RegularExpressions;
 
 public class XmlManager {
-	public static string dashboardFolderName = Path.Combine("YL_tasks", "yl_pilot");
+	public static string dashboardFolderName = Path.Combine("YL_tasks", "yl_test");
 	
 	//Folder names
 	public static string logFilesFolderName = "log_files";

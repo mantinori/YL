@@ -5,41 +5,25 @@ using System.Collections.Generic;
 public class Tab: MonoBehaviour {
 	
 	//The index of whatever element is at the top of the list
-	private int departmentStart;
-	private int provinceStart;
-	private int districtStart;
+	private int clusterStart;
 	private int playerStart;
 	
 	//scroll bars for each category
-	public UIScrollBar departmentScroll;
-	public UIScrollBar provinceScroll;
-	public UIScrollBar districtScroll;
+	public UIScrollBar clusterScroll;
 	public UIScrollBar playerScroll;
 	
 	//The backgrounds for each category
-	public UITexture departmentBackground;
-	public UITexture provinceBackground;
-	public UITexture districtBackground;
+	public UITexture clusterBackground;
 	public UITexture playerBackground;
 	
 	//Lists of the uilabels for each category
-	public List<UILabel> departmentLabels;
-	public List<UILabel> provinceLabels;
-	public List<UILabel> districtLabels;
+	public List<UILabel> clusterLabels;
 	public List<UILabel> playerLabels;
 	
 	//The selected variables
-	private string selectedDepartment;
-	public string SelectedDepartment{
-		get{return selectedDepartment;}
-	}
-	private string selectedProvince;
-	public string SelectedProvince{
-		get{return selectedProvince;}
-	}
-	private string selectedDistrict;
-	public string SelectedDistrict{
-		get{return selectedDistrict;}
+	private string selectedCluster;
+	public string SelectedCluster{
+		get{return selectedCluster;}
 	}
 	private string selectedPlayer;
 	public string SelectedPlayer{
@@ -50,9 +34,7 @@ public class Tab: MonoBehaviour {
 	
 	//List of all the different variables
 	private List<ConfigManager.Child> demographics;
-	private List<string> departments;
-	private List<string> provinces;
-	private List<string> districts;
+	private List<string> clusters;
 	private List<string> players;
 	
 	public Texture scrollBarTab;
@@ -72,44 +54,38 @@ public class Tab: MonoBehaviour {
 		
 		cam = Camera.main;
 		
-		departmentStart = 0;
-		provinceStart = 0;
-		districtStart=0;
+		clusterStart = 0;
 		playerStart= 0;
-		selectedDepartment ="";
-		selectedDistrict ="";
-		selectedProvince ="";
+		selectedCluster ="";
 		selectedPlayer ="";
 		
 		demographics = list;
+		
+		clusterScroll.scrollValue = 0;
+		playerScroll.scrollValue = 0;
 		
 		updateLists();
 	}
 	
 	public void Reset(){
 		selectedPlayer = "";
-		selectedDepartment = "";
-		selectedDistrict ="";
-		selectedProvince ="";
-		provinces = new List<string>();
+		selectedCluster = "";
 		players = new List<string>();
-		districts = new List<string>();
 		
 		updateLists();
 	}
 	
 	//Updates the contents of the lists based on the selected values
 	private void updateLists(){
-		
 		if(selectedPlayer ==""){
-			if(selectedDepartment!="" && selectedProvince != "" && selectedDistrict != ""){
+			if(selectedCluster!=""){
 				
 				playerStart = 0;
 				
 				selectedPlayer = "";
 				players =new List<string>();
 				foreach(ConfigManager.Child c in demographics){
-					if(c.Department == selectedDepartment && c.Province == selectedProvince && c.District == selectedDistrict){
+					if(c.Cluster == selectedCluster){
 						if(!players.Contains(c.ID)){
 							players.Add(c.ID);
 						}
@@ -118,103 +94,37 @@ public class Tab: MonoBehaviour {
 				players.Sort();
 			
 			}
-			else if(selectedDepartment!="" && selectedProvince != ""){
-				
-				districtStart = 0;
-				selectedPlayer = "";
-				selectedDistrict = "";
-				players = new List<string>();
-				districts =new List<string>();
-				foreach(ConfigManager.Child c in demographics){
-					if(c.Department == selectedDepartment && c.Province == selectedProvince){
-						if(!districts.Contains(c.District)){
-							districts.Add(c.District);
-						}
-					}
-				}
-				districts.Sort();
-			}
-			else if(selectedDepartment!=""){
-				provinceStart = 0;
-				selectedPlayer = "";
-				selectedDistrict = "";
-				selectedProvince ="";
-				players = new List<string>();
-				districts =new List<string>();
-				provinces =new List<string>();
-				
-				foreach(ConfigManager.Child c in demographics){
-					if(c.Department == selectedDepartment){
-						if(!provinces.Contains(c.Province)){
-							provinces.Add(c.Province);
-						}
-					}
-				}
-				provinces.Sort();
-			}
 			else{
-				departmentStart =0;
-				selectedDepartment="";
+				clusterStart =0;
+				selectedCluster="";
 				selectedPlayer = "";
-				selectedDistrict = "";
-				selectedProvince ="";
 				players = new List<string>();
-				districts =new List<string>();
-				provinces =new List<string>();
-				departments =new List<string>();
+				clusters =new List<string>();
 				foreach(ConfigManager.Child c in demographics){
-					if(!departments.Contains(c.Department)){
-						departments.Add(c.Department);
+					if(!clusters.Contains(c.Cluster)){
+						clusters.Add(c.Cluster);
 					}
 				}
-				departments.Sort();
+				clusters.Sort();
 			}
 		}
 		
-		departmentScroll.scrollValue = 0;
-		if(departments.Count<=9){
-			departmentScroll.barSize = 1;
-			departmentScroll.alpha =0f;
-			departmentBackground.mainTexture = standardTab;
-			departmentScroll.enabled = false;
+		if(clusters.Count<=9){
+			clusterScroll.scrollValue = 0;
+			clusterScroll.barSize = 1;
+			clusterScroll.alpha =0f;
+			clusterBackground.mainTexture = standardTab;
+			clusterScroll.enabled = false;
 		}
 		else{
-			departmentScroll.alpha =1f;
-			departmentBackground.mainTexture = scrollBarTab;
-			departmentScroll.barSize = 1f/(departments.Count-8f);
-			departmentScroll.enabled = true;
+			clusterScroll.alpha =1f;
+			clusterBackground.mainTexture = scrollBarTab;
+			clusterScroll.barSize = 1f/(clusters.Count-8f);
+			clusterScroll.enabled = true;
 		}
 		
-		provinceScroll.scrollValue = 0;
-		if(provinces.Count<=9){
-			provinceScroll.barSize = 1;
-			provinceScroll.alpha =0f;
-			provinceBackground.mainTexture = standardTab;
-			provinceScroll.enabled = false;
-		}
-		else{
-			provinceScroll.alpha =1f;
-			provinceScroll.barSize = 1f/(provinces.Count-8f);
-			provinceBackground.mainTexture = scrollBarTab;
-			provinceScroll.enabled = true;
-		}
-		
-		districtScroll.scrollValue = 0;
-		if(districts.Count<=9){
-			districtScroll.barSize = 1;
-			districtScroll.alpha =0f;
-			districtBackground.mainTexture = standardTab;
-			districtScroll.enabled = false;
-		}
-		else{
-			districtScroll.alpha =1f;
-			districtScroll.barSize = 1f/(districts.Count-8f);
-			districtBackground.mainTexture = scrollBarTab;
-			districtScroll.enabled = true;
-		}
-		
-		playerScroll.scrollValue = 0;
 		if(players.Count<=9){
+			playerScroll.scrollValue = 0;
 			playerScroll.barSize = 1;
 			playerScroll.alpha =0f;
 			playerBackground.mainTexture = standardTab;
@@ -231,49 +141,19 @@ public class Tab: MonoBehaviour {
 	}
 	
 	private void updateVisuals(){
-		for(int i=0;i<departmentLabels.Count;i++){
-			if(departments.Count>i){
-				departmentLabels[i].text = departments[i+departmentStart];
-				if(selectedDepartment == departments[i+departmentStart])
-					departmentLabels[i].color = Color.yellow;
+
+		for(int i=0;i<clusterLabels.Count;i++){
+			if(clusters.Count>i){
+				clusterLabels[i].text = clusters[i+clusterStart];
+				if(selectedCluster == clusters[i+clusterStart])
+					clusterLabels[i].color = Color.yellow;
 				else
-					departmentLabels[i].color = Color.white;
-				departmentLabels[i].enabled = true;
+					clusterLabels[i].color = Color.white;
+				clusterLabels[i].enabled = true;
 			}
 			else{
-				departmentLabels[i].text ="";
-				departmentLabels[i].enabled = false;
-			}
-		}
-		
-		//If the operator chose a department
-		for(int i=0;i<provinceLabels.Count;i++){
-			if(provinces.Count>i){
-				provinceLabels[i].text = provinces[i+provinceStart];
-				if(selectedProvince == provinces[i+provinceStart])
-					provinceLabels[i].color = Color.yellow;
-				else
-					provinceLabels[i].color = Color.white;
-				provinceLabels[i].enabled = true;
-			}
-			else{
-				provinceLabels[i].text ="";
-				provinceLabels[i].enabled = false;
-			}
-		}
-		
-		for(int i=0;i<districtLabels.Count;i++){
-			if(districts.Count>i){
-				districtLabels[i].text = districts[i+districtStart];
-				if(selectedDistrict == districts[i+districtStart])
-					districtLabels[i].color = Color.yellow;
-				else
-					districtLabels[i].color = Color.white;
-				districtLabels[i].enabled = true;
-			}
-			else{
-				districtLabels[i].text ="";
-				districtLabels[i].enabled = false;
+				clusterLabels[i].text ="";
+				clusterLabels[i].enabled = false;
 			}
 		}
 		
@@ -297,34 +177,13 @@ public class Tab: MonoBehaviour {
 	// Constantly check for player input
 	void Update () {
 		
-		if(departmentScroll.enabled){
-			int i = Mathf.CeilToInt(departmentScroll.scrollValue /departmentScroll.barSize);
+		if(clusterScroll.enabled){
+			int i = Mathf.CeilToInt(clusterScroll.scrollValue /clusterScroll.barSize);
 			
 			if(i>0) i-=1;
 			
-			if(i>=0 && i != departmentStart){
-				departmentStart = i;
-				updateVisuals();
-			}
-		}
-		
-		if(provinceScroll.enabled){
-			int i = Mathf.CeilToInt(provinceScroll.scrollValue /provinceScroll.barSize);
-			
-			if(i>0) i-=1;
-			
-			if(i>=0 && i != provinceStart){
-				provinceStart = i;
-				updateVisuals();
-			}
-		}
-		if(districtScroll.enabled){
-			int i = Mathf.CeilToInt(districtScroll.scrollValue /districtScroll.barSize);
-			
-			if(i>0) i-=1;
-			
-			if(i>=0 && i != districtStart){
-				districtStart = i;
+			if(i>=0 && i != clusterStart){
+				clusterStart = i;
 				updateVisuals();
 			}
 		}
@@ -335,12 +194,11 @@ public class Tab: MonoBehaviour {
 			
 			if(i>=0 && i != playerStart){
 				playerStart = i;
+				
 				updateVisuals();
 			}
 		}
 		
-		
-			
 		bool currentTouch;
 			
 		//Get the touch location based on the platform
@@ -379,41 +237,12 @@ public class Tab: MonoBehaviour {
 				if(hit.collider.name.Contains("name")){
 					
 					int labelNum =int.Parse(hit.collider.name.Replace("name","")) - 1;
-					if(hit.collider.transform.parent.name == "Department"){
-						if(departmentLabels[labelNum].text != ""){
-							if(selectedDepartment != departmentLabels[labelNum].text){
-								selectedDepartment = departmentLabels[labelNum].text;
+					if(hit.collider.transform.parent.name == "Cluster"){
+						if(clusterLabels[labelNum].text != ""){
+							if(selectedCluster != clusterLabels[labelNum].text){
+								selectedCluster = clusterLabels[labelNum].text;
 								
 								cM.hideConfirmation();
-								selectedProvince ="";
-								selectedDistrict ="";
-								selectedPlayer ="";
-								
-								updateLists();
-							}
-						}
-					}
-					else if(hit.collider.transform.parent.name == "Province"){
-						if(provinceLabels[labelNum].text != ""){
-							if(selectedProvince != provinceLabels[labelNum].text){
-								selectedProvince = provinceLabels[labelNum].text;
-							
-								cM.hideConfirmation();
-
-								selectedDistrict ="";
-								selectedPlayer ="";
-								
-								updateLists();
-							}
-						}
-					}
-					else if(hit.collider.transform.parent.name == "District"){
-						if(districtLabels[labelNum].text != ""){
-							if(selectedDistrict!= districtLabels[labelNum].text){
-								selectedDistrict = districtLabels[labelNum].text;
-								
-								cM.hideConfirmation();
-								
 								selectedPlayer ="";
 								
 								updateLists();

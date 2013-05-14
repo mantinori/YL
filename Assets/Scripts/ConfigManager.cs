@@ -6,17 +6,13 @@ using System.IO;
 using System.Xml;
 using LumenWorks.Framework.IO.Csv;
 
-
-
 //Config Controller
 public class ConfigManager : MonoBehaviour {
 	
 	//Struct for child info
 	public struct Child{
 		public string ID {get;set;}
-		public string Department {get;set;}
-		public string Province {get;set;}
-		public string District {get;set;}
+		public string Cluster {get;set;}
 	}
 	
 	//The players file name
@@ -42,9 +38,7 @@ public class ConfigManager : MonoBehaviour {
 	public UILabel buttonText;
 	public UILabel message;
 	
-	public UILabel departmentLabel;
-	public UILabel provinceLabel;
-	public UILabel districtLabel;
+	public UILabel clusterLabel;
 	
 	//For testing purposes, allow someone to just write in a name
 	public UIInput testInput;
@@ -220,9 +214,7 @@ public class ConfigManager : MonoBehaviour {
 			using (CsvReader csv = new CsvReader(reader,true)){
 				while (csv.ReadNextRecord()){
 					Child c = new Child();
-					c.Department = csv["department"];
-					c.Province = csv["province"];
-					c.District = csv["district"];
+					c.Cluster = csv["cluster"];
 					c.ID = csv["childID"];
 					
 					demographics.Add(c);
@@ -281,18 +273,14 @@ public class ConfigManager : MonoBehaviour {
 				name = playerSelector.SelectedPlayer.Replace(" ", "");
 				PlayerPrefs.SetString("-childID", playerSelector.SelectedPlayer);
 				PlayerPrefs.SetString("-testing", "f");
-				PlayerPrefs.SetString("-department", playerSelector.SelectedDepartment);
-				PlayerPrefs.SetString("-province", playerSelector.SelectedProvince);
-				PlayerPrefs.SetString("-district", playerSelector.SelectedDistrict);					
+				PlayerPrefs.SetString("-cluster", playerSelector.SelectedCluster);					
 			}
 			else{
 				//testName = testName.Replace(" ", "");
 				
 				PlayerPrefs.SetString("-childID", testName);
 				PlayerPrefs.SetString("-testing", "t");
-				PlayerPrefs.SetString("-department", "n/a");
-				PlayerPrefs.SetString("-province", "n/a");
-				PlayerPrefs.SetString("-district", "n/a");
+				PlayerPrefs.SetString("-cluster", "n/a");
 			}
 			
 			using(StreamWriter writer = new StreamWriter(Path.Combine(CsvManager.PlayerSpecificPath, name+"_" + System.Environment.MachineName+"_Criterion.csv"))){
@@ -450,9 +438,7 @@ public class ConfigManager : MonoBehaviour {
 			customBackground.transform.localScale = new Vector3(575,40,1);
 			((BoxCollider)customIDButton.collider).size = new Vector3(575,40,0);
 			testingLabel.text = "Escribir ID a mano:";
-			departmentLabel.text = "Departamento";
-			provinceLabel.text = "Provincia";
-			districtLabel.text ="Distrito";
+			clusterLabel.text = "Grupo";
 			testingCheckbox.GetComponentInChildren<UILabel>().text = "Modo de Prueba";
 			if(testName!="")
 				message.text = "Asignar "+testName+ " a este PC";
@@ -467,9 +453,7 @@ public class ConfigManager : MonoBehaviour {
 			customBackground.transform.localScale = new Vector3(400,40,1);
 			((BoxCollider)customIDButton.collider).size = new Vector3(400,40,0);
 			testingLabel.text = "Input ID by hand:";
-			departmentLabel.text = "Department";
-			provinceLabel.text = "Province";
-			districtLabel.text ="District";
+			clusterLabel.text = "Cluster";
 			testingCheckbox.GetComponentInChildren<UILabel>().text = "Testing Mode";
 			if(testName!="")
 				message.text = "Save "+testName+ " to this Device?";
