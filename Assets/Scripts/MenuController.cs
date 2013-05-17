@@ -39,11 +39,8 @@ public class MenuController : MonoBehaviour {
 	public UILabel returnText;
 	public ButtonResponder returnButton;
 	
-	//Did the player perform all the tasks
-	private bool completed;
-	
 	//Is the current player a custom "test" player
-	private bool testing;
+	private bool customID;
 	
 	//What language should be shown
 	private string language ="english";
@@ -55,12 +52,11 @@ public class MenuController : MonoBehaviour {
 	
 	// Use this for initialization
 	void Start () {
-		completed = false;
 		
 		//Check to see if the current player is a test player
-		string test = PlayerPrefs.GetString("-testing");
-		if(test =="-t") testing =true;
-		else testing =false;
+		string test = PlayerPrefs.GetString("-customID");
+		if(test =="-t") customID =true;
+		else customID =false;
 		
 		if(PlayerPrefs.HasKey("-ambience")){
 			float val = PlayerPrefs.GetFloat("-ambience");
@@ -196,7 +192,6 @@ public class MenuController : MonoBehaviour {
 		
 		//If the player has completed all the tasks, change the "abort" button to the "done" button
 		if(latestTask==7){
-			completed = true; 
 			
 			abortButton.transform.GetComponentInChildren<UISlicedSprite>().color = Color.green;
 			((BoxCollider)abortButton.collider).size = new Vector3(165,40,0);
@@ -420,8 +415,15 @@ public class MenuController : MonoBehaviour {
 		
 		NeuroLog.Log("Resetting the device");
 		
+		bool testingMode = true;
+		
+		if(PlayerPrefs.HasKey("-testingMode")){
+			if(PlayerPrefs.GetString("-testingMode") == "false")
+				testingMode = false;
+		}
+		
 		//If the player completed all the tasks and it's not a custom ID
-		if(!testing && completed){
+		if(!customID && !testingMode){
 			try{
 				
 				string path = Path.Combine(CsvManager.PlayerSpecificPath, "players.csv");
@@ -434,17 +436,20 @@ public class MenuController : MonoBehaviour {
 			
 					//Get the cluster and id strings
 					string cluster = PlayerPrefs.GetString("-cluster");
-					string ID = PlayerPrefs.GetString("-id");
+					string ID = PlayerPrefs.GetString("-childID");
 					
 					//Create the new line to replace the old one
-					string newLine = cluster+", "+ ID+", true";
+					string newLine = cluster+", "+ ID+", " + latestTask;
 					
 					int playerLine=-1;
+					
+					Debug.Log(ID + ": " + cluster);
 					
 					//Loop through the lines until we find the matching line
 					for(int i =0;i<lines.Length;i++){
 						string[] values = lines[i].Split(',');
 						
+						Debug.Log(values[1] + ": " + values[0]);
 						if(values[0] == cluster && values[1] == ID){
 							playerLine = i;
 							break;

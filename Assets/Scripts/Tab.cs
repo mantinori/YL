@@ -68,7 +68,11 @@ public class Tab: MonoBehaviour {
 		completed = new Dictionary<string, bool>();
 		
 		foreach(ConfigManager.Child c in demographics){
-			completed.Add(c.Cluster+c.ID, c.Completed);
+			bool complete =false;
+			
+			if(c.lastCompleted==7) complete = true;
+			
+			completed.Add(c.Cluster+c.ID, complete);
 		}
 		
 		updateLists();
@@ -171,12 +175,18 @@ public class Tab: MonoBehaviour {
 				bool c = completed[selectedCluster+players[i+playerStart]];
 				
 				
-				if(selectedPlayer == players[i+playerStart])
+				if(selectedPlayer == players[i+playerStart]){
+					playerLabels[i].collider.enabled = true;
 					playerLabels[i].color = Color.yellow;
-				else if(c)
+				}
+				else if(c){
 					playerLabels[i].color = Color.gray;
-				else
+					playerLabels[i].collider.enabled = false;
+				}
+				else{
 					playerLabels[i].color = Color.white;
+					playerLabels[i].collider.enabled = true;
+				}
 				playerLabels[i].enabled = true;
 			}
 			else{

@@ -13,7 +13,7 @@ public class ConfigManager : MonoBehaviour {
 	public struct Child{
 		public string ID {get;set;}
 		public string Cluster {get;set;}
-		public bool Completed {get;set;}
+		public int lastCompleted {get;set;}
 	}
 	
 	//The players file name
@@ -158,7 +158,7 @@ public class ConfigManager : MonoBehaviour {
 		if(foundFile){
 			string p = PlayerPrefs.GetString("-childID");
 			
-			string testing = PlayerPrefs.GetString("-testing");
+			string customID = PlayerPrefs.GetString("-customID");
 			
 			//If there is no player saved in PlayerPrefs, signal that we need to config the device
 			if(p == ""){
@@ -166,10 +166,10 @@ public class ConfigManager : MonoBehaviour {
 					
 				NeuroLog.Log("No player set to the device.");
 			}
-			else if(testing=="t"){
+			else if(customID=="t"){
 				needConfig = false;
 				
-				NeuroLog.Log("Using Testing Player");
+				NeuroLog.Log("Using customID Player");
 			}
 			
 			//If the program needs to be configured, make all the GUI elements appear
@@ -228,9 +228,17 @@ public class ConfigManager : MonoBehaviour {
 					Child c = new Child();
 					c.Cluster = csv["cluster"];
 					c.ID = csv["childID"];
-					c.Completed = bool.Parse(csv["completed"]);
+					int lastcompleted = -1;
 					
-					demographics.Add(c);
+					int.TryParse(csv["lastcompleted"], out lastcompleted);
+					
+					if(c.lastCompleted<0 || c.lastCompleted>7)
+						NeuroLog.Log("Child " + c.ID +"("+ c.Cluster+") has an invalid value for last Completed. Needs to be between 0-7.");
+					else{
+						c.lastCompleted = lastcompleted;
+						
+						demographics.Add(c);
+					}
 				}
 			}
 		}
@@ -257,6 +265,7 @@ public class ConfigManager : MonoBehaviour {
 			
 			//Set up the task statuses
 			if(testingCheckbox.isChecked){
+				PlayerPrefs.SetString("-testingMode", "true");
 				PlayerPrefs.SetString("-t1", "true");
 				PlayerPrefs.SetString("-t2", "true");
 				PlayerPrefs.SetString("-t3", "true");
@@ -266,13 +275,24 @@ public class ConfigManager : MonoBehaviour {
 				PlayerPrefs.SetString("-t7", "true");
 			}
 			else{
-				PlayerPrefs.SetString("-t1", "false");
-				PlayerPrefs.SetString("-t2", "false");
-				PlayerPrefs.SetString("-t3", "false");
-				PlayerPrefs.SetString("-t4", "false");
-				PlayerPrefs.SetString("-t5", "false");
-				PlayerPrefs.SetString("-t6", "false");
-				PlayerPrefs.SetString("-t7", "false");
+				PlayerPrefs.SetString("-testingMode", "false");
+				
+				//Get the last completed of the player
+				int lastCompleted =0;
+				
+				foreach(Child c in demographics){
+					if(playerSelector.SelectedPlayer == c.ID && playerSelector.SelectedCluster == c.Cluster){
+						lastCompleted = c.lastCompleted;
+					}
+				}
+				
+				//Save the t values
+				for (int i =1 ; i<8;i++){
+					if(lastCompleted<i)
+						PlayerPrefs.SetString("-t"+i, "false");
+					else
+						PlayerPrefs.SetString("-t"+i, "true");
+				}
 			}
 			
 			if(english.isChecked) PlayerPrefs.SetString("-language", "english");
@@ -285,14 +305,14 @@ public class ConfigManager : MonoBehaviour {
 				
 				name = playerSelector.SelectedPlayer.Replace(" ", "");
 				PlayerPrefs.SetString("-childID", playerSelector.SelectedPlayer);
-				PlayerPrefs.SetString("-testing", "f");
+				PlayerPrefs.SetString("-customID", "f");
 				PlayerPrefs.SetString("-cluster", playerSelector.SelectedCluster);					
 			}
 			else{
 				//testName = testName.Replace(" ", "");
 				
 				PlayerPrefs.SetString("-childID", testName);
-				PlayerPrefs.SetString("-testing", "t");
+				PlayerPrefs.SetString("-customID", "t");
 				PlayerPrefs.SetString("-cluster", "n/a");
 			}
 			
