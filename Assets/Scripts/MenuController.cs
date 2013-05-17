@@ -22,6 +22,9 @@ public class MenuController : MonoBehaviour {
 	public ButtonResponder yesButton;
 	public ButtonResponder noButton;
 	
+	//For task confirmation
+	public ButtonResponder confirmButton;
+	
 	//Texted used for the warning message
 	public UILabel warning;
 	//Name of the current player
@@ -44,6 +47,11 @@ public class MenuController : MonoBehaviour {
 	
 	//What language should be shown
 	private string language ="english";
+	
+	//What was the last completed task(number)
+	private int latestTask=0;
+	
+	private string selectedTask;
 	
 	// Use this for initialization
 	void Start () {
@@ -71,7 +79,7 @@ public class MenuController : MonoBehaviour {
 		
 		//Set the response for all the buttons to methods in this class
 		foreach(UIButton b in taskButtons){
-			b.GetComponent<ButtonResponder>().response = beginTask;
+			b.GetComponent<ButtonResponder>().response = taskButtonPressed;
 			if(language == "spanish")
 				b.GetComponentInChildren<UILabel>().text = b.GetComponentInChildren<UILabel>().text.Replace("Game", "Juego"); 
 		}
@@ -84,6 +92,8 @@ public class MenuController : MonoBehaviour {
 			abortButton.GetComponentInChildren<UILabel>().text = "Cambiar usuario"; 
 			quitButton.GetComponentInChildren<UILabel>().text = "Salir"; 
 			yesButton.GetComponentInChildren<UILabel>().text = "Sí";
+			confirmButton.GetComponentInChildren<UILabel>().text = "Sí";
+			
 			warning.text = " La sesión actual será borrada,\nesta seguro que quiere continuar?";
 			((BoxCollider)abortButton.collider).size = new Vector3(200,40,0);
 			abortButton.GetComponentInChildren<UISlicedSprite>().transform.localScale = new Vector3(215,35,1);
@@ -95,6 +105,8 @@ public class MenuController : MonoBehaviour {
 		yesButton.gameObject.SetActive(false);
 		noButton.response = removeWarning;
 		noButton.gameObject.SetActive(false);
+		confirmButton.response = beginTask;
+		confirmButton.gameObject.SetActive(false);
 		
 		warning.enabled =false;
 		
@@ -133,7 +145,7 @@ public class MenuController : MonoBehaviour {
 			PlayerPrefs.DeleteKey("-currentTask");
 		}
 		
-		int latestTask=0;
+		latestTask=0;
 		//See how far the player has gotten so far
 		if(PlayerPrefs.GetString("-t1")=="true"){
 			latestTask++;
@@ -262,14 +274,46 @@ public class MenuController : MonoBehaviour {
 			Application.LoadLevel("stopping");
 	}*/
 	
+	
+	private void taskButtonPressed(GameObject o){
+
+		int num = int.Parse(o.name.Replace("task",""));
+		
+		selectedTask = o.name;
+		
+		if(num<= latestTask){
+			//Show the warning components
+			if(language =="spanish")
+				warning.text = "Este juego ha sido completado,\nesta seguro que quiere continuar?";
+			else
+				warning.text = "You have already completed this game.\nDo you still wish to replay it?";
+			warning.enabled =true;
+			confirmButton.gameObject.SetActive(true);
+			noButton.gameObject.SetActive(true);
+		
+			//Hide the regular components 
+			foreach(UIButton b in taskButtons){
+				b.gameObject.SetActive(false);
+			}
+		
+			quitButton.gameObject.SetActive(false);
+			abortButton.gameObject.SetActive(false);
+			brightnessButton.gameObject.SetActive(false);
+		}
+		//Otherwise, don't need to show warning. Continue on to loading the game
+		else{
+			beginTask(null);
+		}
+	}
+	
 	//If a task button was pressed, find out what game type it is then start the game
 	private void beginTask(GameObject o){
 		
 		//String the fileName
-		string fileName = o.name +".csv";
+		string fileName = selectedTask +".csv";
 		
 		//Get the taskNumber
-		int num = int.Parse(o.name.Replace("task",""));
+		int num = int.Parse(selectedTask.Replace("task",""));
 		
 		StreamReader sR;
 		
@@ -281,17 +325,7 @@ public class MenuController : MonoBehaviour {
 				NeuroLog.Error("Unable to find task file");
 				
 				return;
-			}/*
-			else{
-				NeuroLog.Log("Attempting to read from local Resources");
-					
-				TextAsset sessionData = Resources.Load("session_files/" + sessionXML) as TextAsset;
-		
-				TextReader reader = new StringReader(sessionData.text);
-				
-				sR = new StreamReader();
 			}
-			*/
 		}
 		catch(UnityException e){
 			
@@ -345,6 +379,10 @@ public class MenuController : MonoBehaviour {
 	private void displayWarning(GameObject o){
 		
 		//Show the warning components
+		if(language =="spanish")
+				warning.text = "La sesión actual será borrada,\nesta seguro que quiere continuar?";
+			else
+				warning.text = "Warning!\nCurrent session status will be deleted.\nProceed?";
 		warning.enabled =true;
 		yesButton.gameObject.SetActive(true);
 		noButton.gameObject.SetActive(true);
@@ -365,6 +403,7 @@ public class MenuController : MonoBehaviour {
 		warning.enabled =false;
 		yesButton.gameObject.SetActive(false);
 		noButton.gameObject.SetActive(false);
+		confirmButton.gameObject.SetActive(false);
 		
 		//Make the regular components reappear
 		foreach(UIButton b in taskButtons){
