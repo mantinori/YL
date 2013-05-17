@@ -225,65 +225,75 @@ public class StarManager : GameManager {
 		//List of objects in the scene
 		List<GameObject> starObjects = new List<GameObject>();
 		
-		//Get the required amount of little stars
-		for(k=0;k<littleStars.Count;k++){
-			littleStars[k].transform.rotation = Quaternion.identity;
-			littleStars[k].transform.position = new Vector3(-250,0,0);
-			if(k<CurrentEvent.NumLittleStars/2) littleStars[k].renderer.material = materials[1];
-			else littleStars[k].renderer.material = materials[2];
-			if(k<CurrentEvent.NumLittleStars){
-				littleStars[k].renderer.enabled = true;
-				starObjects.Add(littleStars[k]);
-			}
-			//Hide any unneeded ones
-			else littleStars[k].renderer.enabled = false;
-		}
-		
-		k = 0;
-		
-		//Get the required amount of big stars
-		foreach(GameObject gO in bigStars){
-			gO.transform.rotation = Quaternion.identity;
-			gO.transform.position = new Vector3(-250,0,0);
-			if(k<CurrentEvent.NumBigStars){
+		if(practicing){
+			starObjects.AddRange(GameObject.FindGameObjectsWithTag("example"));
+			foreach(GameObject gO in starObjects){
+				if(littleStars.Contains(gO)) gO.renderer.material = materials[1];
 				gO.renderer.enabled = true;
-				starObjects.Add(gO);
 			}
-			//Hide any unneeded ones
-			else gO.renderer.enabled = false;
-			k++;
 		}
-		
-		k = 0;
-		
-		//Get the required amount of triangles
-		foreach(GameObject gO in triangles){
-			gO.transform.rotation = Quaternion.identity;
-			gO.transform.position = new Vector3(-250,0,0);
+		else{
+			//Get the required amount of little stars
+			for(k=0;k<littleStars.Count;k++){
+				
+				littleStars[k].transform.rotation = Quaternion.identity;
+				littleStars[k].transform.position = new Vector3(-250,0,0);
+				if(k<CurrentEvent.NumLittleStars/2) littleStars[k].renderer.material = materials[1];
+				else littleStars[k].renderer.material = materials[2];
+				if(k<CurrentEvent.NumLittleStars){
+					littleStars[k].renderer.enabled = true;
+					starObjects.Add(littleStars[k]);
+				}
+				//Hide any unneeded ones
+				else littleStars[k].renderer.enabled = false;
+			}
+
+			k = 0;
 			
-			if(k<CurrentEvent.NumTriangles){
-				gO.renderer.enabled = true;
-				starObjects.Add(gO);
+			//Get the required amount of big stars
+			foreach(GameObject gO in bigStars){
+				gO.transform.rotation = Quaternion.identity;
+				gO.transform.position = new Vector3(-250,0,0);
+				if(k<CurrentEvent.NumBigStars){
+					gO.renderer.enabled = true;
+					starObjects.Add(gO);
+				}
+				//Hide any unneeded ones
+				else gO.renderer.enabled = false;
+				k++;
 			}
-			//Hide any unneeded ones
-			else gO.renderer.enabled = false;
-			k++;
-		}
-		
-		k = 0;
-		
-		//Get the required amount of dots
-		foreach(GameObject gO in dots){
-			gO.transform.rotation = Quaternion.identity;
-			gO.transform.position = new Vector3(-250,0,0);
 			
-			if(k<CurrentEvent.NumDots){
-				starObjects.Add(gO);
-				gO.renderer.enabled = true;
+			k = 0;
+			
+			//Get the required amount of triangles
+			foreach(GameObject gO in triangles){
+				gO.transform.rotation = Quaternion.identity;
+				gO.transform.position = new Vector3(-250,0,0);
+				
+				if(k<CurrentEvent.NumTriangles){
+					gO.renderer.enabled = true;
+					starObjects.Add(gO);
+				}
+				//Hide any unneeded ones
+				else gO.renderer.enabled = false;
+				k++;
 			}
-			//Hide any unneeded ones
-			else gO.renderer.enabled = false;
-			k++;
+			
+			k = 0;
+			
+			//Get the required amount of dots
+			foreach(GameObject gO in dots){
+				gO.transform.rotation = Quaternion.identity;
+				gO.transform.position = new Vector3(-250,0,0);
+				
+				if(k<CurrentEvent.NumDots){
+					starObjects.Add(gO);
+					gO.renderer.enabled = true;
+				}
+				//Hide any unneeded ones
+				else gO.renderer.enabled = false;
+				k++;
+			}
 		}
 		
 		System.Random rand = new System.Random();
@@ -632,6 +642,7 @@ public class StarManager : GameManager {
 				gO.renderer.material = materials[1];
 				tutPresses.Add(gO.transform.position);
 			}
+			gO.renderer.enabled = true;
 		}
 		
 		yield return new WaitForSeconds(1.5f);
