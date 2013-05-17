@@ -36,6 +36,7 @@ public class Tab: MonoBehaviour {
 	private List<ConfigManager.Child> demographics;
 	private List<string> clusters;
 	private List<string> players;
+	private Dictionary<string , bool> completed;
 	
 	public Texture scrollBarTab;
 	public Texture standardTab;
@@ -63,6 +64,12 @@ public class Tab: MonoBehaviour {
 		
 		clusterScroll.scrollValue = 0;
 		playerScroll.scrollValue = 0;
+		
+		completed = new Dictionary<string, bool>();
+		
+		foreach(ConfigManager.Child c in demographics){
+			completed.Add(c.Cluster+c.ID, c.Completed);
+		}
 		
 		updateLists();
 	}
@@ -161,8 +168,13 @@ public class Tab: MonoBehaviour {
 			if(players.Count>i){
 				playerLabels[i].text = players[i+playerStart];
 				
+				bool c = completed[selectedCluster+players[i+playerStart]];
+				
+				
 				if(selectedPlayer == players[i+playerStart])
 					playerLabels[i].color = Color.yellow;
+				else if(c)
+					playerLabels[i].color = Color.gray;
 				else
 					playerLabels[i].color = Color.white;
 				playerLabels[i].enabled = true;

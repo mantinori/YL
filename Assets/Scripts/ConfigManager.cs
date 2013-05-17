@@ -13,6 +13,7 @@ public class ConfigManager : MonoBehaviour {
 	public struct Child{
 		public string ID {get;set;}
 		public string Cluster {get;set;}
+		public bool Completed {get;set;}
 	}
 	
 	//The players file name
@@ -227,6 +228,7 @@ public class ConfigManager : MonoBehaviour {
 					Child c = new Child();
 					c.Cluster = csv["cluster"];
 					c.ID = csv["childID"];
+					c.Completed = bool.Parse(csv["completed"]);
 					
 					demographics.Add(c);
 				}

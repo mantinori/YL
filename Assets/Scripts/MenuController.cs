@@ -36,11 +36,23 @@ public class MenuController : MonoBehaviour {
 	public UILabel returnText;
 	public ButtonResponder returnButton;
 	
+	//Did the player perform all the tasks
+	private bool completed;
+	
+	//Is the current player a custom "test" player
+	private bool testing;
+	
 	//What language should be shown
 	private string language ="english";
 	
 	// Use this for initialization
 	void Start () {
+		completed = false;
+		
+		//Check to see if the current player is a test player
+		string test = PlayerPrefs.GetString("-testing");
+		if(test =="-t") testing =true;
+		else testing =false;
 		
 		if(PlayerPrefs.HasKey("-ambience")){
 			float val = PlayerPrefs.GetFloat("-ambience");
@@ -172,6 +184,8 @@ public class MenuController : MonoBehaviour {
 		
 		//If the player has completed all the tasks, change the "abort" button to the "done" button
 		if(latestTask==7){
+			completed = true; 
+			
 			abortButton.transform.GetComponentInChildren<UISlicedSprite>().color = Color.green;
 			((BoxCollider)abortButton.collider).size = new Vector3(165,40,0);
 			abortButton.GetComponentInChildren<UISlicedSprite>().transform.localScale = new Vector3(175,35,1);
@@ -279,9 +293,9 @@ public class MenuController : MonoBehaviour {
 			}
 			*/
 		}
-		catch{
+		catch(UnityException e){
 			
-			NeuroLog.Error("Unable to find task file");
+			NeuroLog.Error("Unable to load task file:\n" + e.Message);
 				
 			return;
 		}
@@ -366,6 +380,55 @@ public class MenuController : MonoBehaviour {
 	private void resetDevice(GameObject o){
 		
 		NeuroLog.Log("Resetting the device");
+		
+		//If the player completed all the tasks and it's not a custom ID
+		if(!testing && completed){
+			try{
+				
+				string path = Path.Combine(CsvManager.PlayerSpecificPath, "players.csv");
+				
+				//Make sure the player file is available
+				if(File.Exists(path)){
+					
+					//Get the lines from the csv file
+					string[] lines = System.IO.File.ReadAllLines(path);
+			
+					//Get the cluster and id strings
+					string cluster = PlayerPrefs.GetString("-cluster");
+					string ID = PlayerPrefs.GetString("-id");
+					
+					//Create the new line to replace the old one
+					string newLine = cluster+", "+ ID+", true";
+					
+					int playerLine=-1;
+					
+					//Loop through the lines until we find the matching line
+					for(int i =0;i<lines.Length;i++){
+						string[] values = lines[i].Split(',');
+						
+						if(values[0] == cluster && values[1] == ID){
+							playerLine = i;
+							break;
+						}
+					}
+					//If we didn't find the player, write out a message
+					if(playerLine==-1) 
+						NeuroLog.Log("Was not able to find the player in the players file");
+					//Otherwise, update the line and writeout the new lines
+					else
+					{
+						lines[playerLine] = newLine;
+						System.IO.File.WriteAllLines(path,lines);
+					}
+				}
+				else{
+					NeuroLog.Log("Unable to find the player file to update the player's status");
+				}
+			}
+			catch(UnityException e){
+				NeuroLog.Log("Unable to update the player's status:\n"+e.Message);
+			}
+		}
 		
 		//Delete all saved player prefs
 		PlayerPrefs.DeleteAll();
