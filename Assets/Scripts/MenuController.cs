@@ -61,7 +61,7 @@ public class MenuController : MonoBehaviour {
 		foreach(UIButton b in taskButtons){
 			b.GetComponent<ButtonResponder>().response = beginTask;
 			if(language == "spanish")
-				b.GetComponentInChildren<UILabel>().text = b.GetComponentInChildren<UILabel>().text.Replace("Task", "Tarea"); 
+				b.GetComponentInChildren<UILabel>().text = b.GetComponentInChildren<UILabel>().text.Replace("Game", "Juego"); 
 		}
 		quitButton.response = quitbuttonPressed;
 		abortButton.response = displayWarning;

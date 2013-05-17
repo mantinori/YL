@@ -37,6 +37,7 @@ public class ConfigManager : MonoBehaviour {
 	public UISlicedSprite confirmBackground;
 	public UILabel buttonText;
 	public UILabel message;
+	public ButtonResponder quitButton;
 	
 	public UILabel clusterLabel;
 	
@@ -44,6 +45,7 @@ public class ConfigManager : MonoBehaviour {
 	public UIInput testInput;
 	public UILabel testingLabel;
 	public UICheckbox testingCheckbox;
+	public UILabel checkBoxLabel;
 
 	//If the config was properly saved
 	private bool configSaved=false;
@@ -60,6 +62,8 @@ public class ConfigManager : MonoBehaviour {
 	//If the player is currently touching the screen
 	protected bool touching=false;
 	private Camera cam;
+	
+	private bool needConfig;
 	
 	//Where did the player touch the screen
 	protected Vector3 touchPos = Vector3.zero;	
@@ -96,7 +100,7 @@ public class ConfigManager : MonoBehaviour {
 		//Remove any saved previously saved scene
 		PlayerPrefs.DeleteKey("-currentTask");
 		
-		bool needConfig=false;
+		needConfig=false;
 		
 		bool foundFile = true;
 		
@@ -116,6 +120,10 @@ public class ConfigManager : MonoBehaviour {
 		customIDButton.GetComponent<ButtonResponder>().response = showInputField;
 		customIDButton.gameObject.SetActive(false);
 		
+		//Set up the quit button, it should be the only thing on the screen at the start
+		quitButton.gameObject.SetActive(true);
+		quitButton.response = quitbuttonPressed;
+		
 		back.response = showPlayerSelector;
 		
 		message.enabled = false;
@@ -127,8 +135,8 @@ public class ConfigManager : MonoBehaviour {
 		//Try to load the players file. If it fails, exit out
 		try{
 			//Try on Dropbox
-			Debug.Log("Attempting to read from Dropbox folder");
-			reader = new StreamReader(Path.Combine(XmlManager.PlayerSpecificPath, playersFile+".csv"));
+			Debug.Log("Attempting to read from Dropbox folder: " + CsvManager.PlayerSpecificPath );
+			reader = new StreamReader(Path.Combine(CsvManager.PlayerSpecificPath, playersFile+".csv"));
 		}
 		catch{
 			NeuroLog.Error("Unable to find dropbox player file.");
@@ -165,7 +173,8 @@ public class ConfigManager : MonoBehaviour {
 			
 			//If the program needs to be configured, make all the GUI elements appear
 			if(needConfig){
-
+				
+				//Remove any previously set brightness value
 				PlayerPrefs.DeleteKey("-ambience");
 				
 				//Set up the players file
@@ -202,6 +211,8 @@ public class ConfigManager : MonoBehaviour {
 		else{
 			NeuroLog.Error("Failed to initialize config scene.");
 				
+			needConfig =false;
+			
 			message.text = "Error! Unable to Run Config Program!";
 			message.enabled = true;
 		}
@@ -310,6 +321,7 @@ public class ConfigManager : MonoBehaviour {
 			keyboard.gameObject.SetActive(false);
 			testInput.gameObject.SetActive(false);	
 			customIDButton.gameObject.SetActive(false);
+			quitButton.gameObject.SetActive(false);
 			testingLabel.enabled = false;
 		}
 	}
@@ -412,6 +424,11 @@ public class ConfigManager : MonoBehaviour {
 		}
 	}
 	
+	//If quit button is pressed, just simply end the program
+	private void quitbuttonPressed(GameObject o){
+		Application.Quit();
+	}
+	
 	//Update will make sure that no dropdown lists will appear outside the screen
 	void Update(){
 		//Check for escape button
@@ -431,36 +448,39 @@ public class ConfigManager : MonoBehaviour {
 				Screen.SetResolution(width,height,true);
 			}
 		}
-		
-		if(spanish.isChecked && currentlyEnglish){
-			currentlyEnglish = false;
-			customIDLabel.text = "ID no se encuentra en la lista, escribirla a mano";
-			customBackground.transform.localScale = new Vector3(575,40,1);
-			((BoxCollider)customIDButton.collider).size = new Vector3(575,40,0);
-			testingLabel.text = "Escribir ID a mano:";
-			clusterLabel.text = "Grupo";
-			testingCheckbox.GetComponentInChildren<UILabel>().text = "Modo de Prueba";
-			if(testName!="")
-				message.text = "Asignar "+testName+ " a este PC";
-			else
-				message.text = "Asignar "+playerSelector.SelectedPlayer+ " a este PC";
-			buttonText.text ="Salvar";
-			backText.text = "Volver";
-		}
-		else if(english.isChecked && !currentlyEnglish){
-			currentlyEnglish = true;
-			customIDLabel.text = "Can't find ID, enter it by hand";
-			customBackground.transform.localScale = new Vector3(400,40,1);
-			((BoxCollider)customIDButton.collider).size = new Vector3(400,40,0);
-			testingLabel.text = "Input ID by hand:";
-			clusterLabel.text = "Cluster";
-			testingCheckbox.GetComponentInChildren<UILabel>().text = "Testing Mode";
-			if(testName!="")
-				message.text = "Save "+testName+ " to this Device?";
-			else
-				message.text = "Save "+playerSelector.SelectedPlayer+ " to this Device?";
-			buttonText.text ="Save";
-			backText.text = "Back";
+		if(needConfig){
+			if(spanish.isChecked && currentlyEnglish){
+				currentlyEnglish = false;
+				customIDLabel.text = "ID no se encuentra en la lista, escribirla a mano";
+				customBackground.transform.localScale = new Vector3(575,40,1);
+				((BoxCollider)customIDButton.collider).size = new Vector3(575,40,0);
+				testingLabel.text = "Escribir ID a mano:";
+				clusterLabel.text = "Grupo";
+				checkBoxLabel.text = "Modo de Prueba";
+				quitButton.GetComponentInChildren<UILabel>().text = "Salir"; 
+				if(testName!="")
+					message.text = "Asignar "+testName+ " a este PC";
+				else
+					message.text = "Asignar "+playerSelector.SelectedPlayer+ " a este PC";
+				buttonText.text ="Salvar";
+				backText.text = "Volver";
+			}
+			else if(english.isChecked && !currentlyEnglish){
+				currentlyEnglish = true;
+				customIDLabel.text = "Can't find ID, enter it by hand";
+				customBackground.transform.localScale = new Vector3(400,40,1);
+				((BoxCollider)customIDButton.collider).size = new Vector3(400,40,0);
+				testingLabel.text = "Input ID by hand:";
+				clusterLabel.text = "Cluster";
+				checkBoxLabel.text = "Testing Mode";
+				quitButton.GetComponentInChildren<UILabel>().text = "Quit"; 
+				if(testName!="")
+					message.text = "Save "+testName+ " to this Device?";
+				else
+					message.text = "Save "+playerSelector.SelectedPlayer+ " to this Device?";
+				buttonText.text ="Save";
+				backText.text = "Back";
+			}
 		}
 		
 		//Show the save button if the test input ever changes
