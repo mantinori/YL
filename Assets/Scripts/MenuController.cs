@@ -142,6 +142,7 @@ public class MenuController : MonoBehaviour {
 		}
 		
 		latestTask=0;
+		/*
 		//See how far the player has gotten so far
 		if(PlayerPrefs.GetString("-t1")=="true"){
 			latestTask++;
@@ -162,9 +163,16 @@ public class MenuController : MonoBehaviour {
 				}
 			}
 		}
+		*/
+		
+		for(int i = 1;i<taskButtons.Count+1;i++){
+			if(PlayerPrefs.GetString("-t" + i.ToString())=="true")
+				latestTask++;
+			else break;
+		}
 		
 		//Update the list of task buttons
-		for(int i =0; i<7;i++){
+		for(int i =0; i<taskButtons.Count;i++){
 			//If the player's latest task is greater than i, mark it as complete by turning it green but still keeping it active
 			if(i<latestTask){
 				taskButtons[i].transform.GetComponentInChildren<UILabel>().color = Color.white;
@@ -191,7 +199,7 @@ public class MenuController : MonoBehaviour {
 		}
 		
 		//If the player has completed all the tasks, change the "abort" button to the "done" button
-		if(latestTask==7){
+		if(latestTask >= taskButtons.Count){
 			
 			abortButton.transform.GetComponentInChildren<UISlicedSprite>().color = Color.green;
 			((BoxCollider)abortButton.collider).size = new Vector3(165,40,0);

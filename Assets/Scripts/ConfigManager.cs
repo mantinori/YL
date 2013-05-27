@@ -137,6 +137,9 @@ public class ConfigManager : MonoBehaviour {
 		try{
 			//Try on Dropbox
 			Debug.Log("Attempting to read from Dropbox folder: " + CsvManager.PlayerSpecificPath );
+			
+			Debug.Log(Path.Combine(CsvManager.PlayerSpecificPath, playersFile+".csv"));
+			
 			reader = new StreamReader(Path.Combine(CsvManager.PlayerSpecificPath, playersFile+".csv"));
 		}
 		catch{
@@ -232,7 +235,7 @@ public class ConfigManager : MonoBehaviour {
 					
 					int.TryParse(csv["lastcompleted"], out lastcompleted);
 					
-					if(c.lastCompleted<0 || c.lastCompleted>7)
+					if(c.lastCompleted<0)
 						NeuroLog.Log("Child " + c.ID +"("+ c.Cluster+") has an invalid value for last Completed. Needs to be between 0-7.");
 					else{
 						c.lastCompleted = lastcompleted;

@@ -1647,9 +1647,11 @@ public class CsvManager {
 				
 			index = 1;
 			
-			newLine = "Practice, TrialNum, TargetID, Stimuli, TouchedID, TouchPosition, NumBadTouches, Score";
+			if(gm.Practice.Count>0){
+				newLine = "Practice, TrialNum, TargetID, Stimuli, TouchedID, TouchPosition, NumBadTouches, Score";
 			
-			writer.WriteLine(newLine);
+				writer.WriteLine(newLine);
+			}
 			
 			//Loop through all the practice trials
 			foreach(AssociateEvent eS in gm.Practice){

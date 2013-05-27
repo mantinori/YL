@@ -70,7 +70,7 @@ public class Tab: MonoBehaviour {
 		foreach(ConfigManager.Child c in demographics){
 			bool complete =false;
 			
-			if(c.lastCompleted==7) complete = true;
+			if(c.lastCompleted>=6) complete = true;
 			
 			completed.Add(c.Cluster+c.ID, complete);
 		}

@@ -65,8 +65,13 @@ public class AssociateManager : GameManager {
 			NeuroLog.Log("Generating Random events");
 		}
 		
-		generatePractice();
+		int tNum = PlayerPrefs.GetInt("-currentTask");
 		
+		if(tNum==1 || tNum == 0) generatePractice();
+		else{
+			practicing = false;
+			practice = new List<EventStats>();
+		}
 		randomizeEvents();
 		
 		//Start the game
@@ -473,8 +478,12 @@ public class AssociateManager : GameManager {
 		yield return StartCoroutine(runTutorial());
 	
 		//Show Practice screen
-		yield return StartCoroutine(showTitle("Practice",3));
-		
+		if(practicing) yield return StartCoroutine(showTitle("Practice",3));
+		else{
+			yield return StartCoroutine(showTitle("Test",3));
+			
+			border.SetActive(false);
+		}
 		screen.enabled = false;
 		
 		//Main Session

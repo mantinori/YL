@@ -39,7 +39,7 @@ public class ImplicitManager : GameManager {
 		
 		implicitStimulus = GameObject.Find("Stimulus");
 		
-		implicitStimulus.renderer.material.color = new Color(.125f,.5f,0,1);
+		implicitStimulus.renderer.material.color = Color.yellow;
 		
 		stimPositions = new Vector2[4]{new Vector2(-15,10), new Vector2(5,5), new Vector2(15,-10), new Vector2(-10,-5)};
 		
@@ -320,19 +320,7 @@ public class ImplicitManager : GameManager {
 		//Main Session
 		while(currentEventNum< events.Count){
 			
-			if(practicing){
-				if(CurrentEvent.Dot==1)
-					implicitStimulus.transform.position = new Vector3(-20,-3.5f,10);
-				else if(CurrentEvent.Dot==2)
-					implicitStimulus.transform.position = new Vector3(-20,-3.5f,-10);
-				else if(CurrentEvent.Dot==3)
-					implicitStimulus.transform.position = new Vector3(20,-3.5f,10);
-				else
-					implicitStimulus.transform.position = new Vector3(20,-3.5f,-10);
-			}
-			else{
-				implicitStimulus.transform.position = new Vector3(stimPositions[CurrentEvent.Dot-1].x, -3.5f,stimPositions[CurrentEvent.Dot-1].y);
-			}
+			implicitStimulus.transform.position = new Vector3(stimPositions[CurrentEvent.Dot-1].x, -3.5f,stimPositions[CurrentEvent.Dot-1].y);
 			
 			startTime = Time.time;
 			
