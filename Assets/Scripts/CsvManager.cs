@@ -1623,6 +1623,8 @@ public class CsvManager {
 		
 		using(StreamWriter writer = new StreamWriter(filePath)){
 			
+			AssociateManager aM = (AssociateManager)(gm);
+			
 			float[] xPos = new float[4];
 			
 			float yPos = ((-7.5f - 15f)/-30f) * Screen.height;
@@ -1656,20 +1658,25 @@ public class CsvManager {
 			//Loop through all the practice trials
 			foreach(AssociateEvent eS in gm.Practice){
 				if(eS.Completed){
-					int score = 0;
 					int target=eS.TargetImage;
 					string availableStim=Mathf.Abs(eS.Stimuli[0]) +";" +Mathf.Abs(eS.Stimuli[1]) +";" +Mathf.Abs(eS.Stimuli[2]) +";" +Mathf.Abs(eS.Stimuli[3]);
-					if(eS.Responses.Count>1){
-						if(target<7){
-							if(eS.Responses[0].DotPressed>=7) score =1;
-							else score =2;
-						}
-						else{
-							if(eS.Responses[0].DotPressed>=7) score =2;
-							else score =1;
-						}
-					}
+					
 					foreach(Response r in eS.Responses){
+						int score = 0;
+						
+						if(aM.getMatchingNum(target) == r.DotPressed) 
+							score = 0;
+						else{
+							if(target<7){
+								if(r.DotPressed>=7) score =1;
+								else score =2;
+							}
+							else{
+								if(r.DotPressed>=7) score =2;
+								else score =1;
+							}
+						}
+						
 						newLine=", " + index + ", " + target +", " + availableStim+ ", " + Mathf.Abs(r.DotPressed) +", "
 							+ r.TouchLocation.x +";" + r.TouchLocation.y+", " +(eS.Responses.Count-1).ToString()+", " + score;
 					
@@ -1687,20 +1694,25 @@ public class CsvManager {
 			//Loop through all the real trials
 			foreach(AssociateEvent eS in gm.Events){
 				if(eS.Completed){
-					int score = 0;
 					int target=eS.TargetImage;
 					string availableStim=eS.Stimuli[0] +";" +eS.Stimuli[1] +";" +eS.Stimuli[2] +";" +eS.Stimuli[3];
-					if(eS.Responses.Count>1){
-						if(target<7){
-							if(eS.Responses[0].DotPressed>=7) score =1;
-							else score =2;
-						}
-						else{
-							if(eS.Responses[0].DotPressed>=7) score =2;
-							else score =1;
-						}
-					}
+					
 					foreach(Response r in eS.Responses){
+						int score = 0;
+						
+						if(aM.getMatchingNum(target) == r.DotPressed) 
+							score = 0;
+						else{
+							if(target<7){
+								if(r.DotPressed>=7) score =1;
+								else score =2;
+							}
+							else{
+								if(r.DotPressed>=7) score =2;
+								else score =1;
+							}
+						}
+						
 						newLine=", " + index + ", " + target +", " + availableStim+ ", " + Mathf.Abs(r.DotPressed) +", "
 							+ r.TouchLocation.x +";" + r.TouchLocation.y+", " +(eS.Responses.Count-1).ToString()+", " + score;
 					
