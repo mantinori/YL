@@ -62,6 +62,8 @@ public class AssociateManager : GameManager {
 			generateEvents();
 			randomizeCorrectChoice();
 			
+			randomizeEvents();
+			
 			NeuroLog.Log("Generating Random events");
 		}
 		
@@ -72,7 +74,6 @@ public class AssociateManager : GameManager {
 			practicing = false;
 			practice = new List<EventStats>();
 		}
-		randomizeEvents();
 		
 		//Start the game
 		StartCoroutine("runSession");
