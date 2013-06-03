@@ -130,10 +130,10 @@ public class SpatialManager : GameManager {
 		System.Random rand = new System.Random();
 		
 		//Apply a base randomization
-		for(int i=0; i<59;i++){
+		for(int i=0; i<41;i++){
 			SpatialEvent originalStats = (SpatialEvent)events[i];
 			
-			int spotToMove = rand.Next(i,60);
+			int spotToMove = rand.Next(i,42);
 			
 			events[i] = events[spotToMove];
 			
@@ -149,7 +149,7 @@ public class SpatialManager : GameManager {
 		do{	
 			ok=true;
 			
-			for(int i=2; i <60;i++){
+			for(int i=2; i <42;i++){
 
 				eventGood = true;
 				
@@ -165,9 +165,9 @@ public class SpatialManager : GameManager {
 					ok = false;
 					
 					int start = i+1;
-					if(start>=60) start = 0;
+					if(start>=42) start = 0;
 					
-					for(int j =i+1;j<60;j++){
+					for(int j =i+1;j<42;j++){
 						eventGood=true;
 						if(((SpatialEvent)events[j]).Dots.Count == ((SpatialEvent)events[i-1]).Dots.Count
 							&& ((SpatialEvent)events[j]).Dots.Count  == ((SpatialEvent)events[i-2]).Dots.Count)
@@ -187,7 +187,7 @@ public class SpatialManager : GameManager {
 						
 							break;
 						}
-						else if(j==59) j=0;
+						else if(j==41) j=0;
 					}
 				}
 			}
