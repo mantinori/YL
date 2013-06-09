@@ -306,7 +306,7 @@ public class ConfigManager : MonoBehaviour {
 			//Save the player's info
 			if(testName==""){
 				
-				name = playerSelector.SelectedPlayer.Replace(" ", "");
+				name = playerSelector.SelectedPlayer.Trim();
 				PlayerPrefs.SetString("-childID", playerSelector.SelectedPlayer);
 				PlayerPrefs.SetString("-customID", "f");
 				PlayerPrefs.SetString("-cluster", playerSelector.SelectedCluster);					
@@ -320,10 +320,10 @@ public class ConfigManager : MonoBehaviour {
 			}
 			
 			using(StreamWriter writer = new StreamWriter(Path.Combine(CsvManager.PlayerSpecificPath, name+"_" + System.Environment.MachineName+"_Criterion.csv"))){
-				writer.WriteLine("TaskNum, CriterionScore, NumofPractice, NumofEvents, AccuracyofPresented , AccuracyofResponses, NumResponsesBasal");
+				writer.WriteLine("TaskNum,CriterionScore,NumofPractice,NumofEvents,AccuracyofPresented,AccuracyofResponses,NumResponsesBasal");
 				
 				for(int i = 0;i<8;i++){
-					writer.WriteLine(i+", 0, ., ., ., ., .");
+					writer.WriteLine(i+",0,.,.,.,.,.");
 				}
 			}
 			

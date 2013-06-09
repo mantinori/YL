@@ -446,38 +446,31 @@ public class MenuController : MonoBehaviour {
 					string cluster = PlayerPrefs.GetString("-cluster");
 					string ID = PlayerPrefs.GetString("-childID");
 					
-					//Create the new line to replace the old one
-					string newLine = cluster+", "+ ID+", " + latestTask;
-					
 					int playerLine=-1;
-					
-					Debug.Log(ID + ": " + cluster);
 					
 					//Loop through the lines until we find the matching line
 					for(int i =0;i<lines.Length;i++){
 						string[] values = lines[i].Split(',');
 						
-						Debug.Log(values[1] + ": " + values[0]);
 						if(values[0] == cluster && values[1] == ID){
 							playerLine = i;
 							break;
 						}
 					}
-					//If we didn't find the player, write out a message
-					if(playerLine==-1) 
-						NeuroLog.Log("Was not able to find the player in the players file");
-					//Otherwise, update the line and writeout the new lines
-					else
-					{
-						lines[playerLine] = newLine;
+					if(playerLine == -1) {
+						NeuroLog.Log("Could not find the player {0}:{1} in the players file, adding it", 
+								     cluster, ID);
+						using (StreamWriter sw = File.AppendText(path)) {
+							sw.WriteLine(cluster+","+ ID+"," + latestTask);
+						}
+					} else {
+						lines[playerLine] = cluster+","+ ID+"," + latestTask;
 						System.IO.File.WriteAllLines(path,lines);
 					}
-				}
-				else{
+				} else {
 					NeuroLog.Log("Unable to find the player file to update the player's status");
 				}
-			}
-			catch(UnityException e){
+			} catch(UnityException e) {
 				NeuroLog.Log("Unable to update the player's status:\n"+e.Message);
 			}
 		}
