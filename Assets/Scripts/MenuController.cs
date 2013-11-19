@@ -318,19 +318,18 @@ public class MenuController : MonoBehaviour {
 		//Get the taskNumber
 		int num = int.Parse(selectedTask.Replace("task",""));
 		
-		StreamReader sR;
+		TextReader sR;
 		
 		try{
-			if(File.Exists(Path.Combine(CsvManager.SessionFilesPath, fileName))){
+			if(File.Exists(Path.Combine(CsvManager.SessionFilesPath, fileName))) {
+				NeuroLog.Debug("Loading session file from {0}", fileName);
 				sR = new StreamReader(Path.Combine(CsvManager.SessionFilesPath, fileName));
+			} else {
+				NeuroLog.Log("Loading bundled session file {0}", fileName);
+				TextAsset sessionData = Resources.Load("session_files/" + fileName) as TextAsset;
+				sR = new StringReader(sessionData.text);
 			}
-			else{
-				NeuroLog.Error("Unable to find task file");
-				
-				return;
-			}
-		}
-		catch(UnityException e){
+		} catch(UnityException e) {
 			
 			NeuroLog.Error("Unable to load task file:\n" + e.Message);
 				

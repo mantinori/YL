@@ -17,7 +17,7 @@ public class ConfigManager : MonoBehaviour {
 	}
 	
 	//The players file name
-	private string playersFile = "players";
+	private string playersFile = "players.csv";
 	private bool fileOnDropbox;
 	
 	//Tab controller
@@ -136,24 +136,20 @@ public class ConfigManager : MonoBehaviour {
 		//Try to load the players file. If it fails, exit out
 		try{
 			//Try on Dropbox
-			Debug.Log("Attempting to read from Dropbox folder: " + CsvManager.PlayerSpecificPath );
+			string fn = Path.Combine(CsvManager.PlayerSpecificPath, playersFile);
+
+			NeuroLog.Debug("Attempting to read from Dropbox folder: " + fn);
 			
-			Debug.Log(Path.Combine(CsvManager.PlayerSpecificPath, playersFile+".csv"));
-			
-			reader = new StreamReader(Path.Combine(CsvManager.PlayerSpecificPath, playersFile+".csv"));
-		}
-		catch{
-			NeuroLog.Error("Unable to find dropbox player file.");
+			reader = new StreamReader(fn);
+		} catch {
+			NeuroLog.Debug("Unable to find dropbox player file, loading bundled one");
 			//Try local bundle if not on dropbox
-			try{		
+			try{
 				TextAsset sessionData = Resources.Load(playersFile) as TextAsset;
-				
 				reader = new StringReader(sessionData.text);
-			}
-			catch{
-				NeuroLog.Error("Unable to find local player file");
-			
-				foundFile =false;
+			} catch {
+				NeuroLog.Error("Unable to find players file");
+				foundFile = false;
 			}
 		}
 		
