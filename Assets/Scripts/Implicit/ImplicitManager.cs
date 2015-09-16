@@ -39,7 +39,7 @@ public class ImplicitManager : GameManager {
 		
 		implicitStimulus = GameObject.Find("Stimulus");
 		
-		implicitStimulus.renderer.material.color = Color.yellow;
+		implicitStimulus.GetComponent<Renderer>().material.color = Color.yellow;
 		
 		stimPositions = new Vector2[4]{new Vector2(-15,10), new Vector2(5,5), new Vector2(15,-10), new Vector2(-10,-5)};
 		
@@ -213,7 +213,7 @@ public class ImplicitManager : GameManager {
 	//Generate practice pitches
 	protected override  void generatePractice(){
 	
-		border.renderer.enabled = true;
+		border.GetComponent<Renderer>().enabled = true;
 		
 		List<EventStats> newPractice = new List<EventStats>(){new ImplicitEvent(1,0),new ImplicitEvent(2,0),new ImplicitEvent(3,0),new ImplicitEvent(4,0)};
 
@@ -235,7 +235,7 @@ public class ImplicitManager : GameManager {
 		implicitStimulus.transform.position = new Vector3(stimPositions[0].x,-3.5f,stimPositions[0].y);
 		
 		//screen.enabled = false;
-		implicitStimulus.renderer.enabled = true;
+		implicitStimulus.GetComponent<Renderer>().enabled = true;
 		
 		yield return new WaitForSeconds(.15f);
 		
@@ -244,7 +244,7 @@ public class ImplicitManager : GameManager {
 		yield return StartCoroutine(tFinger.exit());	
 		
 		//screen.enabled = true;
-		implicitStimulus.renderer.enabled = false;
+		implicitStimulus.GetComponent<Renderer>().enabled = false;
 		
 		yield return new WaitForSeconds(.1f);
 		
@@ -254,7 +254,7 @@ public class ImplicitManager : GameManager {
 		implicitStimulus.transform.position =new Vector3(stimPositions[1].x,-3.5f,stimPositions[1].y);
 		
 		//screen.enabled = false;
-		implicitStimulus.renderer.enabled = true;
+		implicitStimulus.GetComponent<Renderer>().enabled = true;
 		
 		yield return new WaitForSeconds(.15f);
 		
@@ -263,7 +263,7 @@ public class ImplicitManager : GameManager {
 		yield return StartCoroutine(tFinger.exit());	
 		
 		//screen.enabled = true;
-		implicitStimulus.renderer.enabled = false;
+		implicitStimulus.GetComponent<Renderer>().enabled = false;
 		
 		yield return new WaitForSeconds(.1f);
 		
@@ -273,7 +273,7 @@ public class ImplicitManager : GameManager {
 		implicitStimulus.transform.position =new Vector3(stimPositions[2].x,-3.5f,stimPositions[2].y);
 		
 		//screen.enabled = false;
-		implicitStimulus.renderer.enabled = true;
+		implicitStimulus.GetComponent<Renderer>().enabled = true;
 		
 		yield return new WaitForSeconds(.15f);
 		
@@ -282,7 +282,7 @@ public class ImplicitManager : GameManager {
 		yield return StartCoroutine(tFinger.exit());	
 		
 		//screen.enabled = true;
-		implicitStimulus.renderer.enabled = false;
+		implicitStimulus.GetComponent<Renderer>().enabled = false;
 		
 		yield return new WaitForSeconds(.1f);
 		
@@ -292,7 +292,7 @@ public class ImplicitManager : GameManager {
 		implicitStimulus.transform.position =new Vector3(stimPositions[3].x,-3.5f,stimPositions[3].y);
 		
 		//screen.enabled = false;
-		implicitStimulus.renderer.enabled = true;
+		implicitStimulus.GetComponent<Renderer>().enabled = true;
 		
 		yield return new WaitForSeconds(.15f);
 		
@@ -301,7 +301,7 @@ public class ImplicitManager : GameManager {
 		yield return StartCoroutine(tFinger.exit());	
 		
 		//screen.enabled = true;
-		implicitStimulus.renderer.enabled = false;
+		implicitStimulus.GetComponent<Renderer>().enabled = false;
 		
 		yield return new WaitForSeconds(.1f);
 	}
@@ -324,7 +324,7 @@ public class ImplicitManager : GameManager {
 			
 			startTime = Time.time;
 			
-			implicitStimulus.renderer.enabled = true;
+			implicitStimulus.GetComponent<Renderer>().enabled = true;
 			
 			float currentTime =0;
 			
@@ -343,7 +343,7 @@ public class ImplicitManager : GameManager {
 			state = GameState.ITI;
 			//screen.enabled = true;
 			
-			implicitStimulus.renderer.enabled = false;
+			implicitStimulus.GetComponent<Renderer>().enabled = false;
 			yield return new WaitForSeconds(.1f);
 			
 			//Get the next event
@@ -430,7 +430,7 @@ public class ImplicitManager : GameManager {
 			touching = true;
 			
 			if(State == GameManager.GameState.Probe){
-				Ray ray = camera.ScreenPointToRay(touchPos);
+				Ray ray = GetComponent<Camera>().ScreenPointToRay(touchPos);
 				RaycastHit hit = new RaycastHit();
 				//If the raycast of the touch hit something
 				if(Physics.Raycast(ray, out hit)) {

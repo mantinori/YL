@@ -286,12 +286,12 @@ public class AssociateManager : GameManager {
 		List<Vector3> tutDots = new List<Vector3>(){new Vector3(0f,-5f,0)};
 		
 		//Troubled first pair
-		target.renderer.material.mainTexture = pracImages[0];
+		target.GetComponent<Renderer>().material.mainTexture = pracImages[0];
 		
-		stimuli[0].renderer.material.mainTexture = pracImages[3];
-		stimuli[1].renderer.material.mainTexture = pracImages[1];
-		stimuli[2].renderer.material.mainTexture = pracImages[2];
-		stimuli[3].renderer.material.mainTexture = pracImages[4];
+		stimuli[0].GetComponent<Renderer>().material.mainTexture = pracImages[3];
+		stimuli[1].GetComponent<Renderer>().material.mainTexture = pracImages[1];
+		stimuli[2].GetComponent<Renderer>().material.mainTexture = pracImages[2];
+		stimuli[3].GetComponent<Renderer>().material.mainTexture = pracImages[4];
 		
 		yield return StartCoroutine(startEvent());
 		
@@ -329,11 +329,11 @@ public class AssociateManager : GameManager {
 		
 		//Confidant first pair
 		tutDots = new List<Vector3>(){new Vector3(0f,-5f,0f)};
-		target.renderer.material.mainTexture = pracImages[1];
-		stimuli[0].renderer.material.mainTexture = pracImages[0];
-		stimuli[1].renderer.material.mainTexture = pracImages[3];
-		stimuli[2].renderer.material.mainTexture = pracImages[4];
-		stimuli[3].renderer.material.mainTexture = pracImages[2];
+		target.GetComponent<Renderer>().material.mainTexture = pracImages[1];
+		stimuli[0].GetComponent<Renderer>().material.mainTexture = pracImages[0];
+		stimuli[1].GetComponent<Renderer>().material.mainTexture = pracImages[3];
+		stimuli[2].GetComponent<Renderer>().material.mainTexture = pracImages[4];
+		stimuli[3].GetComponent<Renderer>().material.mainTexture = pracImages[2];
 		
 		yield return StartCoroutine(startEvent());
 		
@@ -357,12 +357,12 @@ public class AssociateManager : GameManager {
 		//Troubled second pair
 		tutDots = new List<Vector3>(){new Vector3(0f,-5f,0)};
 		
-		target.renderer.material.mainTexture = pracImages[2];
+		target.GetComponent<Renderer>().material.mainTexture = pracImages[2];
 		
-		stimuli[0].renderer.material.mainTexture = pracImages[4];
-		stimuli[1].renderer.material.mainTexture = pracImages[1];
-		stimuli[2].renderer.material.mainTexture = pracImages[3];
-		stimuli[3].renderer.material.mainTexture = pracImages[0];
+		stimuli[0].GetComponent<Renderer>().material.mainTexture = pracImages[4];
+		stimuli[1].GetComponent<Renderer>().material.mainTexture = pracImages[1];
+		stimuli[2].GetComponent<Renderer>().material.mainTexture = pracImages[3];
+		stimuli[3].GetComponent<Renderer>().material.mainTexture = pracImages[0];
 		
 		yield return StartCoroutine(startEvent());
 		
@@ -392,11 +392,11 @@ public class AssociateManager : GameManager {
 		
 		//Confidant second pair
 		tutDots = new List<Vector3>(){new Vector3(0f,-5f,0f)};
-		target.renderer.material.mainTexture = pracImages[3];
-		stimuli[0].renderer.material.mainTexture = pracImages[1];
-		stimuli[1].renderer.material.mainTexture = pracImages[4];
-		stimuli[2].renderer.material.mainTexture = pracImages[0];
-		stimuli[3].renderer.material.mainTexture = pracImages[2];
+		target.GetComponent<Renderer>().material.mainTexture = pracImages[3];
+		stimuli[0].GetComponent<Renderer>().material.mainTexture = pracImages[1];
+		stimuli[1].GetComponent<Renderer>().material.mainTexture = pracImages[4];
+		stimuli[2].GetComponent<Renderer>().material.mainTexture = pracImages[0];
+		stimuli[3].GetComponent<Renderer>().material.mainTexture = pracImages[2];
 		
 		yield return StartCoroutine(startEvent());
 		
@@ -493,17 +493,17 @@ public class AssociateManager : GameManager {
 			//Probe
 			//Set up the stimuli
 			if(CurrentEvent.TargetImage>0)
-				target.renderer.material.mainTexture = images[CurrentEvent.TargetImage-1];
+				target.GetComponent<Renderer>().material.mainTexture = images[CurrentEvent.TargetImage-1];
 			else{
 				int num = (CurrentEvent.TargetImage*-1)-1;
-				target.renderer.material.mainTexture = pracImages[num];
+				target.GetComponent<Renderer>().material.mainTexture = pracImages[num];
 			}
 			for(int i = 0; i<4;i++){
 				if(CurrentEvent.Stimuli[i]>0)
-					stimuli[i].renderer.material.mainTexture = images[CurrentEvent.Stimuli[i]-1];
+					stimuli[i].GetComponent<Renderer>().material.mainTexture = images[CurrentEvent.Stimuli[i]-1];
 				else{
 					int num = (CurrentEvent.Stimuli[i]*-1)-1;
-					stimuli[i].renderer.material.mainTexture = pracImages[num];
+					stimuli[i].GetComponent<Renderer>().material.mainTexture = pracImages[num];
 				}
 			}
 			
@@ -609,7 +609,7 @@ public class AssociateManager : GameManager {
 			touching = true;
 			//If were in the probe state
 			if(state == GameState.Probe){
-				Ray ray = camera.ScreenPointToRay(touchPos);
+				Ray ray = GetComponent<Camera>().ScreenPointToRay(touchPos);
 				RaycastHit hit = new RaycastHit();
 				//If the raycast of the touch hit something
 				if(Physics.Raycast(ray, out hit)) {

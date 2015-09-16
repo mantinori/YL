@@ -35,7 +35,7 @@ public class StoppingManager : GameManager {
 		
 		stoppingStimulus = GameObject.Find("Stimulus");
 		
-		stoppingStimulus.renderer.material.color = new Color(.125f,.5f,0,1);
+		stoppingStimulus.GetComponent<Renderer>().material.color = new Color(.125f,.5f,0,1);
 		
 		stimPositions = new Vector2[4]{new Vector2(-15,10), new Vector2(5,5), new Vector2(15,-10), new Vector2(-10,-5)};
 		
@@ -173,7 +173,7 @@ public class StoppingManager : GameManager {
 	//Generate practice pitches
 	protected override  void generatePractice(){
 	
-		border.renderer.enabled = true;
+		border.GetComponent<Renderer>().enabled = true;
 		
 		List<EventStats> newPractice = new List<EventStats>(){new StoppingEvent(1,true),new StoppingEvent(4,false),new StoppingEvent(3,false),new StoppingEvent(2,true)};
 
@@ -194,17 +194,17 @@ public class StoppingManager : GameManager {
 		//Click 1st dot
 		stoppingStimulus.transform.position = new Vector3(stimPositions[0].x,-3.5f,stimPositions[0].y);
 		
-		stoppingStimulus.renderer.material.color = new Color(.125f,.5f,0,1);
+		stoppingStimulus.GetComponent<Renderer>().material.color = new Color(.125f,.5f,0,1);
 		
 		//screen.enabled = false;
-		stoppingStimulus.renderer.enabled = true;
+		stoppingStimulus.GetComponent<Renderer>().enabled = true;
 		
 		yield return new WaitForSeconds(.15f);
 		
 		yield return StartCoroutine(tFinger.performAction(tutDots,null));
 		
 		//screen.enabled = true;
-		stoppingStimulus.renderer.enabled = false;
+		stoppingStimulus.GetComponent<Renderer>().enabled = false;
 		
 		yield return new WaitForSeconds(.05f);
 		
@@ -213,10 +213,10 @@ public class StoppingManager : GameManager {
 		
 		stoppingStimulus.transform.position =new Vector3(stimPositions[1].x,-3.5f,stimPositions[1].y);
 		
-		stoppingStimulus.renderer.material.color = new Color(1,.5f,0);
+		stoppingStimulus.GetComponent<Renderer>().material.color = new Color(1,.5f,0);
 		
 		//screen.enabled = false;
-		stoppingStimulus.renderer.enabled = true;
+		stoppingStimulus.GetComponent<Renderer>().enabled = true;
 		
 		yield return new WaitForSeconds(.1f);
 		
@@ -229,9 +229,9 @@ public class StoppingManager : GameManager {
 		yield return new WaitForSeconds(.6f);
 		
 		//screen.enabled = true;
-		stoppingStimulus.renderer.enabled = false;
+		stoppingStimulus.GetComponent<Renderer>().enabled = false;
 		
-		stoppingStimulus.renderer.material.color = new Color(.125f,.5f,0,1);
+		stoppingStimulus.GetComponent<Renderer>().material.color = new Color(.125f,.5f,0,1);
 		
 		yield return new WaitForSeconds(.05f);
 		
@@ -241,14 +241,14 @@ public class StoppingManager : GameManager {
 		stoppingStimulus.transform.position =new Vector3(stimPositions[2].x,-3.5f,stimPositions[2].y);
 		
 		//screen.enabled = false;
-		stoppingStimulus.renderer.enabled = true;
+		stoppingStimulus.GetComponent<Renderer>().enabled = true;
 		
 		yield return new WaitForSeconds(.15f);
 		
 		yield return StartCoroutine(tFinger.performAction(tutDots,null));
 		
 		//screen.enabled = true;
-		stoppingStimulus.renderer.enabled = false;
+		stoppingStimulus.GetComponent<Renderer>().enabled = false;
 		
 		yield return new WaitForSeconds(.05f);
 		
@@ -257,10 +257,10 @@ public class StoppingManager : GameManager {
 		
 		stoppingStimulus.transform.position =new Vector3(stimPositions[3].x,-3.5f,stimPositions[3].y);
 		
-		stoppingStimulus.renderer.material.color = new Color(1,.5f,0);
+		stoppingStimulus.GetComponent<Renderer>().material.color = new Color(1,.5f,0);
 		
 		//screen.enabled = false;	
-		stoppingStimulus.renderer.enabled = true;
+		stoppingStimulus.GetComponent<Renderer>().enabled = true;
 		
 		yield return new WaitForSeconds(.15f);
 		
@@ -275,7 +275,7 @@ public class StoppingManager : GameManager {
 		yield return StartCoroutine(tFinger.exit());	
 		
 		//screen.enabled = true;
-		stoppingStimulus.renderer.enabled = false;
+		stoppingStimulus.GetComponent<Renderer>().enabled = false;
 
 		yield return new WaitForSeconds(.05f);
 	}
@@ -295,9 +295,9 @@ public class StoppingManager : GameManager {
 		while(currentEventNum< events.Count){
 			
 			if(CurrentEvent.Go)
-				stoppingStimulus.renderer.material.color = new Color(.125f,.5f,0,1);
+				stoppingStimulus.GetComponent<Renderer>().material.color = new Color(.125f,.5f,0,1);
 			else
-				stoppingStimulus.renderer.material.color = new Color(1,.5f,0);
+				stoppingStimulus.GetComponent<Renderer>().material.color = new Color(1,.5f,0);
 			
 			if(practicing){
 				if(CurrentEvent.Dot==1)
@@ -313,7 +313,7 @@ public class StoppingManager : GameManager {
 				stoppingStimulus.transform.position = new Vector3(stimPositions[CurrentEvent.Dot-1].x, -3.5f,stimPositions[CurrentEvent.Dot-1].y);
 			}
 			
-			stoppingStimulus.renderer.enabled = true;
+			stoppingStimulus.GetComponent<Renderer>().enabled = true;
 			
 			startTime = Time.time;
 			
@@ -338,7 +338,7 @@ public class StoppingManager : GameManager {
 			//ITI, black screen
 			state = GameState.ITI;
 			//screen.enabled = true;
-			stoppingStimulus.renderer.enabled = false;
+			stoppingStimulus.GetComponent<Renderer>().enabled = false;
 			
 			if(currentTime>=1f) CurrentEvent.TimedOut = true;
 			/*
@@ -447,7 +447,7 @@ public class StoppingManager : GameManager {
 			touching = true;
 			
 			if(State == GameManager.GameState.Probe){
-				Ray ray = camera.ScreenPointToRay(touchPos);
+				Ray ray = GetComponent<Camera>().ScreenPointToRay(touchPos);
 				RaycastHit hit = new RaycastHit();
 				//If the raycast of the touch hit something
 				if(Physics.Raycast(ray, out hit)) {

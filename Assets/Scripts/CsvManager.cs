@@ -98,9 +98,11 @@ public class CsvManager {
 	
 	//Constructor for CsvManager
 	public CsvManager(){
+
 		gm = GameManager.main;
+
 	}
-	
+
 	/*
 	 * Checks to see if dir exists, and if not tries to create. If all goes
 	 * well returns true. If something goes wrong, false is returned.

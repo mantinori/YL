@@ -21,7 +21,7 @@ public class TutorialFinger : MonoBehaviour {
 		//Set up base values
 		gm = GameManager.main;
 		
-		finger.renderer.enabled =false;
+		finger.GetComponent<Renderer>().enabled =false;
 		edgeScreen = gm.transform.position.z-20;
 		margin = .5f;
 		speed = .75f;
@@ -56,7 +56,7 @@ public class TutorialFinger : MonoBehaviour {
 		
 		//Hide the object
 		transform.position = new Vector3(gm.transform.position.x,5f,edgeScreen);
-		finger.renderer.enabled = false;
+		finger.GetComponent<Renderer>().enabled = false;
 	}
 	
 	//Have the finger move to and tap different spots on the screen
@@ -64,7 +64,7 @@ public class TutorialFinger : MonoBehaviour {
 	//objsAffected(GameObject[]): An array of gameobjects that will be affected when the finger clicks on it. (For Star)
 	public IEnumerator performAction(List<Vector3> locationsToPress, GameObject[] objsAffected){
 		
-		finger.renderer.enabled = true;
+		finger.GetComponent<Renderer>().enabled = true;
 		
 		int currentTarget=0;
 		
@@ -104,7 +104,7 @@ public class TutorialFinger : MonoBehaviour {
 	//objsAffected(GameObject[]): An array of gameobjects that will be affected when the finger clicks on it. (For Star)
 	public IEnumerator moveTo(List<Vector3> locationsToMove){
 		
-		finger.renderer.enabled = true;
+		finger.GetComponent<Renderer>().enabled = true;
 		
 		int currentTarget=0;
 		
@@ -152,7 +152,7 @@ public class TutorialFinger : MonoBehaviour {
 		if(gO!=null){
 			//In Star games, make the object grayed out
 			if(GameManager.main.SType == GameManager.SessionType.Star){
-				gO.renderer.material = GameManager.main.materials[0];
+				gO.GetComponent<Renderer>().material = GameManager.main.materials[0];
 			}
 		}
 		

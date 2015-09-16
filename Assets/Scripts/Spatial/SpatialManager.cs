@@ -27,8 +27,8 @@ public class SpatialManager : GameManager {
 		
 		//Hide all the balls
 		foreach(GameObject g in dots){
-			g.renderer.enabled = false;
-			g.renderer.material.color = Color.blue;
+			g.GetComponent<Renderer>().enabled = false;
+			g.GetComponent<Renderer>().material.color = Color.blue;
 		}
 		
 		//Read in the events
@@ -202,7 +202,7 @@ public class SpatialManager : GameManager {
 		
 		System.Random rand = new System.Random();
 		
-		border.renderer.enabled = true;
+		border.GetComponent<Renderer>().enabled = true;
 		
 		List<EventStats> newPractice = new List<EventStats>();
 		
@@ -257,9 +257,9 @@ public class SpatialManager : GameManager {
 		
 		state = GameState.Tutorial;
 		
-		border.renderer.material.mainTexture = eyeBorderImage;
+		border.GetComponent<Renderer>().material.mainTexture = eyeBorderImage;
 		
-		text.renderer.enabled = false;
+		text.GetComponent<Renderer>().enabled = false;
 		
 		//Encoding
 		//Display the dots
@@ -267,7 +267,7 @@ public class SpatialManager : GameManager {
 		List<GameObject> tutDots = new List<GameObject>(){dots[3]};
 		
 		foreach(GameObject i in tutDots){
-			i.renderer.enabled = true;
+			i.GetComponent<Renderer>().enabled = true;
 		}
 		screen.enabled = false;
 			
@@ -275,12 +275,12 @@ public class SpatialManager : GameManager {
 			
 		//Delay
 		
-		border.renderer.material.mainTexture = simpleBorderImage;
+		border.GetComponent<Renderer>().material.mainTexture = simpleBorderImage;
 		screen.material.color = Color.white;
 		
 		screen.enabled = true;
 		foreach(GameObject g in dots){
-			g.renderer.enabled = false;
+			g.GetComponent<Renderer>().enabled = false;
 		}
 			
 		yield return new WaitForSeconds(.1f);
@@ -301,7 +301,7 @@ public class SpatialManager : GameManager {
 		//Encoding
 		//Display the dots
 		
-		border.renderer.material.mainTexture = eyeBorderImage;
+		border.GetComponent<Renderer>().material.mainTexture = eyeBorderImage;
 		
 		tutDots = new List<GameObject>();
 		
@@ -310,7 +310,7 @@ public class SpatialManager : GameManager {
 		tutDots.Add(dots[6]);
 				
 		foreach(GameObject i in tutDots){
-			i.renderer.enabled = true;
+			i.GetComponent<Renderer>().enabled = true;
 		}
 		screen.enabled = false;
 			
@@ -319,11 +319,11 @@ public class SpatialManager : GameManager {
 		//Delay
 		screen.material.color = Color.white;
 		
-		border.renderer.material.mainTexture = simpleBorderImage;
+		border.GetComponent<Renderer>().material.mainTexture = simpleBorderImage;
 		
 		screen.enabled = true;
 		foreach(GameObject g in dots){
-			g.renderer.enabled = false;
+			g.GetComponent<Renderer>().enabled = false;
 		}
 			
 		yield return new WaitForSeconds(3f);
@@ -358,7 +358,7 @@ public class SpatialManager : GameManager {
 			//Display the dots
 			state = GameState.Encoding;
 			foreach(int i in CurrentEvent.Dots){
-				dots[i-1].renderer.enabled = true;
+				dots[i-1].GetComponent<Renderer>().enabled = true;
 			}
 			screen.enabled = false;
 				
@@ -369,7 +369,7 @@ public class SpatialManager : GameManager {
 			screen.material.color = Color.white;
 			screen.enabled = true;
 			foreach(GameObject g in dots){
-				g.renderer.enabled = false;
+				g.GetComponent<Renderer>().enabled = false;
 			}
 			
 			startTime = CurrentEvent.Delay + Time.time;

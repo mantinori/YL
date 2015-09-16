@@ -81,15 +81,19 @@ public class ConfigManager : MonoBehaviour {
 		
 		currentlyEnglish = true;
 		
-		if(Application.platform == RuntimePlatform.WindowsPlayer || Application.platform == RuntimePlatform.WindowsEditor){
+		//if(Application.platform == RuntimePlatform.WindowsPlayer || Application.platform == RuntimePlatform.WindowsEditor){
 			windowsTab = true;
-			testInput.collider.enabled =false;
-		}
+			testInput.GetComponent<Collider>().enabled =false;
+		//}
 		
 		demographics = new List<Child>();
 		
 		//Resize the window to fit the monitor
 		if(!Screen.fullScreen) Screen.SetResolution(1366,768,true);
+
+		// MA 9/10/15
+		// SET ROOT FOLDER BASED ON CONFIG
+		SetRootFolder();
 		
 		//Have the static xmlmanager check to make sure the folders are properly set up
 		if(!CsvManager.CheckFolders()){
@@ -217,6 +221,24 @@ public class ConfigManager : MonoBehaviour {
 			message.enabled = true;
 		}
 	}
+
+	// MA -- 9/10/15
+	// get actual root directory name from streamassets config file
+	private void SetRootFolder() {
+		string configPath = Path.Combine(Application.streamingAssetsPath, "configRootFolder.txt");
+		
+		using(StreamReader reader =  new StreamReader(configPath)) {
+			string rootFolder = reader.ReadLine();
+			
+			if(rootFolder != null) {
+				string combinedPath = Path.Combine(rootFolder, "yl_test");
+				CsvManager.dashboardFolderName = XmlManager.dashboardFolderName = combinedPath;
+				Debug.Log("ROOT FOLDER="+ rootFolder);
+			}
+		}
+
+	}
+
 	
 	//Make sure there is at least one sub division
 	public bool SetupPlayersCSV(TextReader reader)
@@ -474,7 +496,7 @@ public class ConfigManager : MonoBehaviour {
 				currentlyEnglish = false;
 				customIDLabel.text = "ID no se encuentra en la lista, escribirla a mano";
 				customBackground.transform.localScale = new Vector3(575,40,1);
-				((BoxCollider)customIDButton.collider).size = new Vector3(575,40,0);
+				((BoxCollider)customIDButton.GetComponent<Collider>()).size = new Vector3(575,40,0);
 				testingLabel.text = "Escribir ID a mano:";
 				clusterLabel.text = "Grupo";
 				checkBoxLabel.text = "Modo de Prueba";
@@ -490,7 +512,7 @@ public class ConfigManager : MonoBehaviour {
 				currentlyEnglish = true;
 				customIDLabel.text = "Can't find ID, enter it by hand";
 				customBackground.transform.localScale = new Vector3(400,40,1);
-				((BoxCollider)customIDButton.collider).size = new Vector3(400,40,0);
+				((BoxCollider)customIDButton.GetComponent<Collider>()).size = new Vector3(400,40,0);
 				testingLabel.text = "Input ID by hand:";
 				clusterLabel.text = "Cluster";
 				checkBoxLabel.text = "Testing Mode";

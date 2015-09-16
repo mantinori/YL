@@ -176,16 +176,16 @@ public class Tab: MonoBehaviour {
 				
 				
 				if(selectedPlayer == players[i+playerStart]){
-					playerLabels[i].collider.enabled = true;
+					playerLabels[i].GetComponent<Collider>().enabled = true;
 					playerLabels[i].color = Color.yellow;
 				}
 				else if(c){
 					playerLabels[i].color = Color.gray;
-					playerLabels[i].collider.enabled = false;
+					playerLabels[i].GetComponent<Collider>().enabled = false;
 				}
 				else{
 					playerLabels[i].color = Color.white;
-					playerLabels[i].collider.enabled = true;
+					playerLabels[i].GetComponent<Collider>().enabled = true;
 				}
 				playerLabels[i].enabled = true;
 			}

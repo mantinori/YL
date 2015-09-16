@@ -147,7 +147,7 @@ public class InhibitionManager : GameManager {
 	//Generate practice pitches
 	protected override  void generatePractice(){
 	
-		border.renderer.enabled = true;
+		border.GetComponent<Renderer>().enabled = true;
 		
 		List<EventStats> newPractice = new List<EventStats>();
 		
@@ -196,7 +196,7 @@ public class InhibitionManager : GameManager {
 		List<Vector3> tutDots = new List<Vector3>(){new Vector3(-13.25f,-5f,0)};
 		
 		//Click Yellow Left
-		inhibStimulus.renderer.material = yellow;
+		inhibStimulus.GetComponent<Renderer>().material = yellow;
 		
 		inhibStimulus.transform.position = new Vector3(-13.25f,-6f,0);
 		
@@ -233,7 +233,7 @@ public class InhibitionManager : GameManager {
 	 	tutDots = new List<Vector3>(){new Vector3(13.25f,-5f,0)};
 		inhibStimulus.transform.position = new Vector3(-13.25f,-6f,0);
 		
-		inhibStimulus.renderer.material = stripesPurple;
+		inhibStimulus.GetComponent<Renderer>().material = stripesPurple;
 		
 		screen.enabled = false;
 		
@@ -278,8 +278,8 @@ public class InhibitionManager : GameManager {
 				
 			//Probe
 			//Set up the ball's color
-			if(CurrentEvent.DotColor =="yellow") inhibStimulus.renderer.material = yellow;
-			else inhibStimulus.renderer.material = stripesPurple;
+			if(CurrentEvent.DotColor =="yellow") inhibStimulus.GetComponent<Renderer>().material = yellow;
+			else inhibStimulus.GetComponent<Renderer>().material = stripesPurple;
 			
 			//Set up the ball's position
 			if(CurrentEvent.Side =='l') inhibStimulus.transform.position = new Vector3(-13.25f,-6f,0);

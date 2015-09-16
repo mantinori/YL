@@ -91,7 +91,7 @@ public class MenuController : MonoBehaviour {
 			confirmButton.GetComponentInChildren<UILabel>().text = "Sí";
 			
 			warning.text = " La sesión actual será borrada,\nesta seguro que quiere continuar?";
-			((BoxCollider)abortButton.collider).size = new Vector3(200,40,0);
+			((BoxCollider)abortButton.GetComponent<Collider>()).size = new Vector3(200,40,0);
 			abortButton.GetComponentInChildren<UISlicedSprite>().transform.localScale = new Vector3(215,35,1);
 			returnText.text = "Volver";
 			brightnessText.text = "Brillo";
@@ -202,7 +202,7 @@ public class MenuController : MonoBehaviour {
 		if(latestTask >= taskButtons.Count){
 			
 			abortButton.transform.GetComponentInChildren<UISlicedSprite>().color = Color.green;
-			((BoxCollider)abortButton.collider).size = new Vector3(165,40,0);
+			((BoxCollider)abortButton.GetComponent<Collider>()).size = new Vector3(165,40,0);
 			abortButton.GetComponentInChildren<UISlicedSprite>().transform.localScale = new Vector3(175,35,1);
 			if(language == "spanish")
 				abortButton.transform.GetComponentInChildren<UILabel>().text ="Cambiar ID";

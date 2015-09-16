@@ -6,7 +6,7 @@ public class FadingFingerprint : MonoBehaviour {
 	
 	// Hide the finger print at initializtion
 	void Start () {
-		renderer.enabled = false;
+		GetComponent<Renderer>().enabled = false;
 	}
 	
 	//Method used to fade the spot
@@ -21,15 +21,15 @@ public class FadingFingerprint : MonoBehaviour {
 		else{
 			//Make the spot reappear where the player touched the screen
 			if(GameManager.main.SType == GameManager.SessionType.Spatial)
-				renderer.material.color = Color.white;
+				GetComponent<Renderer>().material.color = Color.white;
 			else
-				renderer.material.color = Color.black;
+				GetComponent<Renderer>().material.color = Color.black;
 			
 			transform.position = new Vector3(pos.x, 2f, pos.y);
-			renderer.enabled = true;
+			GetComponent<Renderer>().enabled = true;
 			float a = 1;
 			
-			Color c = renderer.material.color;
+			Color c = GetComponent<Renderer>().material.color;
 			
 			float p =1;
 			
@@ -79,12 +79,12 @@ public class FadingFingerprint : MonoBehaviour {
 				if(a<0)	a=0;
 				c.a = a;
 				
-				renderer.material.color = c;
+				GetComponent<Renderer>().material.color = c;
 				
 				yield return new WaitForFixedUpdate();
 			}
 		
-			renderer.enabled = false;
+			GetComponent<Renderer>().enabled = false;
 		}
 	}
 }

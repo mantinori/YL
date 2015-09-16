@@ -141,7 +141,7 @@ public class GameManager : MonoBehaviour {
 		
 		state = GameState.Title;	
 		
-		text.renderer.enabled = false;	
+		text.GetComponent<Renderer>().enabled = false;	
 		
 		screen = GameObject.Find("Screen").GetComponent<Renderer>();
 	
@@ -161,7 +161,7 @@ public class GameManager : MonoBehaviour {
 		
 		events = new List<EventStats>();
 		
-		border.renderer.material.mainTexture = simpleBorderImage;
+		border.GetComponent<Renderer>().material.mainTexture = simpleBorderImage;
 		
 		border.SetActive(true);
 	}
@@ -210,13 +210,13 @@ public class GameManager : MonoBehaviour {
 		
 		screen.enabled = true;
 		
-		text.renderer.enabled = true;
+		text.GetComponent<Renderer>().enabled = true;
 					
 		yield return new WaitForSeconds(duration);
 		
 		if(t != "Session Over") screen.enabled = false;
 		
-		text.renderer.enabled = false;
+		text.GetComponent<Renderer>().enabled = false;
 	}
 	
 	//Used to read in

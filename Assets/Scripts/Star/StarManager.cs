@@ -160,8 +160,8 @@ public class StarManager : GameManager {
 			//Mark the first 5 as "example", for tutorial
 			if(i<5) newStar.tag = "example";
 			
-			if(i<= maxLS/2) newStar.renderer.material = materials[1];
-			else  newStar.renderer.material = materials[2];
+			if(i<= maxLS/2) newStar.GetComponent<Renderer>().material = materials[1];
+			else  newStar.GetComponent<Renderer>().material = materials[2];
 			
 			littleStars.Add(newStar);
 		}
@@ -175,8 +175,8 @@ public class StarManager : GameManager {
 			//Mark the first 3 as "example", for tutorial
 			if(i<3) newStar.tag = "example";
 			
-			if(i%2==0) newStar.renderer.material = materials[1];
-			else  newStar.renderer.material = materials[2];
+			if(i%2==0) newStar.GetComponent<Renderer>().material = materials[1];
+			else  newStar.GetComponent<Renderer>().material = materials[2];
 			
 			bigStars.Add(newStar);
 		}
@@ -186,13 +186,13 @@ public class StarManager : GameManager {
 			GameObject newDot = (GameObject)Instantiate(loadedObject,new Vector3(-225,0,0), Quaternion.identity);
 			newDot.name = "dot";
 			newDot.transform.localScale = new Vector3(2.8f,1,-2.8f);
-			newDot.renderer.material = materials[3];
+			newDot.GetComponent<Renderer>().material = materials[3];
 			
 			//Mark the first 2 as "example", for tutorial
 			if(i<2) newDot.tag = "example";
 			
-			if(i%2==0) newDot.renderer.material = materials[3];
-			else  newDot.renderer.material = materials[4];
+			if(i%2==0) newDot.GetComponent<Renderer>().material = materials[3];
+			else  newDot.GetComponent<Renderer>().material = materials[4];
 			
 			dots.Add(newDot);
 		}
@@ -202,13 +202,13 @@ public class StarManager : GameManager {
 			GameObject newTri = (GameObject)Instantiate(loadedObject,new Vector3(-225,0,0), Quaternion.identity);
 			newTri.name = "triangle";
 			newTri.transform.localScale = new Vector3(1.4f,1,-1.4f);
-			newTri.renderer.material = materials[5];
+			newTri.GetComponent<Renderer>().material = materials[5];
 			
 			//Mark the first 2 as "example", for tutorial
 			if(i<2) newTri.tag = "example";
 			
-			if(i%2==0) newTri.renderer.material = materials[5];
-			else  newTri.renderer.material = materials[6];
+			if(i%2==0) newTri.GetComponent<Renderer>().material = materials[5];
+			else  newTri.GetComponent<Renderer>().material = materials[6];
 			
 			triangles.Add(newTri);
 		}
@@ -228,8 +228,8 @@ public class StarManager : GameManager {
 		if(practicing){
 			starObjects.AddRange(GameObject.FindGameObjectsWithTag("example"));
 			foreach(GameObject gO in starObjects){
-				if(littleStars.Contains(gO)) gO.renderer.material = materials[1];
-				gO.renderer.enabled = true;
+				if(littleStars.Contains(gO)) gO.GetComponent<Renderer>().material = materials[1];
+				gO.GetComponent<Renderer>().enabled = true;
 			}
 		}
 		else{
@@ -238,14 +238,14 @@ public class StarManager : GameManager {
 				
 				littleStars[k].transform.rotation = Quaternion.identity;
 				littleStars[k].transform.position = new Vector3(-250,0,0);
-				if(k<CurrentEvent.NumLittleStars/2) littleStars[k].renderer.material = materials[1];
-				else littleStars[k].renderer.material = materials[2];
+				if(k<CurrentEvent.NumLittleStars/2) littleStars[k].GetComponent<Renderer>().material = materials[1];
+				else littleStars[k].GetComponent<Renderer>().material = materials[2];
 				if(k<CurrentEvent.NumLittleStars){
-					littleStars[k].renderer.enabled = true;
+					littleStars[k].GetComponent<Renderer>().enabled = true;
 					starObjects.Add(littleStars[k]);
 				}
 				//Hide any unneeded ones
-				else littleStars[k].renderer.enabled = false;
+				else littleStars[k].GetComponent<Renderer>().enabled = false;
 			}
 
 			k = 0;
@@ -255,11 +255,11 @@ public class StarManager : GameManager {
 				gO.transform.rotation = Quaternion.identity;
 				gO.transform.position = new Vector3(-250,0,0);
 				if(k<CurrentEvent.NumBigStars){
-					gO.renderer.enabled = true;
+					gO.GetComponent<Renderer>().enabled = true;
 					starObjects.Add(gO);
 				}
 				//Hide any unneeded ones
-				else gO.renderer.enabled = false;
+				else gO.GetComponent<Renderer>().enabled = false;
 				k++;
 			}
 			
@@ -271,11 +271,11 @@ public class StarManager : GameManager {
 				gO.transform.position = new Vector3(-250,0,0);
 				
 				if(k<CurrentEvent.NumTriangles){
-					gO.renderer.enabled = true;
+					gO.GetComponent<Renderer>().enabled = true;
 					starObjects.Add(gO);
 				}
 				//Hide any unneeded ones
-				else gO.renderer.enabled = false;
+				else gO.GetComponent<Renderer>().enabled = false;
 				k++;
 			}
 			
@@ -288,10 +288,10 @@ public class StarManager : GameManager {
 				
 				if(k<CurrentEvent.NumDots){
 					starObjects.Add(gO);
-					gO.renderer.enabled = true;
+					gO.GetComponent<Renderer>().enabled = true;
 				}
 				//Hide any unneeded ones
-				else gO.renderer.enabled = false;
+				else gO.GetComponent<Renderer>().enabled = false;
 				k++;
 			}
 		}
@@ -546,13 +546,13 @@ public class StarManager : GameManager {
 			if(i<ls.Count){
 				littleStars[i].transform.rotation = Quaternion.Euler(new Vector3(0, ls[i].Rotation,0));
 				littleStars[i].transform.position = new Vector3(ls[i].Position.x,0,ls[i].Position.y);
-				if(i<ls.Count/2) littleStars[i].renderer.material = materials[1];
-				else littleStars[i].renderer.material = materials[2];
-				littleStars[i].renderer.enabled = true;
+				if(i<ls.Count/2) littleStars[i].GetComponent<Renderer>().material = materials[1];
+				else littleStars[i].GetComponent<Renderer>().material = materials[2];
+				littleStars[i].GetComponent<Renderer>().enabled = true;
 			}
 			else{
 				littleStars[i].transform.position = new Vector3(-250,0,0);
-			 	littleStars[i].renderer.enabled = false;
+			 	littleStars[i].GetComponent<Renderer>().enabled = false;
 			}
 		}
 		
@@ -561,11 +561,11 @@ public class StarManager : GameManager {
 			if(i<bs.Count){
 				bigStars[i].transform.rotation = Quaternion.Euler(new Vector3(0, bs[i].Rotation,0));
 				bigStars[i].transform.position = new Vector3(bs[i].Position.x,0,bs[i].Position.y);
-				bigStars[i].renderer.enabled = true;
+				bigStars[i].GetComponent<Renderer>().enabled = true;
 			}
 			else{
 				bigStars[i].transform.position = new Vector3(-250,0,0);
-			 	bigStars[i].renderer.enabled = false;
+			 	bigStars[i].GetComponent<Renderer>().enabled = false;
 			}
 		}
 		
@@ -574,11 +574,11 @@ public class StarManager : GameManager {
 			if(i<d.Count){
 				dots[i].transform.rotation = Quaternion.Euler(new Vector3(0, d[i].Rotation,0));
 				dots[i].transform.position = new Vector3(d[i].Position.x,0,d[i].Position.y);
-				dots[i].renderer.enabled = true;
+				dots[i].GetComponent<Renderer>().enabled = true;
 			}
 			else{
 				dots[i].transform.position = new Vector3(-250,0,0);
-			 	dots[i].renderer.enabled = false;
+			 	dots[i].GetComponent<Renderer>().enabled = false;
 			}
 		}
 		
@@ -587,11 +587,11 @@ public class StarManager : GameManager {
 			if(i<t.Count){
 				triangles[i].transform.rotation = Quaternion.Euler(new Vector3(0, t[i].Rotation,0));
 				triangles[i].transform.position = new Vector3(t[i].Position.x,0,t[i].Position.y);
-				triangles[i].renderer.enabled = true;
+				triangles[i].GetComponent<Renderer>().enabled = true;
 			}
 			else{
 				triangles[i].transform.position = new Vector3(-250,0,0);
-			 	triangles[i].renderer.enabled = false;
+			 	triangles[i].GetComponent<Renderer>().enabled = false;
 			}
 		}
 	}
@@ -639,10 +639,10 @@ public class StarManager : GameManager {
 		foreach(GameObject gO in practiceObjs){
 			gO.transform.rotation = Quaternion.Euler(0,0,0);
 			if(gO.name == "littleStar"){
-				gO.renderer.material = materials[1];
+				gO.GetComponent<Renderer>().material = materials[1];
 				tutPresses.Add(gO.transform.position);
 			}
-			gO.renderer.enabled = true;
+			gO.GetComponent<Renderer>().enabled = true;
 		}
 		
 		yield return new WaitForSeconds(1.5f);
@@ -819,7 +819,7 @@ public class StarManager : GameManager {
 			touching = true;
 			//If were in the probe state
 			if(state == GameState.Probe && !skipTrial){
-				Ray ray = camera.ScreenPointToRay(touchPos);
+				Ray ray = GetComponent<Camera>().ScreenPointToRay(touchPos);
 				RaycastHit hit = new RaycastHit();
 				//If the raycast of the touch hit something
 				if(Physics.Raycast(ray, out hit)) {
@@ -847,11 +847,11 @@ public class StarManager : GameManager {
 							}
 							
 							//The star has not been touched yet
-							if(!hit.collider.renderer.material.name.Contains("Touched")){
+							if(!hit.collider.GetComponent<Renderer>().material.name.Contains("Touched")){
 						
 								r = new Response(sType, responseTime,new Vector2(fixedPos.x,fixedPos.y),0);
 							
-								hit.collider.renderer.material = materials[0];
+								hit.collider.GetComponent<Renderer>().material = materials[0];
 								
 								StartCoroutine(spot.fadeFinger(Vector3.zero, 1));
 							}
