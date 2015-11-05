@@ -24,18 +24,18 @@ public class ConfigManager : MonoBehaviour {
 	public Tab playerSelector;
 	
 	//Only need the english checkbox
-	public UICheckbox english;
-	public UICheckbox spanish;
+	public UIToggle english;
+	public UIToggle spanish;
 	
 	private bool currentlyEnglish;
 	
 	//Other elements on the screen
 	public UITexture background;
 	public UIButton customIDButton;
-	public UISlicedSprite customBackground;
+	public UISprite customBackground;
 	public UILabel customIDLabel;
 	public UIButton confirmButton;
-	public UISlicedSprite confirmBackground;
+	public UISprite confirmBackground;
 	public UILabel buttonText;
 	public UILabel message;
 	public ButtonResponder quitButton;
@@ -45,7 +45,7 @@ public class ConfigManager : MonoBehaviour {
 	//For testing purposes, allow someone to just write in a name
 	public UIInput testInput;
 	public UILabel testingLabel;
-	public UICheckbox testingCheckbox;
+	public UIToggle testingCheckbox;
 	public UILabel checkBoxLabel;
 
 	//If the config was properly saved
@@ -353,7 +353,7 @@ public class ConfigManager : MonoBehaviour {
 			else{
 				message.text = "La configuración ha sido guardada";
 				buttonText.text = "CERRAR";
-				confirmBackground.transform.localScale = new Vector3(225,60,1);
+				//confirmBackground.transform.localScale = new Vector3(225,60,1);
 			}
 			
 			configSaved = true;
@@ -495,7 +495,7 @@ public class ConfigManager : MonoBehaviour {
 			if(spanish.isChecked && currentlyEnglish){
 				currentlyEnglish = false;
 				customIDLabel.text = "ID no se encuentra en la lista, escribirla a mano";
-				customBackground.transform.localScale = new Vector3(575,40,1);
+				customBackground.SetDimensions(575,40);
 				((BoxCollider)customIDButton.GetComponent<Collider>()).size = new Vector3(575,40,0);
 				testingLabel.text = "Escribir ID a mano:";
 				clusterLabel.text = "Grupo";
@@ -511,7 +511,7 @@ public class ConfigManager : MonoBehaviour {
 			else if(english.isChecked && !currentlyEnglish){
 				currentlyEnglish = true;
 				customIDLabel.text = "Can't find ID, enter it by hand";
-				customBackground.transform.localScale = new Vector3(400,40,1);
+				customBackground.SetDimensions(400,40);
 				((BoxCollider)customIDButton.GetComponent<Collider>()).size = new Vector3(400,40,0);
 				testingLabel.text = "Input ID by hand:";
 				clusterLabel.text = "Cluster";

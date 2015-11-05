@@ -185,9 +185,9 @@ public class CsvManager {
 				reader = new StreamReader(Path.Combine(CsvManager.SessionFilesPath, fn));
 			}
 			else{
-				NeuroLog.Log("Attempting to read from local Resources");
+				NeuroLog.Log("Attempting to read from local Resources: " + "session_files/" + fn);
 					
-				TextAsset sessionData = Resources.Load("session_files/" + sessionXML) as TextAsset;
+				TextAsset sessionData = Resources.Load("session_files/" + fn) as TextAsset;
 				
 				reader = new StringReader(sessionData.text);
 			}
@@ -291,6 +291,18 @@ public class CsvManager {
 				}
 				else
 					eS = ReadAssociateEvents(csv);
+			}
+			else if(gm.SType == GameManager.SessionType.MemAttentEnc1 ){
+				if(!headers.Contains("quadrant")){
+					NeuroLog.Log("Invalid read in file for current scene. File is missing header 'Quadrant' for Associate Scene");
+					exit =true;
+				}
+				else if(!headers.Contains("stimulus")){
+					NeuroLog.Log("Invalid read in file for current scene. File is missing header 'Stimuli' for Associate Scene");
+					exit =true;
+				}
+				else
+					eS = ReadMemAttEncEvents(csv);
 			}
 			
 			if(exit){
@@ -769,6 +781,45 @@ public class CsvManager {
 	
 		
 		return associateEvents;
+	}
+
+	private List<EventStats> ReadMemAttEncEvents(CsvReader csv){
+		
+		List<EventStats> events = new List<EventStats>();
+		
+		int fieldCount = csv.FieldCount;
+		
+		string[] headers = csv.GetFieldHeaders();
+		
+		int i = 2; // start on second line		
+
+		while (csv.ReadNextRecord()){
+			
+			int quadrant = -1;
+			
+			string stimulus = "";
+			
+			for(int j = 0;j<fieldCount;j++){
+				if(headers[j].ToLower() == "quadrant"){	
+					if(int.TryParse(csv[j],out quadrant)){
+						if(quadrant <1  && quadrant>4){
+							NeuroLog.Log("Invalid value for 'quadrant' at line #" + i.ToString() + ". Needs to be between 0 and 4.");
+							quadrant = -1;
+						}
+					}
+					else NeuroLog.Log("Invalid value for 'quadrant' at line #" + i.ToString() + ". Needs to be a int.");
+				}
+				else if(headers[j].ToLower() == "stimulus"){	
+					stimulus = csv[j].ToLower();
+				}
+			}
+
+			if(quadrant != -1 && stimulus != "") events.Add(new MemAttentionEvent(quadrant,stimulus));
+			
+			i++;
+		}
+		
+		return events;
 	}
 	
 	//Method used to write out the log file once the game has completed

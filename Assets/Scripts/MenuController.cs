@@ -91,8 +91,10 @@ public class MenuController : MonoBehaviour {
 			confirmButton.GetComponentInChildren<UILabel>().text = "Sí";
 			
 			warning.text = " La sesión actual será borrada,\nesta seguro que quiere continuar?";
+
 			((BoxCollider)abortButton.GetComponent<Collider>()).size = new Vector3(200,40,0);
-			abortButton.GetComponentInChildren<UISlicedSprite>().transform.localScale = new Vector3(215,35,1);
+			abortButton.GetComponentInChildren<UISprite>().SetDimensions(215,35);
+
 			returnText.text = "Volver";
 			brightnessText.text = "Brillo";
 		}
@@ -177,7 +179,7 @@ public class MenuController : MonoBehaviour {
 			if(i<latestTask){
 				taskButtons[i].transform.GetComponentInChildren<UILabel>().color = Color.white;
 				
-				taskButtons[i].transform.GetComponentInChildren<UISlicedSprite>().color = Color.green;
+				taskButtons[i].transform.GetComponentInChildren<UISprite>().color = Color.green;
 				
 				taskButtons[i].isEnabled = true;
 			}
@@ -192,7 +194,7 @@ public class MenuController : MonoBehaviour {
 			else{
 				taskButtons[i].transform.GetComponentInChildren<UILabel>().color = new Color(1f,1f,1f,.5f);
 				
-				taskButtons[i].transform.GetComponentInChildren<UISlicedSprite>().color =  new Color(.75f,.75f,.75f,.25f);
+				taskButtons[i].transform.GetComponentInChildren<UISprite>().color =  new Color(.75f,.75f,.75f,.25f);
 				
 				taskButtons[i].isEnabled = false;
 			}
@@ -201,82 +203,20 @@ public class MenuController : MonoBehaviour {
 		//If the player has completed all the tasks, change the "abort" button to the "done" button
 		if(latestTask >= taskButtons.Count){
 			
-			abortButton.transform.GetComponentInChildren<UISlicedSprite>().color = Color.green;
+			abortButton.transform.GetComponentInChildren<UISprite>().color = Color.green;
+
 			((BoxCollider)abortButton.GetComponent<Collider>()).size = new Vector3(165,40,0);
-			abortButton.GetComponentInChildren<UISlicedSprite>().transform.localScale = new Vector3(175,35,1);
+			abortButton.GetComponentInChildren<UISprite>().SetDimensions(175,35);
+
 			if(language == "spanish")
 				abortButton.transform.GetComponentInChildren<UILabel>().text ="Cambiar ID";
 			else
 				abortButton.transform.GetComponentInChildren<UILabel>().text = "Change User";
-			abortButton.transform.localScale = new Vector3(1f,1f,1);
+
+			//abortButton.transform.localScale = new Vector3(1f,1f,1);
 			//abortButton.transform.localPosition = new Vector3(-250,-310,0);
 		}
 	}
-	
-	//Old xml version: If a task button was pressed, find out what game type it is then start the game 
-	/*private void beginTask(GameObject o){
-		
-		//String the fileName
-		string fileName = o.name +".xml";
-		
-		//Get the taskNumber
-		int num = int.Parse(o.name.Replace("task",""));
-		
-		XmlDocument xml = new XmlDocument();
-		
-		//Check to see if the file exists in Dropbox
-		if(File.Exists(Path.Combine(XmlManager.SessionFilesPath, fileName))){
-			Debug.Log("Attempting to read from Dropbox folder");
-			xml.Load(Path.Combine(XmlManager.SessionFilesPath, fileName));
-		}
-		//If not, try the local bundle
-		else{
-			NeuroLog.Error("Attempting to read from local Resources");
-			
-			string path = "session_files/" + o.name;
-			
-			Debug.Log(path);
-			
-			try{		
-				TextAsset sessionData = Resources.Load(path) as TextAsset;
-		
-				TextReader reader = new StringReader(sessionData.text);
-			
-				xml.Load(reader);
-			}
-			//Don't try to load another scene if we can't find the file
-			catch{
-				NeuroLog.Error("Unable to find local task file");
-				
-				return;
-			}
-		}
-		
-		//Get the session type of the task
-		string type = xml.SelectSingleNode("/session").Attributes["type"].Value;
-		
-		PlayerPrefs.SetInt("-currentTask", num);
-		
-		//Spatial
-		if(type =="0")
-			Application.LoadLevel("spatial");
-		//Inhibition
-		else if(type =="1")
-			Application.LoadLevel("inhibition");
-		//Star
-		else if(type=="2")
-			Application.LoadLevel("star");
-		//Implicit
-		else if(type =="3")
-			Application.LoadLevel("implicit");
-		//Associate
-		else if(type =="4")
-			Application.LoadLevel("associate");
-		//Stopping
-		else if(type =="5")
-			Application.LoadLevel("stopping");
-	}*/
-	
 	
 	private void taskButtonPressed(GameObject o){
 
@@ -369,6 +309,10 @@ public class MenuController : MonoBehaviour {
 			else if(headers.Contains("target") && headers.Contains("stimuli")){
 				NeuroLog.Log("Loading Associate game");
 				Application.LoadLevel("associate");
+			}
+			else if(headers.Contains("quadrant") && headers.Contains("stimulus")){
+				NeuroLog.Log("Loading MemAttention1 game");
+				Application.LoadLevel("MemAttentionEncoding1");
 			}
 			else{
 				NeuroLog.Log("Listed headers in task " +num + "do not match up with any of the current programs");

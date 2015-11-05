@@ -1,6 +1,6 @@
 //----------------------------------------------
 //            NGUI: Next-Gen UI kit
-// Copyright © 2011-2012 Tasharen Entertainment
+// Copyright Â© 2011-2015 Tasharen Entertainment
 //----------------------------------------------
 
 using UnityEngine;
@@ -13,9 +13,9 @@ using System.Collections;
 [RequireComponent(typeof(UITexture))]
 public class DownloadTexture : MonoBehaviour
 {
-	public string url = "http://www.tasharen.com/misc/logo.png";
+	public string url = "http://www.yourwebsite.com/logo.png";
+	public bool pixelPerfect = true;
 
-	Material mMat;
 	Texture2D mTex;
 
 	IEnumerator Start ()
@@ -27,25 +27,14 @@ public class DownloadTexture : MonoBehaviour
 		if (mTex != null)
 		{
 			UITexture ut = GetComponent<UITexture>();
-
-			if (ut.material == null)
-			{
-				mMat = new Material(Shader.Find("Unlit/Transparent Colored"));
-			}
-			else
-			{
-				mMat = new Material(ut.material);
-			}
-			ut.material = mMat;
-			mMat.mainTexture = mTex;
-			ut.MakePixelPerfect();
+			ut.mainTexture = mTex;
+			if (pixelPerfect) ut.MakePixelPerfect();
 		}
 		www.Dispose();
 	}
 
 	void OnDestroy ()
 	{
-		if (mMat != null) Destroy(mMat);
 		if (mTex != null) Destroy(mTex);
 	}
 }
