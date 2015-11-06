@@ -45,7 +45,7 @@ public class MemAttention1Manager : GameManager {
 		stimPositions = new Vector2[4]{new Vector2(12,8), new Vector2(12,-8), new Vector2(-12,-8), new Vector2(-12,8)};
 		
 		//Preform the read in to get the events
-		events =  csv.ReadInSession();
+		events = csv.ReadInSession();
 		
 		//Generate the practice events
 		generatePractice();
@@ -66,8 +66,14 @@ public class MemAttention1Manager : GameManager {
 	protected override  void generatePractice(){
 	
 		border.GetComponent<Renderer>().enabled = true;
-		
-		List<EventStats> newPractice = new List<EventStats>(){new MemAttentionEvent(1,"truck"),new MemAttentionEvent(2,"kite"),new MemAttentionEvent(3,"flower"),new MemAttentionEvent(4,"paint")};
+
+		// pull practice from first 8 in events list
+		List<EventStats> newPractice = events.GetRange(0, 8);
+
+		// then delete them from events
+		events.RemoveRange(0, 8);
+
+		//new List<EventStats>(){new MemAttentionEvent(1,"truck"),new MemAttentionEvent(2,"kite"),new MemAttentionEvent(3,"flower"),new MemAttentionEvent(4,"paint")};
 
 		practice.AddRange(newPractice);
 	}

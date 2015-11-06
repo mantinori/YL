@@ -1,4 +1,12 @@
 Quadrant, Stimulus
+3,plus
+1,star
+1,star
+3,plus
+3,plus
+1,star
+3,plus 
+1,star
 2,truck
 1,kite
 4,flower
