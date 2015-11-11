@@ -292,7 +292,7 @@ public class CsvManager {
 				else
 					eS = ReadAssociateEvents(csv);
 			}
-			else if(gm.SType == GameManager.SessionType.MemAttentEnc1 ){
+			else if(gm.SType == GameManager.SessionType.MemAttentEnc1 || gm.SType == GameManager.SessionType.MemAttentEnc2 ){
 				if(!headers.Contains("quadrant")){
 					NeuroLog.Log("Invalid read in file for current scene. File is missing header 'Quadrant' for Associate Scene");
 					exit =true;
@@ -842,7 +842,8 @@ public class CsvManager {
 		else if (gm.SType == GameManager.SessionType.Implicit) WriteOutImplicit(filePath);
 		else if (gm.SType == GameManager.SessionType.Associate) WriteOutAssociate(filePath);
 		else if (gm.SType == GameManager.SessionType.Stopping) WriteOutStopping(filePath);
-		
+		else if (gm.SType == GameManager.SessionType.MemAttentEnc2) WriteOutMemAttentionEnc2(filePath);
+
 		if(completed){
 			try{
 				WriteOutCriterion(Path.Combine(CsvManager.PlayerSpecificPath, mUserName+"_" + System.Environment.MachineName+"_Criterion.csv"), gm.SType);
@@ -1776,7 +1777,82 @@ public class CsvManager {
 			}
 		}
 	}
-	
+
+
+	private void WriteOutMemAttentionEnc2(string filePath){
+		using(StreamWriter writer = new StreamWriter(filePath)){
+
+			string newLine = "Quadrant1, " + (Screen.width * .75f).ToString() + ";" + (Screen.height * .75f).ToString();
+			writer.WriteLine(newLine);
+
+			newLine = "Quadrant2, " + (Screen.width * .75f).ToString() + ";" + (Screen.height/4f).ToString();
+			writer.WriteLine(newLine);
+
+			newLine = "Quadrant3, " + (Screen.width / 4f).ToString() + ";" + (Screen.height/4f).ToString();
+			writer.WriteLine(newLine);
+
+			newLine = "Quadrant4, " + (Screen.width / 4f).ToString() + ";" + (Screen.height * .75f).ToString();
+			writer.WriteLine(newLine);
+
+			newLine = "Practice, TrialNum, TouchTime, TouchPosition, CorrectPosition";
+			
+			writer.WriteLine(newLine);
+			
+			int index = 1;
+			
+			foreach(MemAttentionEvent eS in gm.Practice){
+
+				if(eS.Completed){
+
+					foreach(Response r in eS.Responses){
+
+						newLine = " ,";
+						
+						newLine += index.ToString()+",";
+
+						newLine += r.ResponseTime.ToString()+",";
+
+						newLine += r.TouchLocation.x.ToString()+ ";"+ r.TouchLocation.y.ToString()+",";
+
+						newLine += r.StimulusLocation.x.ToString()+ ";"+ r.StimulusLocation.y.ToString();
+
+						writer.WriteLine(newLine);
+						
+					}
+				}
+				index++;
+			}
+			
+			newLine = "Task, TrialNum, TouchTime, TouchPosition, CorrectPosition";
+			
+			writer.WriteLine(newLine);
+			
+			index = 1;
+			
+			foreach(MemAttentionEvent eS in gm.Events){
+				if(eS.Completed){
+					foreach(Response r in eS.Responses){
+						
+						newLine = " ,";
+						
+						newLine += index.ToString()+",";
+						
+						newLine += r.ResponseTime.ToString()+",";
+						
+						newLine += r.TouchLocation.x.ToString()+ ";"+ r.TouchLocation.y.ToString()+",";
+						
+						newLine += r.StimulusLocation.x.ToString()+ ";"+ r.StimulusLocation.y.ToString();
+						
+						writer.WriteLine(newLine);
+						
+					}
+				}
+				index++;
+			}
+		}
+	}
+
+
 	private void WriteOutCriterion(string criterionPath, GameManager.SessionType type){
 		
 		string[] lines = System.IO.File.ReadAllLines(criterionPath);
@@ -1867,7 +1943,27 @@ public class CsvManager {
 		
 			if((numberOfEarlyPresses/numResponses)<.1f) practicePassed = true;
 		}
-		
+		else if (type == GameManager.SessionType.MemAttentEnc1){
+			
+			float numResponses=gm.Practice.Count;
+			
+			foreach(MemAttentionEvent e in gm.Practice){
+				if(e.Responses[e.Responses.Count-1].ResponseTime<.2f || e.Responses[e.Responses.Count-1].ResponseTime>8f) numberOfEarlyPresses++;	
+			}
+			
+			if((numberOfEarlyPresses/numResponses)<.1f) practicePassed = true;
+		}
+		else if (type == GameManager.SessionType.MemAttentEnc2){
+			
+			float numResponses=gm.Practice.Count;
+			
+			foreach(MemAttentionEvent e in gm.Practice){
+				if(e.Responses[e.Responses.Count-1].ResponseTime<.2f || e.Responses[e.Responses.Count-1].ResponseTime>8f) numberOfEarlyPresses++;	
+			}
+			
+			if((numberOfEarlyPresses/numResponses)<.1f) practicePassed = true;
+		}
+
 		int criterion = 0;
 		
 		float correctResponse =0;
@@ -1969,7 +2065,23 @@ public class CsvManager {
 			
 			if(practicePassed && (numberOfEarlyPresses/gm.Events.Count)<.1f) criterion = 1;
 		}
-		
+		else if (type == GameManager.SessionType.MemAttentEnc1){
+
+			foreach(MemAttentionEvent e in gm.Events){
+				if(e.Responses[e.Responses.Count-1].ResponseTime<.2f || e.Responses[e.Responses.Count-1].ResponseTime>8f) numberOfEarlyPresses++;	
+			}
+			
+			if(practicePassed && (numberOfEarlyPresses/gm.Events.Count)<.1f) criterion = 1;
+		}
+		else if (type == GameManager.SessionType.MemAttentEnc2){
+			
+			foreach(MemAttentionEvent e in gm.Events){
+				if(e.Responses[e.Responses.Count-1].ResponseTime<.2f || e.Responses[e.Responses.Count-1].ResponseTime>8f) numberOfEarlyPresses++;	
+			}
+			
+			if(practicePassed && (numberOfEarlyPresses/gm.Events.Count)<.1f) criterion = 1;
+		}
+
 		float responseAccuracy = correctResponse/totalResponseCount;
 		float correctAccuracy = correctResponse/responseCount;
 		

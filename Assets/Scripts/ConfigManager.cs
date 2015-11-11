@@ -330,8 +330,10 @@ public class ConfigManager : MonoBehaviour {
 				PlayerPrefs.SetString("-cluster", playerSelector.SelectedCluster);					
 			}
 			else{
-				//testName = testName.Replace(" ", "");
-				
+				testName = testName.Replace(" ", "");
+
+				name = testName;
+
 				PlayerPrefs.SetString("-childID", testName);
 				PlayerPrefs.SetString("-customID", "t");
 				PlayerPrefs.SetString("-cluster", "n/a");

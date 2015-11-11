@@ -82,7 +82,7 @@ public class GameManager : MonoBehaviour {
 	private List<Vector3> dragPoints;
 
 	//Which gametype is running
-	public enum SessionType{Spatial, Inhibition, Star, Implicit, Associate, Stopping, MemAttentEnc1};
+	public enum SessionType{Spatial, Inhibition, Star, Implicit, Associate, Stopping, MemAttentEnc1, MemAttentEnc2};
 	protected SessionType sType;
 	public SessionType SType{
 		get{return sType;}

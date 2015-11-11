@@ -312,7 +312,12 @@ public class MenuController : MonoBehaviour {
 			}
 			else if(headers.Contains("quadrant") && headers.Contains("stimulus")){
 				NeuroLog.Log("Loading MemAttention1 game");
-				Application.LoadLevel("MemAttentionEncoding1");
+				if(num == 1) {
+					Application.LoadLevel("MemAttentionEncoding1");
+				} else if(num == 2) {
+					Application.LoadLevel("MemAttentionEncoding2");
+				}
+
 			}
 			else{
 				NeuroLog.Log("Listed headers in task " +num + "do not match up with any of the current programs");

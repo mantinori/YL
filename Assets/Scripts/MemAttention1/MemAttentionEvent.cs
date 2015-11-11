@@ -18,20 +18,19 @@ public class MemAttentionEvent: EventStats{
 		set{stimulus = value;}
 	}
 	
-	//The list of responses that occurred within the probe(correct) period of the trial
-	private Response response;
-	public Response Response{
-		get{return response;}
-		set{response = value;}
+	//The list of responses that occurred during the event
+	private List<Response> responses;
+	public List<Response> Responses{
+		get{return responses;}
+		set{responses = value;}
 	}
+
 	
 	//Method used to see if the player responded correctly in the trial
 	public override bool respondedCorrectly(){
-		//If the player got more than half right, they pass.
-		if(response != null)
-			return true;
-		else 
-			return false;
+		if(responses.Count==1) return true;
+
+		return false;
 	}
 	
 	//Constructor
@@ -39,6 +38,6 @@ public class MemAttentionEvent: EventStats{
 	public MemAttentionEvent(int d, string s){
 		quadrant = d;
 		stimulus = s;
-		response = null;
+		responses = new List<Response>();
 	}
 }

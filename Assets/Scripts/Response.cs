@@ -21,7 +21,13 @@ public class Response{
 	public Vector2 TouchLocation{
 		get{ return touchLocation;}
 	}
-	
+
+	//Where on the screen was the stimulus
+	private Vector2 stimulusLocation;
+	public Vector2 StimulusLocation{
+		get{ return stimulusLocation;}
+	}
+
 	//Distance from dot's center
 	private float distanceFromCenter;
 	public float DistanceFromCenter{
@@ -109,7 +115,8 @@ public class Response{
 	public Response(Vector2 objPos, float rTime, Vector2 tL){
 		responseTime = rTime;
 		touchLocation = tL;
-		
+		stimulusLocation = objPos;
+
 		int pos = 1;
 		if(objPos.x>Screen.width/2 && objPos.y<Screen.height/2) pos=2;
 		else  if(objPos.x>Screen.width/2 && objPos.y>Screen.height/2) pos=3;
@@ -132,4 +139,5 @@ public class Response{
 		
 		distanceFromCenter = 0;
 	}
+	
 }
