@@ -10,7 +10,9 @@ public class MemAttention1Manager : GameManager {
 
 	//The stimulus image
 	protected GameObject stimulus;
-	
+
+	protected int screenIndex = 0;
+
 	//Positions of the game's stimuli
 	protected Vector2[] stimPositions;
 	public Vector2[] StimPositions{
@@ -35,7 +37,10 @@ public class MemAttention1Manager : GameManager {
 		
 		stimulus = GameObject.Find("Stimulus");
 
-		stimPositions = new Vector2[4]{new Vector2(12,8), new Vector2(12,-8), new Vector2(-12,-8), new Vector2(-12,8)};
+		stimPositions = new Vector2[4]{new Vector2(Screen.width * .75f, Screen.height * .75f), 
+			new Vector2(Screen.width * .75f, Screen.height / 4f), 
+			new Vector2(Screen.width / 4f, Screen.height / 4f), 
+			new Vector2(Screen.width / 4f, Screen.height * .75f)};
 		
 		//Preform the read in to get the events
 		events = csv.ReadInSession();
@@ -66,8 +71,6 @@ public class MemAttention1Manager : GameManager {
 		// then delete them from events
 		events.RemoveRange(0, 8);
 
-		//new List<EventStats>(){new MemAttentionEvent(1,"truck"),new MemAttentionEvent(2,"kite"),new MemAttentionEvent(3,"flower"),new MemAttentionEvent(4,"paint")};
-
 		practice.AddRange(newPractice);
 	}
 	
@@ -91,6 +94,8 @@ public class MemAttention1Manager : GameManager {
 		//Main Session
 		while(currentEventNum < events.Count){
 
+			screenIndex = 0;
+
 			Texture2D tex = Resources.Load<Texture2D>("stimuli/" + CurrentEvent.Stimulus);
 
 			AudioClip audio = Resources.Load<AudioClip>("audio/" + CurrentEvent.Stimulus);
@@ -103,7 +108,8 @@ public class MemAttention1Manager : GameManager {
 
 			audioSource.PlayOneShot(audio);
 
-			stimulus.transform.position = new Vector3(stimPositions[CurrentEvent.Quadrant-1].x, -3.5f,stimPositions[CurrentEvent.Quadrant-1].y);
+			Vector3 worldPos = Camera.main.ScreenToWorldPoint(stimPositions[CurrentEvent.Quadrant-1]);
+			stimulus.transform.position = new Vector3(worldPos.x, -3.5f, worldPos.z);
 			
 			startTime = Time.time;
 			
@@ -137,7 +143,7 @@ public class MemAttention1Manager : GameManager {
 				
 				border.SetActive(false);
 				
-				yield return StartCoroutine(showTitle("Test",3));
+				yield return StartCoroutine(showTitle("Study",3));
 				
 				practicing = false;
 
@@ -157,8 +163,5 @@ public class MemAttention1Manager : GameManager {
 		//Return to menu
 		Application.LoadLevel("menu");
 	}
-	
-	void Update () {	
-			
-	}
+
 }

@@ -39,6 +39,11 @@ public class Response{
 	public int ResponseType{
 		get{return responseType;}
 	}
+
+	private int screenIndex;
+	public int ScreenIndex{
+		get{return screenIndex;}
+	}
 	
 	//Constructor
 	//sT(SessionType): What Gametype is the current game
@@ -126,7 +131,17 @@ public class Response{
 		
 		distanceFromCenter = Vector2.Distance(objPos,tL);
 	}
-	
+
+	// response for mem attention encoding
+	public Response(Vector2 objPos, float rTime, Vector2 tL, int screen){
+		responseTime = rTime;
+		touchLocation = tL;
+		stimulusLocation = objPos;
+
+		screenIndex = screen;
+
+	}
+
 	//Constructor for associate
 	//dot(int): the number of the stimulus the player pressed
 	//rTime(float): The Response Time of the action

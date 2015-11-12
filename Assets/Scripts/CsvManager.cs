@@ -1782,19 +1782,24 @@ public class CsvManager {
 	private void WriteOutMemAttentionEnc2(string filePath){
 		using(StreamWriter writer = new StreamWriter(filePath)){
 
-			string newLine = "Quadrant1, " + (Screen.width * .75f).ToString() + ";" + (Screen.height * .75f).ToString();
+			int leftX = Mathf.RoundToInt(Screen.width / 4f);
+			int rightX = Mathf.RoundToInt(Screen.width * .75f);
+			int topY = Mathf.RoundToInt(Screen.height * .75f);
+			int bottomY = Mathf.RoundToInt(Screen.height / 4f);
+
+			string newLine = "Quadrant1, " + rightX.ToString() + ";" + topY.ToString();
 			writer.WriteLine(newLine);
 
-			newLine = "Quadrant2, " + (Screen.width * .75f).ToString() + ";" + (Screen.height/4f).ToString();
+			newLine = "Quadrant2, " + rightX.ToString() + ";" + bottomY.ToString();
 			writer.WriteLine(newLine);
 
-			newLine = "Quadrant3, " + (Screen.width / 4f).ToString() + ";" + (Screen.height/4f).ToString();
+			newLine = "Quadrant3, " + leftX.ToString() + ";" + bottomY.ToString();
 			writer.WriteLine(newLine);
 
-			newLine = "Quadrant4, " + (Screen.width / 4f).ToString() + ";" + (Screen.height * .75f).ToString();
+			newLine = "Quadrant4, " + leftX.ToString() + ";" + topY.ToString();
 			writer.WriteLine(newLine);
 
-			newLine = "Practice, TrialNum, TouchTime, TouchPosition, CorrectPosition";
+			newLine = "Practice, TrialNum, Screen, TouchTime, TouchPosition, CorrectPosition";
 			
 			writer.WriteLine(newLine);
 			
@@ -1810,11 +1815,13 @@ public class CsvManager {
 						
 						newLine += index.ToString()+",";
 
-						newLine += r.ResponseTime.ToString()+",";
+						newLine += r.ScreenIndex.ToString()+",";
 
-						newLine += r.TouchLocation.x.ToString()+ ";"+ r.TouchLocation.y.ToString()+",";
+						newLine += RoundFloat(r.ResponseTime, 3).ToString()+",";
 
-						newLine += r.StimulusLocation.x.ToString()+ ";"+ r.StimulusLocation.y.ToString();
+						newLine += Mathf.RoundToInt(r.TouchLocation.x).ToString()+ ";"+ Mathf.RoundToInt(r.TouchLocation.y).ToString()+",";
+
+						newLine += Mathf.RoundToInt(r.StimulusLocation.x).ToString()+ ";"+ Mathf.RoundToInt(r.StimulusLocation.y).ToString();
 
 						writer.WriteLine(newLine);
 						
@@ -1823,7 +1830,7 @@ public class CsvManager {
 				index++;
 			}
 			
-			newLine = "Task, TrialNum, TouchTime, TouchPosition, CorrectPosition";
+			newLine = "Task, TrialNum, Screen, TouchTime, TouchPosition, CorrectPosition";
 			
 			writer.WriteLine(newLine);
 			
@@ -1836,12 +1843,14 @@ public class CsvManager {
 						newLine = " ,";
 						
 						newLine += index.ToString()+",";
+
+						newLine += r.ScreenIndex.ToString()+",";
+
+						newLine += RoundFloat(r.ResponseTime, 3).ToString()+",";
+
+						newLine += Mathf.RoundToInt(r.TouchLocation.x).ToString()+ ";"+ Mathf.RoundToInt(r.TouchLocation.y).ToString()+",";
 						
-						newLine += r.ResponseTime.ToString()+",";
-						
-						newLine += r.TouchLocation.x.ToString()+ ";"+ r.TouchLocation.y.ToString()+",";
-						
-						newLine += r.StimulusLocation.x.ToString()+ ";"+ r.StimulusLocation.y.ToString();
+						newLine += Mathf.RoundToInt(r.StimulusLocation.x).ToString()+ ";"+ Mathf.RoundToInt(r.StimulusLocation.y).ToString();
 						
 						writer.WriteLine(newLine);
 						
@@ -2182,5 +2191,11 @@ public class CsvManager {
 			NeuroLog.Log(e.Message);
 			statsXML = mUserName +"_" + System.Environment.MachineName +"_None_" + theTime + ".csv";
 		}
+	}
+
+	float RoundFloat(float num, int places) {
+		float rounded = Mathf.Round(Mathf.Pow(10f, places) * num) / Mathf.Pow(10f, places);
+		
+		return rounded;
 	}
 }

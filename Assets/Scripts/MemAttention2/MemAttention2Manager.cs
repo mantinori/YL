@@ -10,8 +10,11 @@ public class MemAttention2Manager : MemAttention1Manager {
 		
 		stimulus = GameObject.Find("Stimulus");
 		
-		stimPositions = new Vector2[4]{new Vector2(12,8), new Vector2(12,-8), new Vector2(-12,-8), new Vector2(-12,8)};
-		
+		stimPositions = new Vector2[4]{new Vector2(Screen.width * .75f, Screen.height * .75f), 
+			new Vector2(Screen.width * .75f, Screen.height / 4f), 
+			new Vector2(Screen.width / 4f, Screen.height / 4f), 
+			new Vector2(Screen.width / 4f, Screen.height * .75f)};
+
 		//Preform the read in to get the events
 		events = csv.ReadInSession();
 		
@@ -19,7 +22,7 @@ public class MemAttention2Manager : MemAttention1Manager {
 		generatePractice();
 		
 		//If the read in failed, generate the base events
-		if(events ==null){
+		if(events == null){
 			NeuroLog.Log("Failed to load list of events");
 		} else {
 			//Start the game
@@ -43,6 +46,8 @@ public class MemAttention2Manager : MemAttention1Manager {
 		//Main Session
 		while(currentEventNum < events.Count){
 
+			screenIndex = 0;
+
 			Texture2D tex = Resources.Load<Texture2D>("stimuli/" + CurrentEvent.Stimulus);
 
 			AudioClip audio = Resources.Load<AudioClip>("audio/" + CurrentEvent.Stimulus);
@@ -59,6 +64,8 @@ public class MemAttention2Manager : MemAttention1Manager {
 
 			yield return new WaitForSeconds(1f);
 
+			screenIndex = 1;
+
 			stimulusText.gameObject.SetActive(false);
 			
 			//ITI, blank screen
@@ -66,13 +73,16 @@ public class MemAttention2Manager : MemAttention1Manager {
 
 			yield return new WaitForSeconds(1f);
 
+			screenIndex = 2;
+
 			float currentTime = 0;
 
 			state = GameState.Probe;
 
 			stimulus.GetComponent<Renderer>().material.mainTexture = tex;
-			stimulus.transform.position = new Vector3(stimPositions[CurrentEvent.Quadrant-1].x, -3.5f,stimPositions[CurrentEvent.Quadrant-1].y);
-			
+			Vector3 worldPos = Camera.main.ScreenToWorldPoint(stimPositions[CurrentEvent.Quadrant-1]);
+			stimulus.transform.position = new Vector3(worldPos.x, -3.5f, worldPos.z);
+
 			stimulus.GetComponent<Renderer>().enabled = true;
 
 			yield return new WaitForSeconds(1f);
@@ -94,7 +104,7 @@ public class MemAttention2Manager : MemAttention1Manager {
 				
 				border.SetActive(false);
 				
-				yield return StartCoroutine(showTitle("Test",3));
+				yield return StartCoroutine(showTitle("Study",3));
 				
 				practicing = false;
 
@@ -151,11 +161,10 @@ public class MemAttention2Manager : MemAttention1Manager {
 			float time = Time.time - startTime;
 
 			// stimulus position
-			Vector3 screenPos = Camera.main.WorldToScreenPoint(stimulus.transform.position);
-			Vector2 targPos = new Vector2(screenPos.x, screenPos.y);
+			Vector2 targPos = stimPositions[CurrentEvent.Quadrant - 1];
 
 			//Create the respones
-			Response r = new Response(targPos, time, touchPos);
+			Response r = new Response(targPos, time, touchPos, screenIndex);
 
 			// finger/dot indicator position
 			Vector3 worldPos = Camera.main.ScreenToWorldPoint(touchPos);
