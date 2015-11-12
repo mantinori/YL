@@ -128,33 +128,31 @@ public class MemAttention2Manager : MemAttention1Manager {
 	// Constantly check for player input
 	void Update () {	
 			
-		bool currentTouch;
+		if(screen.enabled) return;
+
+		bool currentTouch = false;
 		
 		//Get the touch location based on the platform
 		if(Application.platform == RuntimePlatform.IPhonePlayer){
 			if(Input.touchCount>0){
 				touchPos = Input.touches[0].position;
-			
 				currentTouch = true;
 			}
-			else currentTouch =false;		
-		}
-		else{
-			if(Input.GetMouseButton(0)){
-				touchPos = Input.mousePosition;
-			
+		} else {
+			if(Input.GetMouseButtonDown(0)){
+				touchPos = Input.mousePosition;			
 				currentTouch = true;
 			}
-			else currentTouch =false;
 		}
 		
 		//Not Touching
-		if(!currentTouch)
+		if(!currentTouch) {
 			touching = false;
+		} else if(!touching) {	
+			//If a player has touched the screen and released
 
-		//If a player has touched the screen, not holding
-		else if(!touching && currentTouch){	
-			
+			Debug.Log("touchPos="+touchPos);
+
 			touching = true;
 
 			//Calculate the response time

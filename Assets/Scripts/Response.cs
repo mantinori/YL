@@ -44,7 +44,12 @@ public class Response{
 	public int ScreenIndex{
 		get{return screenIndex;}
 	}
-	
+
+	private int quadrantTouched;
+	public int QuadrantTouched{
+		get{return quadrantTouched;}
+	}
+
 	//Constructor
 	//sT(SessionType): What Gametype is the current game
 	//rTime(float): The Response Time of the action
@@ -137,6 +142,16 @@ public class Response{
 		responseTime = rTime;
 		touchLocation = tL;
 		stimulusLocation = objPos;
+
+		// calc quadrant touched
+		quadrantTouched = 1;
+		if(touchLocation.x > Screen.width / 2f && touchLocation.y < Screen.height / 2f) {
+			quadrantTouched = 2;
+		} else if(touchLocation.x < Screen.width / 2f && touchLocation.y < Screen.height / 2f) {
+			quadrantTouched = 3;
+		} else if(touchLocation.x < Screen.width / 2f && touchLocation.y > Screen.height / 2f) {
+			quadrantTouched = 4;
+		}
 
 		screenIndex = screen;
 
