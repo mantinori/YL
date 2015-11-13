@@ -151,7 +151,7 @@ public class MemAttention2Manager : MemAttention1Manager {
 		} else if(!touching) {	
 			//If a player has touched the screen and released
 
-			Debug.Log("touchPos="+touchPos);
+			//Debug.Log("touchPos="+touchPos);
 
 			touching = true;
 

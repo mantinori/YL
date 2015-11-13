@@ -311,10 +311,11 @@ public class MenuController : MonoBehaviour {
 				Application.LoadLevel("associate");
 			}
 			else if(headers.Contains("quadrant") && headers.Contains("stimulus")){
-				NeuroLog.Log("Loading MemAttention1 game");
 				if(num == 1) {
+					NeuroLog.Log("Loading MemAttention1 game");
 					Application.LoadLevel("MemAttentionEncoding1");
 				} else if(num == 2) {
+					NeuroLog.Log("Loading MemAttention2 game");
 					Application.LoadLevel("MemAttentionEncoding2");
 				}
 

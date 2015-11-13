@@ -28,7 +28,12 @@ public class MemAttentionEvent: EventStats{
 	
 	//Method used to see if the player responded correctly in the trial
 	public override bool respondedCorrectly(){
-		if(responses.Count==1) return true;
+		foreach(Response r in responses ) {
+			Debug.Log(quadrant +" == " + r.QuadrantTouched);
+			if(quadrant == r.QuadrantTouched) {
+				return true;
+			}
+		}
 
 		return false;
 	}

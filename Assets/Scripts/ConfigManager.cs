@@ -294,6 +294,10 @@ public class ConfigManager : MonoBehaviour {
 				PlayerPrefs.SetString("-t5", "true");
 				PlayerPrefs.SetString("-t6", "true");
 				PlayerPrefs.SetString("-t7", "true");
+				PlayerPrefs.SetString("-t8", "true");
+				PlayerPrefs.SetString("-t9", "true");
+				PlayerPrefs.SetString("-t10", "true");
+				PlayerPrefs.SetString("-t11", "true");
 			}
 			else{
 				PlayerPrefs.SetString("-testingMode", "false");
@@ -308,7 +312,7 @@ public class ConfigManager : MonoBehaviour {
 				}
 				
 				//Save the t values
-				for (int i =1 ; i<8;i++){
+				for (int i =1 ; i<12;i++){
 					if(lastCompleted<i)
 						PlayerPrefs.SetString("-t"+i, "false");
 					else
@@ -339,13 +343,13 @@ public class ConfigManager : MonoBehaviour {
 				PlayerPrefs.SetString("-cluster", "n/a");
 			}
 			
-//			using(StreamWriter writer = new StreamWriter(Path.Combine(CsvManager.PlayerSpecificPath, name+"_" + System.Environment.MachineName+"_Criterion.csv"))){
-//				writer.WriteLine("TaskNum,CriterionScore,NumofPractice,NumofEvents,AccuracyofPresented,AccuracyofResponses,NumResponsesBasal");
-//				
-//				for(int i = 0; i < 8; i++){
-//					writer.WriteLine(i+",0,.,.,.,.,.");
-//				}
-//			}
+			using(StreamWriter writer = new StreamWriter(Path.Combine(CsvManager.PlayerSpecificPath, name+"_" + System.Environment.MachineName+"_Criterion.csv"))){
+				writer.WriteLine("TaskNum,CriterionScore,NumofPractice,NumofEvents,AccuracyofPresented,AccuracyofResponses,NumResponsesBasal");
+				
+				for(int i = 0; i < 12; i++){
+					writer.WriteLine(i+",0,.,.,.,.,.");
+				}
+			}
 			
 			if(currentlyEnglish){
 				message.text = "Config info saved";

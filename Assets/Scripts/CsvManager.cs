@@ -845,8 +845,13 @@ public class CsvManager {
 		else if (gm.SType == GameManager.SessionType.MemAttentEnc2) WriteOutMemAttentionEnc2(filePath);
 
 		if(completed){
+
 			try{
-				WriteOutCriterion(Path.Combine(CsvManager.PlayerSpecificPath, mUserName+"_" + System.Environment.MachineName+"_Criterion.csv"), gm.SType);
+				//Path.Combine(CsvManager.PlayerSpecificPath, name+"_" + System.Environment.MachineName+"_Criterion.csv"
+				filePath = Path.Combine(CsvManager.PlayerSpecificPath, mUserName+"_" + System.Environment.MachineName+"_Criterion.csv");
+				Debug.Log("saving criterion to: " + filePath + "," + gm.SType);
+
+				WriteOutCriterion(filePath, gm.SType);
 			}catch(Exception e){
 				NeuroLog.Log("Unable to update the player's Criterion file");
 				NeuroLog.Log(e.Message);
@@ -1873,143 +1878,9 @@ public class CsvManager {
 		}
 	}
 
-	private void WriteOutCriterionMemAttentEnc2(string criterionPath){
-		using(StreamWriter writer = new StreamWriter(criterionPath)) {
-			writer.WriteLine("TaskNum,CriterionScore,CorrectQuadrant,PercentageCorrectResponses");
-			
-//			for(int i = 0; i < 8; i++){
-//				writer.WriteLine(i+",0,.,.,.,.,.");
-//			}
-		}
-		
-		string[] lines = System.IO.File.ReadAllLines(criterionPath);
-		
-		int taskNum = int.Parse(sessionXML.Replace("task",""));
-		
-		string newLine = taskNum+",";
-		
-		bool practicePassed=false;
-		
-		float responseCount = 0;
-		float numberOfEarlyPresses=0;
-		int practiceCount=gm.Practice.Count;
-
-		float numResponses=gm.Practice.Count;
-		
-		foreach(MemAttentionEvent e in gm.Practice){
-			if(e.Responses[e.Responses.Count-1].ResponseTime<.2f || e.Responses[e.Responses.Count-1].ResponseTime>8f) numberOfEarlyPresses++;	
-		}
-		
-		if((numberOfEarlyPresses/numResponses)<.1f) practicePassed = true;
-
-		int criterion = 0;
-		
-		float correctResponse =0;
-		responseCount = 0;
-		numberOfEarlyPresses=0;
-		float totalResponseCount = gm.Events.Count;
-
-		
-		foreach(MemAttentionEvent e in gm.Events){
-			if(e.Responses[e.Responses.Count-1].ResponseTime<.2f || e.Responses[e.Responses.Count-1].ResponseTime>8f) numberOfEarlyPresses++;	
-		}
-		
-		if(practicePassed && (numberOfEarlyPresses/gm.Events.Count)<.1f) criterion = 1;
-
-		
-		float responseAccuracy = correctResponse/totalResponseCount;
-		float correctAccuracy = correctResponse/responseCount;
-		
-		newLine+= criterion + "," + practiceCount + "," + totalResponseCount +"," + responseAccuracy + "," + correctAccuracy+"," + numberOfEarlyPresses;
-		
-		bool acrossAll=true;
-		
-		float totalPracCount=0;
-		float totalEventCount=0;
-		float totalRightperPresented=0;
-		float totalRightperResponse=0;
-		float totalEarlyResponse=0;
-		
-		practicePassed = true;
-		
-		for(int i =2;i<lines.Length;i++){
-			if(lines[i].StartsWith(taskNum.ToString())){
-				//lines[i] = newLine;
-			}
-			else if(acrossAll){
-				int count = 0;
-				
-				foreach(char c in lines[i]){
-					if(c=='.') count++;
-				}
-				
-				if(count==5) acrossAll = false;
-			}
-			
-			if(acrossAll){
-				
-				string line = lines[i].Replace(" " ,"");
-				
-				string[] values = line.Split(',');
-				
-				float tPC = -1;
-				float tEC = -1;
-				float tRP = -1;
-				float tRR = -1;
-				float tER = -1;
-				
-				if(values[1] =="0") practicePassed = false;
-				
-				if(!float.TryParse(values[2],out tPC)) acrossAll = false;
-				if(!float.TryParse(values[3],out tEC)) acrossAll = false;
-				if(!float.TryParse(values[4],out tRP)) acrossAll = false;
-				if(!float.TryParse(values[5],out tRR)) acrossAll = false;
-				if(!float.TryParse(values[6],out tER)) acrossAll = false;
-				
-				if(acrossAll){
-					totalPracCount += tPC;
-					totalEventCount += tEC;
-					totalRightperPresented += (tRP * tEC);
-					totalRightperResponse += ((tRP * tEC) * tRR);
-					totalEarlyResponse += tER;
-				}
-			}	
-		}
-		
-		if(acrossAll){
-			if(practicePassed && (totalRightperPresented /totalEventCount)>.7f && (totalEarlyResponse/totalRightperPresented)<.1f)	criterion = 1;
-			else criterion = 0;
-			
-			float totalRpR = totalRightperResponse/totalRightperPresented;
-			
-			float totalRpP = totalRightperResponse/totalEventCount;
-			
-			newLine= "0," +criterion + "," + totalPracCount + "," + totalEventCount +"," + totalRpP + "," + totalRpR +"," + totalEarlyResponse;
-			
-			lines[1] = newLine;
-		}
-		
-		System.IO.File.WriteAllLines(criterionPath,lines);
-
-	}
-
 	private void WriteOutCriterion(string criterionPath, GameManager.SessionType type){
 
-		if(type == GameManager.SessionType.MemAttentEnc1){
-			// no criterion needed?
-			return;
-		} else if(type == GameManager.SessionType.MemAttentEnc2){
-			WriteOutCriterionMemAttentEnc2(criterionPath);
-			return;
-		}
-
-		using(StreamWriter writer = new StreamWriter(criterionPath)) {
-			writer.WriteLine("TaskNum,CriterionScore,NumofPractice,NumofEvents,AccuracyofPresented,AccuracyofResponses,NumResponsesBasal");
-			
-			for(int i = 0; i < 8; i++){
-				writer.WriteLine(i+",0,.,.,.,.,.");
-			}
-		}
+		Debug.Log("WriteOutCriterion");
 
 		string[] lines = System.IO.File.ReadAllLines(criterionPath);
 		
@@ -2098,6 +1969,19 @@ public class CsvManager {
 			}
 		
 			if((numberOfEarlyPresses/numResponses)<.1f) practicePassed = true;
+		} 
+		else if (type == GameManager.SessionType.MemAttentEnc1){			
+			practicePassed = true;
+		} 
+		else if (type == GameManager.SessionType.MemAttentEnc2){			
+			foreach(MemAttentionEvent e in gm.Practice){
+				foreach(Response r in e.Responses ){
+					if(r.ResponseTime<.2f) numberOfEarlyPresses++;
+				}
+			}
+			
+			if((numberOfEarlyPresses/gm.Practice.Count)<.1f) practicePassed = true;
+
 		}
 
 		int criterion = 0;
@@ -2146,7 +2030,7 @@ public class CsvManager {
 					
 					float responseTime=e.Responses[i].ResponseTime;
 					if(i>0) responseTime = e.Responses[i].ResponseTime - e.Responses[i-1].ResponseTime;
-					if(responseTime<.2f || responseTime>8) numberOfEarlyPresses++;
+					if(responseTime<.2f || responseTime>8f) numberOfEarlyPresses++;
 					
 					responseCount++;
 					if(e.Responses[i].ResponseType ==0){
@@ -2201,10 +2085,32 @@ public class CsvManager {
 			
 			if(practicePassed && (numberOfEarlyPresses/gm.Events.Count)<.1f) criterion = 1;
 		}
+		else if (type == GameManager.SessionType.MemAttentEnc1){
+			criterion = 1;
+		}
+		else if (type == GameManager.SessionType.MemAttentEnc2){
+
+			foreach(MemAttentionEvent e in gm.Events){
+					
+				if(e.Responses.Count >= 1) responseCount++;
+
+				if(e.respondedCorrectly()) correctResponse++;
+
+				foreach(Response r in e.Responses ){
+					if(r.ResponseTime<.2f) numberOfEarlyPresses++;
+				}
+			}
+			
+			if(practicePassed && (numberOfEarlyPresses/totalResponseCount)<.1f) criterion = 1;
+		}
 
 		float responseAccuracy = correctResponse/totalResponseCount;
-		float correctAccuracy = correctResponse/responseCount;
-		
+		float correctAccuracy = responseCount > 0 ? correctResponse/responseCount : 0f;
+
+		Debug.Log(correctResponse + "/" + totalResponseCount);
+		Debug.Log(correctResponse + "/" + responseCount);
+
+
 		newLine+= criterion + "," + practiceCount + "," + totalResponseCount +"," + responseAccuracy + "," + correctAccuracy+"," + numberOfEarlyPresses;
 		
 		bool acrossAll=true;
@@ -2219,7 +2125,7 @@ public class CsvManager {
 		
 		for(int i =2;i<lines.Length;i++){
 			if(lines[i].StartsWith(taskNum.ToString())){
-				//lines[i] = newLine;
+				lines[i] = newLine;
 			}
 			else if(acrossAll){
 				int count = 0;
@@ -2273,8 +2179,9 @@ public class CsvManager {
 			
 			lines[1] = newLine;
 		}
-		
+
 		System.IO.File.WriteAllLines(criterionPath,lines);
+
 	}
 	
 	//Generates the time the file was written out, and writeout file name
