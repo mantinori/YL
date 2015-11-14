@@ -14,7 +14,7 @@ public class NeuroLog
 	 * Before log in use machine-wide log file:
 	 * machine_dashboard_trace.txt
 	 */
-	private static string log_fn = Path.Combine(XmlManager.TraceFilesPath,
+	private static string log_fn = Path.Combine(CsvManager.TraceFilesPath,
 												System.Environment.MachineName + "_trace.txt");
 
 
@@ -24,7 +24,7 @@ public class NeuroLog
 	 */
 	public static void SetPlayer(string player_id)
 	{
-		log_fn = Path.Combine(XmlManager.TraceFilesPath,
+		log_fn = Path.Combine(CsvManager.TraceFilesPath,
 				 player_id + "_" + System.Environment.MachineName + "_trace.txt");
 		UnityEngine.Debug.Log("using trace file " + log_fn);
 		Log("Using player name " + player_id);

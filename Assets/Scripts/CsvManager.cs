@@ -155,8 +155,8 @@ public class CsvManager {
 	{
 		int tNum = PlayerPrefs.GetInt("-currentTask");
 		
-		//Check to see if the task number is in the correct range of 1-7
-		if(tNum<1 ||tNum>6){
+		//Check to see if the task number is in the correct range
+		if(tNum<1 ||tNum>11){
 			
 			NeuroLog.Log("Invalid task number given: " + tNum.ToString());
 			

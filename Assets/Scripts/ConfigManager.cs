@@ -232,7 +232,7 @@ public class ConfigManager : MonoBehaviour {
 			
 			if(rootFolder != null) {
 				string combinedPath = Path.Combine(rootFolder, "yl_test");
-				CsvManager.dashboardFolderName = XmlManager.dashboardFolderName = combinedPath;
+				CsvManager.dashboardFolderName = combinedPath; // =  XmlManager.dashboardFolderName
 				Debug.Log("ROOT FOLDER="+ rootFolder);
 			}
 		}
