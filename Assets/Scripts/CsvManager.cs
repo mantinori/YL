@@ -19,7 +19,9 @@ public class CsvManager {
 	public static string playermeasuresName = "indiv_measures";
 	public static string pitchFilesName = "pitch_files";
 	public static string unfinishedSessionFolderName = "unfinished_files";
-	
+
+	public static int totalSessionFiles = 11;
+
 	//The delimiter used for Path
 	//public static char delim = Path.DirectorySeparatorChar;
 	
@@ -145,7 +147,7 @@ public class CsvManager {
 		if (!CheckAndCreateDir(PitchFilesPath)) return false;
 		
 		if(!CheckAndCreateDir(PlayerMeasuresPath)) return false;
-		
+
 		return true;
 	}
 	
@@ -156,7 +158,7 @@ public class CsvManager {
 		int tNum = PlayerPrefs.GetInt("-currentTask");
 		
 		//Check to see if the task number is in the correct range
-		if(tNum<1 ||tNum>11){
+		if(tNum < 1 ||tNum > totalSessionFiles ){
 			
 			NeuroLog.Log("Invalid task number given: " + tNum.ToString());
 			

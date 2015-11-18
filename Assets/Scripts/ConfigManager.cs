@@ -15,7 +15,10 @@ public class ConfigManager : MonoBehaviour {
 		public string Cluster {get;set;}
 		public int lastCompleted {get;set;}
 	}
-	
+
+	[SerializeField]
+	private int totalGames = 6;
+
 	//The players file name
 	private string playersFile = "players.csv";
 	private bool fileOnDropbox;
@@ -94,12 +97,19 @@ public class ConfigManager : MonoBehaviour {
 		// MA 9/10/15
 		// SET ROOT FOLDER BASED ON CONFIG
 		SetRootFolder();
-		
+
+		// set total sessions (games);
+		CsvManager.totalSessionFiles = totalGames;
+
 		//Have the static xmlmanager check to make sure the folders are properly set up
 		if(!CsvManager.CheckFolders()){
 			//If a folder(s) is missing, exit out of the game
 			NeuroLog.Error("Unable to start program due to missing folder");
-			Application.Quit();
+			if(Application.platform == RuntimePlatform.WindowsPlayer) {
+				System.Diagnostics.Process.GetCurrentProcess().Kill();
+			} else {
+				Application.Quit();
+			}
 		}
 		
 		//Remove any saved previously saved scene
@@ -208,7 +218,7 @@ public class ConfigManager : MonoBehaviour {
 				if(!PlayerPrefs.HasKey("-language"))
 					PlayerPrefs.SetString("-language", "english");
 				
-				Application.LoadLevel("menu");
+				Application.LoadLevel(1);
 			}
 		}
 		//Tell the player the file was unable to be loaded
@@ -278,8 +288,11 @@ public class ConfigManager : MonoBehaviour {
 		//If the config has been saved, quit once the button is pressed
 		if(configSaved){
 			NeuroLog.Log("Exiting Now");
-			
-			Application.Quit();
+			if(Application.platform == RuntimePlatform.WindowsPlayer) {
+				System.Diagnostics.Process.GetCurrentProcess().Kill();
+			} else {
+				Application.Quit();
+			}
 		}
 		//If the config hasn't been saved
 		else{
@@ -287,17 +300,10 @@ public class ConfigManager : MonoBehaviour {
 			//Set up the task statuses
 			if(testingCheckbox.isChecked){
 				PlayerPrefs.SetString("-testingMode", "true");
-				PlayerPrefs.SetString("-t1", "true");
-				PlayerPrefs.SetString("-t2", "true");
-				PlayerPrefs.SetString("-t3", "true");
-				PlayerPrefs.SetString("-t4", "true");
-				PlayerPrefs.SetString("-t5", "true");
-				PlayerPrefs.SetString("-t6", "true");
-				PlayerPrefs.SetString("-t7", "true");
-				PlayerPrefs.SetString("-t8", "true");
-				PlayerPrefs.SetString("-t9", "true");
-				PlayerPrefs.SetString("-t10", "true");
-				PlayerPrefs.SetString("-t11", "true");
+
+				for(int i = 1; i <= CsvManager.totalSessionFiles; i++) {
+					PlayerPrefs.SetString("-t" + i, "true");
+				}
 			}
 			else{
 				PlayerPrefs.SetString("-testingMode", "false");
@@ -312,7 +318,7 @@ public class ConfigManager : MonoBehaviour {
 				}
 				
 				//Save the t values
-				for (int i =1 ; i<12;i++){
+				for (int i =1 ; i <= CsvManager.totalSessionFiles;i++){
 					if(lastCompleted<i)
 						PlayerPrefs.SetString("-t"+i, "false");
 					else
@@ -346,7 +352,7 @@ public class ConfigManager : MonoBehaviour {
 			using(StreamWriter writer = new StreamWriter(Path.Combine(CsvManager.PlayerSpecificPath, name+"_" + System.Environment.MachineName+"_Criterion.csv"))){
 				writer.WriteLine("TaskNum,CriterionScore,NumofPractice,NumofEvents,AccuracyofPresented,AccuracyofResponses,NumResponsesBasal");
 				
-				for(int i = 0; i < 12; i++){
+				for(int i = 0; i <= CsvManager.totalSessionFiles; i++){
 					writer.WriteLine(i+",0,.,.,.,.,.");
 				}
 			}
@@ -475,7 +481,11 @@ public class ConfigManager : MonoBehaviour {
 	
 	//If quit button is pressed, just simply end the program
 	private void quitbuttonPressed(GameObject o){
-		Application.Quit();
+		if(Application.platform == RuntimePlatform.WindowsPlayer) {
+			System.Diagnostics.Process.GetCurrentProcess().Kill();
+		} else {
+			Application.Quit();
+		}
 	}
 	
 	//Update will make sure that no dropdown lists will appear outside the screen

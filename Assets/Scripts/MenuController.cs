@@ -428,12 +428,20 @@ public class MenuController : MonoBehaviour {
 		PlayerPrefs.DeleteAll();
 		
 		//Quit
-		Application.Quit();
+		if(Application.platform == RuntimePlatform.WindowsPlayer) {
+			System.Diagnostics.Process.GetCurrentProcess().Kill();
+		} else {
+			Application.Quit();
+		}
 	}
 	
 	//If quit button is pressed, just simply end the program
 	private void quitbuttonPressed(GameObject o){
-		Application.Quit();
+		if(Application.platform == RuntimePlatform.WindowsPlayer) {
+			System.Diagnostics.Process.GetCurrentProcess().Kill();
+		} else {
+			Application.Quit();
+		}
 	}
 	
 	//Check for escape button
