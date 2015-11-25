@@ -25,9 +25,11 @@ public class MemAttention2Manager : MemAttention1Manager {
 		if(events == null){
 			NeuroLog.Log("Failed to load list of events");
 		} else {
+			// randomize
+			events.Shuffle();
+
 			//Start the game
 			StartCoroutine("runSession");
-			
 		}
 		
 	}

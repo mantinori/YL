@@ -49,15 +49,15 @@ public class MemAttention1Manager : GameManager {
 		generatePractice();
 		
 		//If the read in failed, generate the base events
-		if(events ==null){
-
+		if(events == null){
 			NeuroLog.Log("Failed to load list of events");
 		} else {
+			// randomize
+			events.Shuffle();
+
 			//Start the game
 			StartCoroutine("runSession");
-
-		}
-		
+		}		
 	}
 
 	//Generate practice pitches
@@ -72,12 +72,6 @@ public class MemAttention1Manager : GameManager {
 		events.RemoveRange(0, 8);
 
 		practice.AddRange(newPractice);
-	}
-	
-	//Method used to perform the tutorial
-	protected override  IEnumerator runTutorial(){
-
-		yield return new WaitForSeconds(.1f);
 	}
 	
 	//Main method of the game
@@ -161,7 +155,7 @@ public class MemAttention1Manager : GameManager {
 		Debug.Log("GAME OVER, Returning to menu");
 		
 		//Return to menu
-		Application.LoadLevel("menu");
+		Application.LoadLevel(2);
 	}
 
 }

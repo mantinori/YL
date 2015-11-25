@@ -266,7 +266,7 @@ public class MenuController : MonoBehaviour {
 				sR = new StreamReader(Path.Combine(CsvManager.SessionFilesPath, fileName));
 			} else {
 				NeuroLog.Log("Loading bundled session file {0}", fileName);
-				TextAsset sessionData = Resources.Load("session_files/" + fileName) as TextAsset;
+				TextAsset sessionData = Resources.Load(CsvManager.sessionFilesName + "/" + fileName) as TextAsset;
 				sR = new StringReader(sessionData.text);
 			}
 		} catch(UnityException e) {

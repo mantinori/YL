@@ -174,10 +174,7 @@ public class CsvManager {
 		//Add an xml extension
 		string fn = sessionXML;
 		if (!fn.EndsWith(".xml")) fn += ".csv";
-		
-		//Set up the XmlDocument variable
-		//StreamReader sR;
-		
+
 		TextReader reader;
 		
 		//Try to load the file. If it fails, exit out
@@ -187,9 +184,9 @@ public class CsvManager {
 				reader = new StreamReader(Path.Combine(CsvManager.SessionFilesPath, fn));
 			}
 			else{
-				NeuroLog.Log("Attempting to read from local Resources: " + "session_files/" + fn);
+				NeuroLog.Log("Attempting to read from local Resources: " + sessionFilesName + "/" + fn);
 					
-				TextAsset sessionData = Resources.Load("session_files/" + fn) as TextAsset;
+				TextAsset sessionData = Resources.Load(sessionFilesName + "/" + fn) as TextAsset;
 				
 				reader = new StringReader(sessionData.text);
 			}
