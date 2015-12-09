@@ -62,8 +62,8 @@ public class Tab: MonoBehaviour {
 		
 		demographics = list;
 		
-		clusterScroll.scrollValue = 0;
-		playerScroll.scrollValue = 0;
+		clusterScroll.value = 0;
+		playerScroll.value = 0;
 		
 		completed = new Dictionary<string, bool>();
 		
@@ -121,7 +121,7 @@ public class Tab: MonoBehaviour {
 		}
 		
 		if(clusters.Count<=9){
-			clusterScroll.scrollValue = 0;
+			clusterScroll.value = 0;
 			clusterScroll.barSize = 1;
 			clusterScroll.alpha =0f;
 			clusterBackground.mainTexture = standardTab;
@@ -135,7 +135,7 @@ public class Tab: MonoBehaviour {
 		}
 		
 		if(players.Count<=9){
-			playerScroll.scrollValue = 0;
+			playerScroll.value = 0;
 			playerScroll.barSize = 1;
 			playerScroll.alpha =0f;
 			playerBackground.mainTexture = standardTab;
@@ -200,7 +200,7 @@ public class Tab: MonoBehaviour {
 	void Update () {
 		
 		if(clusterScroll.enabled){
-			int i = Mathf.CeilToInt(clusterScroll.scrollValue /clusterScroll.barSize);
+			int i = Mathf.CeilToInt(clusterScroll.value /clusterScroll.barSize);
 			
 			if(i>0) i-=1;
 			
@@ -210,7 +210,7 @@ public class Tab: MonoBehaviour {
 			}
 		}
 		if(playerScroll.enabled){
-			int i = Mathf.CeilToInt(playerScroll.scrollValue /playerScroll.barSize);
+			int i = Mathf.CeilToInt(playerScroll.value /playerScroll.barSize);
 			
 			if(i>0) i-=1;
 			

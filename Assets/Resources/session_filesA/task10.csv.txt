@@ -1,13 +1,41 @@
-Target, Stimuli
-3 , 6;5;8;11
-2 , 3;9;12;4
-6 , 10;1;7;2
-5 , 1;6;9;8
-7 , 3;9;4;11
-9 , 11;2;4;7
-11, 1;7;3;12
-1 , 4;12;11;5
-10, 5;8;6;9
-8 , 5;12;2;10
-4 , 7;2;10;3
-12, 8;10;6;1
+ValidLoc, TargetLoc, Loc1, Loc2, Loc3, Loc4, MemTest1
+1,1,star,L,burst,o
+3,4,L,arrow,bolt,plus
+3,3,flag,sun,plus,triangle
+1,2,cloud,star,triangle,burst
+3,3,L,flag,plus,arrow
+1,1,star,cloud,sun,flag
+3,1,plus,scroll,flag,sun
+1,4,o,burst,L,star
+2,2,tree,truck,pillow,shoe
+3,3,drum,pool,paint,wand
+4,3,coat,bat,flower,pillow
+2,1,truck,apple,hat,cup
+4,4,bucket,tree,cup,flower
+3,4,wand,tree,pool,paint
+1,1,kite,bucket,pillow,hat
+4,2,apple,flower,coat,bat
+1,3,drum,shoe,kite,cup
+3,1,paint,drum,tree,apple
+2,3,hat,wand,truck,bucket
+1,2,wand,kite,pool,apple
+4,1,flower,drum,apple,wand
+1,1,kite,cup,hat,bucket
+3,3,coat,bat,paint,pillow
+2,2,shoe,truck,pillow,bat
+3,4,tree,cup,pool,paint
+1,1,kite,bat,coat,pillow
+2,1,truck,pool,wand,shoe
+3,3,tree,shoe,paint,pool
+1,1,kite,wand,drum,hat
+3,2,pillow,paint,coat,bat
+4,1,flower,coat,hat,apple
+3,3,shoe,drum,paint,tree
+4,4,bucket,cup,shoe,flower
+1,4,pool,bat,drum,kite
+2,2,cup,truck,coat,tree
+4,4,wand,pillow,bucket,flower
+2,2,hat,truck,apple,bat
+4,4,pool,shoe,bucket,flower
+1,2,tree,kite,apple,coat
+2,4,hat,cup,wand,truck

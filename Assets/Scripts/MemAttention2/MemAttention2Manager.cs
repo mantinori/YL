@@ -77,7 +77,7 @@ public class MemAttention2Manager : MemAttention1Manager {
 
 			screenIndex = 2;
 
-			float currentTime = 0;
+			//float currentTime = 0;
 
 			state = GameState.Probe;
 
@@ -124,7 +124,7 @@ public class MemAttention2Manager : MemAttention1Manager {
 		Debug.Log("GAME OVER, Returning to menu");
 		
 		//Return to menu
-		Application.LoadLevel("menu");
+		Application.LoadLevel(2);
 	}
 	
 	// Constantly check for player input

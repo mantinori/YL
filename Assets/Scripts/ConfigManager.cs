@@ -17,7 +17,7 @@ public class ConfigManager : MonoBehaviour {
 	}
 
 	[SerializeField]
-	private int totalGames = 6;
+	private int totalGames = 11;
 
 	//The players file name
 	private string playersFile = "players.csv";
@@ -220,9 +220,8 @@ public class ConfigManager : MonoBehaviour {
 				
 				Application.LoadLevel(1);
 			}
-		}
-		//Tell the player the file was unable to be loaded
-		else{
+		} else{
+			//Tell the player the file was unable to be loaded
 			NeuroLog.Error("Failed to initialize config scene.");
 				
 			needConfig =false;
@@ -298,7 +297,7 @@ public class ConfigManager : MonoBehaviour {
 		else{
 			
 			//Set up the task statuses
-			if(testingCheckbox.isChecked){
+			if(testingCheckbox.value){
 				PlayerPrefs.SetString("-testingMode", "true");
 
 				for(int i = 1; i <= CsvManager.totalSessionFiles; i++) {
@@ -326,7 +325,7 @@ public class ConfigManager : MonoBehaviour {
 				}
 			}
 			
-			if(english.isChecked) PlayerPrefs.SetString("-language", "english");
+			if(english.value) PlayerPrefs.SetString("-language", "english");
 			else PlayerPrefs.SetString("-language", "spanish");
 			
 			string name ="";
@@ -418,7 +417,7 @@ public class ConfigManager : MonoBehaviour {
 		playerSelector.Reset();
 		
 		if(windowsTab){
-			testInput.text ="|";
+			testInput.value ="|";
 			keyboard.gameObject.SetActive(true);
 			playerSelector.gameObject.SetActive(false);
 			displayKeyboard=true;
@@ -427,7 +426,7 @@ public class ConfigManager : MonoBehaviour {
 	
 	//Hides the input field
 	void hideInputField(){
-		testInput.text = "";
+		testInput.value = "";
 		
 		testInput.gameObject.SetActive(false);
 		testingLabel.enabled = false;
@@ -439,7 +438,7 @@ public class ConfigManager : MonoBehaviour {
 	void showPlayerSelector(GameObject go){
 		
 		if(message.enabled ==true){
-			testInput.text = "";
+			testInput.value = "";
 			
 			confirmButton.gameObject.SetActive(false);
 			message.enabled = false;	
@@ -458,11 +457,11 @@ public class ConfigManager : MonoBehaviour {
 	
 	void OnSubmit(){
 		
-		if(testInput.text.Length>0){
-			if(testInput.text[testInput.text.Length-1] =='|'){
-				testName = testInput.text.Substring(0,testInput.text.Length-1);
+		if(testInput.value.Length>0){
+			if(testInput.value[testInput.value.Length-1] =='|'){
+				testName = testInput.value.Substring(0,testInput.value.Length-1);
 			}
-			else testName = testInput.text;
+			else testName = testInput.value;
 		}
 		
 		if(testName !=""){
@@ -508,7 +507,7 @@ public class ConfigManager : MonoBehaviour {
 			}
 		}
 		if(needConfig){
-			if(spanish.isChecked && currentlyEnglish){
+			if(spanish.value && currentlyEnglish){
 				currentlyEnglish = false;
 				customIDLabel.text = "ID no se encuentra en la lista, escribirla a mano";
 				customBackground.SetDimensions(575,40);
@@ -524,7 +523,7 @@ public class ConfigManager : MonoBehaviour {
 				buttonText.text ="Salvar";
 				backText.text = "Volver";
 			}
-			else if(english.isChecked && !currentlyEnglish){
+			else if(english.value && !currentlyEnglish){
 				currentlyEnglish = true;
 				customIDLabel.text = "Can't find ID, enter it by hand";
 				customBackground.SetDimensions(400,40);
@@ -543,14 +542,14 @@ public class ConfigManager : MonoBehaviour {
 		}
 		
 		//Show the save button if the test input ever changes
-		if(testName != testInput.text){
+		if(testName != testInput.value){
 			
-			if(testInput.text!= "" && testInput.text!= "|" && testName != testInput.text){
-				testName = testInput.text;
+			if(testInput.value!= "" && testInput.value!= "|" && testName != testInput.value){
+				testName = testInput.value;
 				
 				OnSubmit();
 			}
-			else if(testInput.text== "" || testInput.text== "|"){
+			else if(testInput.value== "" || testInput.value== "|"){
 				testName = "";
 				
 				confirmButton.gameObject.SetActive(false);
@@ -559,10 +558,10 @@ public class ConfigManager : MonoBehaviour {
 		}
 		
 		if(windowsTab && displayKeyboard){
-			if(testInput.selected){
-				if(testInput.text.Length >0){
-					if(testInput.text[testInput.text.Length-1] =='|')
-						testInput.text = testInput.text.Substring(0,testInput.text.Length-1);
+			if(testInput.isSelected){
+				if(testInput.value.Length >0){
+					if(testInput.value[testInput.value.Length-1] =='|')
+						testInput.value = testInput.value.Substring(0,testInput.value.Length-1);
 				}
 				inputLabel.color = new Color(.95f,1f,0f,1);
 			}
@@ -606,39 +605,39 @@ public class ConfigManager : MonoBehaviour {
 						if(keyChar =="shift") shifting = !shifting;
 						else{
 							if(keyChar == "enter"){
-								if(testInput.text.Length>0){
-									if(testInput.text[testInput.text.Length-1] =='|')
-										testInput.text= testInput.text.Substring(0,testInput.text.Length-1);
+								if(testInput.value.Length>0){
+									if(testInput.value[testInput.value.Length-1] =='|')
+										testInput.value= testInput.value.Substring(0,testInput.value.Length-1);
 									
 									OnSubmit();
 								}
 							}
 							else{
 								if(keyChar =="space"){
-									if(testInput.text.Length==0)
-										testInput.text =" |";
-									if(testInput.text[testInput.text.Length-1] !='|')
-										testInput.text += " |";
+									if(testInput.value.Length==0)
+										testInput.value =" |";
+									if(testInput.value[testInput.value.Length-1] !='|')
+										testInput.value += " |";
 									else
-										testInput.text= testInput.text.Substring(0,testInput.text.Length-1) + " |";
+										testInput.value= testInput.value.Substring(0,testInput.value.Length-1) + " |";
 								}
 								else if(keyChar =="backspace"){
-									if(testInput.text.Length==0)
-										testInput.text ="|";
-									else if(testInput.text[testInput.text.Length-1] !='|')
-										testInput.text = testInput.text.Substring(0,testInput.text.Length-1) + "|";
-								 	else if(testInput.text.Length>1)
-										testInput.text = testInput.text.Substring(0,testInput.text.Length-2) + "|";
+									if(testInput.value.Length==0)
+										testInput.value ="|";
+									else if(testInput.value[testInput.value.Length-1] !='|')
+										testInput.value = testInput.value.Substring(0,testInput.value.Length-1) + "|";
+								 	else if(testInput.value.Length>1)
+										testInput.value = testInput.value.Substring(0,testInput.value.Length-2) + "|";
 								}
 								else{
 									if(shifting) keyChar = keyChar.ToUpper();
 							
-									if(testInput.text.Length==0)
-										testInput.text = (keyChar+"|");
-									else if(testInput.text[testInput.text.Length-1] !='|')
-										testInput.text += (keyChar+"|");
+									if(testInput.value.Length==0)
+										testInput.value = (keyChar+"|");
+									else if(testInput.value[testInput.value.Length-1] !='|')
+										testInput.value += (keyChar+"|");
 									else
-										testInput.text = testInput.text.Substring(0,testInput.text.Length-1) + keyChar +"|"; 
+										testInput.value = testInput.value.Substring(0,testInput.value.Length-1) + keyChar +"|"; 
 								}
 							}
 							

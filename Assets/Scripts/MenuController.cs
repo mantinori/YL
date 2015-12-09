@@ -8,7 +8,7 @@ using LumenWorks.Framework.IO.Csv;
 //Script used to control all activity in the menu scene.
 public class MenuController : MonoBehaviour {
 	
-	//List of the task button in the scene(Should be 6)
+	//List of the task button in the scene
 	public List<UIButton> taskButtons;
 	
 	public UIPanel menu;
@@ -43,7 +43,7 @@ public class MenuController : MonoBehaviour {
 	private bool customID;
 	
 	//What language should be shown
-	private string language ="english";
+	private string language = "english";
 	
 	//What was the last completed task(number)
 	private int latestTask=0;
@@ -52,7 +52,7 @@ public class MenuController : MonoBehaviour {
 	
 	// Use this for initialization
 	void Start () {
-		
+
 		//Check to see if the current player is a test player
 		string test = PlayerPrefs.GetString("-customID");
 		if(test =="-t") customID =true;
@@ -65,7 +65,7 @@ public class MenuController : MonoBehaviour {
 			ambience.r= val;
 			ambience.g = val;
 			
-			gammaBar.scrollValue = val;
+			gammaBar.value = val;
 			
 			RenderSettings.ambientLight = ambience;
 		}
@@ -106,7 +106,8 @@ public class MenuController : MonoBehaviour {
 		confirmButton.response = beginTask;
 		confirmButton.gameObject.SetActive(false);
 		
-		warning.enabled =false;
+		warning.gameObject.SetActive(false);
+
 		
 		//Set up the scene
 		setupScene();
@@ -123,7 +124,7 @@ public class MenuController : MonoBehaviour {
 		menu.gameObject.SetActive(false);
 		brightness.gameObject.SetActive(true);
 		
-		gammaBar.scrollValue = ambience.b;
+		gammaBar.value = ambience.b;
 	}
 	
 	//Sets up the scene based on the saved PlayerPrefs
@@ -220,38 +221,43 @@ public class MenuController : MonoBehaviour {
 	
 	private void taskButtonPressed(GameObject o){
 
+		Debug.Log("btn pressed: " + o);
+
 		int num = int.Parse(o.name.Replace("task",""));
 		
 		selectedTask = o.name;
 		
-		if(num<= latestTask){
+		if(num <= latestTask){
+
 			//Show the warning components
-			if(language =="spanish")
+			if(language == "spanish") {
 				warning.text = "Este juego ha sido completado,\nesta seguro que quiere continuar?";
-			else
+			} else {
 				warning.text = "You have already completed this game.\nDo you still wish to replay it?";
-			warning.enabled =true;
+			}
+
+			warning.gameObject.SetActive(true);
 			confirmButton.gameObject.SetActive(true);
 			noButton.gameObject.SetActive(true);
-		
-			//Hide the regular components 
-			foreach(UIButton b in taskButtons){
-				b.gameObject.SetActive(false);
-			}
-		
 			quitButton.gameObject.SetActive(false);
 			abortButton.gameObject.SetActive(false);
 			brightnessButton.gameObject.SetActive(false);
-		}
-		//Otherwise, don't need to show warning. Continue on to loading the game
-		else{
+
+			//Hide the regular components 
+			foreach(UIButton b in taskButtons){
+				b.gameObject.SetActive(false);
+			}		
+
+		} else{
+			//Otherwise, don't need to show warning. Continue on to loading the game
 			beginTask(null);
 		}
 	}
 	
 	//If a task button was pressed, find out what game type it is then start the game
 	private void beginTask(GameObject o){
-		
+
+
 		//String the fileName
 		string fileName = selectedTask +".csv";
 		
@@ -320,6 +326,15 @@ public class MenuController : MonoBehaviour {
 				}
 
 			}
+			else if(headers.Contains("stimencoding1")){
+				Application.LoadLevel("StimEncoding1");
+			}
+			else if(headers.Contains("memtest1")){
+				Application.LoadLevel("MemTest1");
+			}
+			else if(headers.Contains("stimtest1")){
+				Application.LoadLevel("StimTest1");
+			}
 			else{
 				NeuroLog.Log("Listed headers in task " +num + "do not match up with any of the current programs");
 			}
@@ -335,7 +350,8 @@ public class MenuController : MonoBehaviour {
 				warning.text = "La sesión actual será borrada,\nesta seguro que quiere continuar?";
 			else
 				warning.text = "Warning!\nCurrent session status will be deleted.\nProceed?";
-		warning.enabled =true;
+
+		warning.gameObject.SetActive(true);
 		yesButton.gameObject.SetActive(true);
 		noButton.gameObject.SetActive(true);
 		
@@ -352,7 +368,8 @@ public class MenuController : MonoBehaviour {
 	//Hides the warning, and resets the scene
 	private void removeWarning(GameObject o){
 		//Hide the warning components
-		warning.enabled =false;
+		warning.gameObject.SetActive(false);
+
 		yesButton.gameObject.SetActive(false);
 		noButton.gameObject.SetActive(false);
 		confirmButton.gameObject.SetActive(false);
@@ -462,10 +479,10 @@ public class MenuController : MonoBehaviour {
 				Screen.SetResolution(width,height,true);
 			}
 		}
-		if(ambience.b!= gammaBar.scrollValue){
-			ambience.b = gammaBar.scrollValue;
-			ambience.r = gammaBar.scrollValue;
-			ambience.g = gammaBar.scrollValue;
+		if(ambience.b!= gammaBar.value){
+			ambience.b = gammaBar.value;
+			ambience.r = gammaBar.value;
+			ambience.g = gammaBar.value;
 			
 			RenderSettings.ambientLight = ambience;
 		}

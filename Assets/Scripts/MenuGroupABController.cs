@@ -19,8 +19,9 @@ public class MenuGroupABController : MonoBehaviour {
 		//Set the response for all the buttons to methods in this class
 		foreach(UIButton b in groupButtons){
 			b.GetComponent<ButtonResponder>().response = groupButtonPressed;
-			if(language == "spanish")
+			if(language == "spanish") {
 				b.GetComponentInChildren<UILabel>().text = b.GetComponentInChildren<UILabel>().text.Replace("Group", "Grupo"); 
+			}
 		}
 	}
 

@@ -109,7 +109,7 @@ public class MemAttention1Manager : GameManager {
 			
 			stimulus.GetComponent<Renderer>().enabled = true;
 			
-			float currentTime = 0;
+			//float currentTime = 0;
 			
 			state = GameState.Probe;
 

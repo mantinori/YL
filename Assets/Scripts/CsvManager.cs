@@ -303,7 +303,31 @@ public class CsvManager {
 				else
 					eS = ReadMemAttEncEvents(csv);
 			}
-			
+			else if(gm.SType == GameManager.SessionType.StimEncoding1 ){
+				if(!headers.Contains("stimencoding1")){
+					NeuroLog.Log("Invalid read in file for current scene. File is missing header 'stimencoding1' for StimEncoding1 Scene");
+					exit =true;
+				}
+				else
+					eS = ReadStimEnc1Events(csv);
+			}
+			else if(gm.SType == GameManager.SessionType.MemTest1 ){
+				if(!headers.Contains("memtest1")){
+					NeuroLog.Log("Invalid read in file for current scene. File is missing header 'memtest1' for MemTest1 Scene");
+					exit =true;
+				}
+				else
+					eS = ReadMemTest1Events(csv);
+			}
+			else if(gm.SType == GameManager.SessionType.StimTest1 ){
+				if(!headers.Contains("stimtest1")){
+					NeuroLog.Log("Invalid read in file for current scene. File is missing header 'memtest1' for StimTest1 Scene");
+					exit =true;
+				}
+				else
+					eS = ReadStimTest1Events(csv);
+			}
+
 			if(exit){
 				sessionXML = "randomList";
 			
@@ -821,6 +845,134 @@ public class CsvManager {
 		return events;
 	}
 	
+	private List<EventStats> ReadStimEnc1Events(CsvReader csv){
+		
+		List<EventStats> events = new List<EventStats>();
+		
+		int fieldCount = csv.FieldCount;
+		
+		string[] headers = csv.GetFieldHeaders();
+		
+		int i = 2; // start on second line		
+		
+		while (csv.ReadNextRecord()){
+			
+			string stimulus = "";
+			
+			for(int j = 0;j<fieldCount;j++){
+				if(headers[j].ToLower() == "stimencoding1"){	
+					stimulus = csv[j].ToLower();
+				}
+			}
+			
+			if(stimulus != "") events.Add(new StimEncodingEvent(stimulus));
+			
+			i++;
+		}
+		
+		return events;
+	}
+
+	private List<EventStats> ReadMemTest1Events(CsvReader csv){
+		
+		List<EventStats> events = new List<EventStats>();
+		
+		int fieldCount = csv.FieldCount;
+		
+		string[] headers = csv.GetFieldHeaders();
+		
+		int i = 2; // start on second line		
+		
+		while (csv.ReadNextRecord()){
+			
+			string[] stimuli = new string[4];
+			int validLoc = 1;
+			int targetLoc = 1;
+
+			for(int j = 0;j<fieldCount;j++){
+
+				if(headers[j].ToLower() == "validloc"){	
+					if(int.TryParse(csv[j],out validLoc)){
+						if(validLoc <1  && validLoc>4){
+							NeuroLog.Log("Invalid value for 'validLoc' at line #" + i.ToString() + ". Needs to be between 0 and 4.");
+							validLoc = -1;
+						}
+					}
+				}
+				else if(headers[j].ToLower() == "targetloc"){	
+					if(int.TryParse(csv[j],out targetLoc)){
+						if(targetLoc <1  && targetLoc>4){
+							NeuroLog.Log("Invalid value for 'targetLoc' at line #" + i.ToString() + ". Needs to be between 0 and 4.");
+							targetLoc = -1;
+						}
+					}
+				}
+				else if(headers[j].ToLower().IndexOf("loc") == 0) {	
+					int index = 0;
+					if(int.TryParse(headers[j].Substring(3,1),out index)){
+						stimuli[index - 1] = csv[j];
+					}
+				}
+			}
+			
+			events.Add(new MemTest1Event(validLoc, targetLoc, stimuli));
+			
+			i++;
+		}
+		
+		return events;
+	}
+
+	private List<EventStats> ReadStimTest1Events(CsvReader csv){
+		
+		List<EventStats> events = new List<EventStats>();
+		
+		int fieldCount = csv.FieldCount;
+		
+		string[] headers = csv.GetFieldHeaders();
+		
+		int i = 2; // start on second line		
+		
+		while (csv.ReadNextRecord()){
+			
+			string[] stimuli = new string[4];
+			int cuedLoc = 1;
+			int targetLoc = 1;
+			
+			for(int j = 0;j<fieldCount;j++){
+				
+				if(headers[j].ToLower() == "cuedloc"){	
+					if(int.TryParse(csv[j],out cuedLoc)){
+						if(cuedLoc < 1  && cuedLoc > 4){
+							NeuroLog.Log("Invalid value for 'cuedLoc' at line #" + i.ToString() + ". Needs to be between 0 and 4.");
+							cuedLoc = -1;
+						}
+					}
+				}
+				else if(headers[j].ToLower() == "targetloc"){	
+					if(int.TryParse(csv[j],out targetLoc)){
+						if(targetLoc <1  && targetLoc>4){
+							NeuroLog.Log("Invalid value for 'targetLoc' at line #" + i.ToString() + ". Needs to be between 0 and 4.");
+							targetLoc = -1;
+						}
+					}
+				}
+				else if(headers[j].ToLower().IndexOf("loc") == 0) {	
+					int index = 0;
+					if(int.TryParse(headers[j].Substring(3,1),out index)){
+						stimuli[index - 1] = csv[j];
+					}
+				}
+			}
+			
+			events.Add(new StimTest1Event(cuedLoc, targetLoc, stimuli));
+			
+			i++;
+		}
+		
+		return events;
+	}
+
 	//Method used to write out the log file once the game has completed
 	//takes  bool that indicates whether the session was properly completed
 	public void WriteOut(bool completed){
@@ -842,6 +994,7 @@ public class CsvManager {
 		else if (gm.SType == GameManager.SessionType.Associate) WriteOutAssociate(filePath);
 		else if (gm.SType == GameManager.SessionType.Stopping) WriteOutStopping(filePath);
 		else if (gm.SType == GameManager.SessionType.MemAttentEnc2) WriteOutMemAttentionEnc2(filePath);
+		else if (gm.SType == GameManager.SessionType.MemTest1) WriteOutMemTest1(filePath);
 
 		if(completed){
 
@@ -1877,6 +2030,100 @@ public class CsvManager {
 		}
 	}
 
+	private void WriteOutMemTest1(string filePath){
+		using(StreamWriter writer = new StreamWriter(filePath)){
+			
+			int leftX = Mathf.RoundToInt(Screen.width / 4f);
+			int rightX = Mathf.RoundToInt(Screen.width * .75f);
+			int topY = Mathf.RoundToInt(Screen.height * .75f);
+			int bottomY = Mathf.RoundToInt(Screen.height / 4f);
+			
+			string newLine = "Quadrant1, " + rightX.ToString() + ";" + topY.ToString();
+			writer.WriteLine(newLine);
+			
+			newLine = "Quadrant2, " + rightX.ToString() + ";" + bottomY.ToString();
+			writer.WriteLine(newLine);
+			
+			newLine = "Quadrant3, " + leftX.ToString() + ";" + bottomY.ToString();
+			writer.WriteLine(newLine);
+			
+			newLine = "Quadrant4, " + leftX.ToString() + ";" + topY.ToString();
+			writer.WriteLine(newLine);
+			
+			newLine = "Practice, TrialNum, Screen, TouchTime, TouchPosition, CorrectPosition, TouchedQuadrant, CorrectQuadrant, Correct/Incorrect";
+			
+			writer.WriteLine(newLine);
+			
+			int index = 1;
+			
+			foreach(MemTest1Event eS in gm.Practice){
+				
+				if(eS.Completed){
+					
+					foreach(Response r in eS.Responses){
+						
+						newLine = " ,";
+						
+						newLine += index.ToString()+",";
+						
+						newLine += r.ScreenIndex.ToString()+",";
+						
+						newLine += RoundFloat(r.ResponseTime, 3).ToString()+",";
+						
+						newLine += Mathf.RoundToInt(r.TouchLocation.x).ToString()+ ";"+ Mathf.RoundToInt(r.TouchLocation.y).ToString()+",";
+						
+						newLine += Mathf.RoundToInt(r.StimulusLocation.x).ToString()+ ";"+ Mathf.RoundToInt(r.StimulusLocation.y).ToString() + ",";
+						
+						newLine += r.QuadrantTouched.ToString() + ",";
+						
+						newLine += eS.ValidLoc.ToString() + ",";
+						
+						newLine += r.QuadrantTouched == eS.ValidLoc ? "Correct" : "Incorrect";
+						
+						writer.WriteLine(newLine);
+						
+					}
+				}
+				index++;
+			}
+			
+			newLine = "Study, TrialNum, Screen, TouchTime, TouchPosition, CorrectPosition, TouchedQuadrant, CorrectQuadrant, Correct/Incorrect";
+			
+			writer.WriteLine(newLine);
+			
+			index = 1;
+			
+			foreach(MemTest1Event eS in gm.Events){
+				if(eS.Completed){
+					foreach(Response r in eS.Responses){
+						
+						newLine = " ,";
+						
+						newLine += index.ToString()+",";
+						
+						newLine += r.ScreenIndex.ToString()+",";
+						
+						newLine += RoundFloat(r.ResponseTime, 3).ToString()+",";
+						
+						newLine += Mathf.RoundToInt(r.TouchLocation.x).ToString()+ ";"+ Mathf.RoundToInt(r.TouchLocation.y).ToString()+",";
+						
+						newLine += Mathf.RoundToInt(r.StimulusLocation.x).ToString()+ ";"+ Mathf.RoundToInt(r.StimulusLocation.y).ToString() + ",";
+						
+						newLine += r.QuadrantTouched.ToString() + ",";
+						
+						newLine += eS.ValidLoc.ToString() + ",";
+						
+						newLine += r.QuadrantTouched == eS.ValidLoc ? "Correct" : "Incorrect";
+						
+						writer.WriteLine(newLine);
+						
+					}
+				}
+				index++;
+			}
+		}
+	}
+
 	private void WriteOutCriterion(string criterionPath, GameManager.SessionType type){
 
 		Debug.Log("WriteOutCriterion");
@@ -1981,6 +2228,16 @@ public class CsvManager {
 			
 			if((numberOfEarlyPresses/gm.Practice.Count)<.1f) practicePassed = true;
 
+		}
+		else if (type == GameManager.SessionType.MemTest1){			
+			foreach(MemTest1Event e in gm.Practice){
+				foreach(Response r in e.Responses ){
+					if(r.ResponseTime<.2f) numberOfEarlyPresses++;
+				}
+			}
+			
+			if((numberOfEarlyPresses/gm.Practice.Count)<.1f) practicePassed = true;
+			
 		}
 
 		int criterion = 0;
@@ -2102,13 +2359,27 @@ public class CsvManager {
 			
 			if(practicePassed && (numberOfEarlyPresses/totalResponseCount)<.1f) criterion = 1;
 		}
+		else if (type == GameManager.SessionType.MemTest1){
+			
+			foreach(MemTest1Event e in gm.Events){
+				
+				if(e.Responses.Count >= 1) responseCount++;
+				
+				if(e.respondedCorrectly()) correctResponse++;
+				
+				foreach(Response r in e.Responses ){
+					if(r.ResponseTime<.2f) numberOfEarlyPresses++;
+				}
+			}
+			
+			if(practicePassed && (numberOfEarlyPresses/totalResponseCount)<.1f) criterion = 1;
+		}
 
 		float responseAccuracy = correctResponse/totalResponseCount;
 		float correctAccuracy = responseCount > 0 ? correctResponse/responseCount : 0f;
 
 		Debug.Log(correctResponse + "/" + totalResponseCount);
 		Debug.Log(correctResponse + "/" + responseCount);
-
 
 		newLine+= criterion + "," + practiceCount + "," + totalResponseCount +"," + responseAccuracy + "," + correctAccuracy+"," + numberOfEarlyPresses;
 		
