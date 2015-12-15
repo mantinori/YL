@@ -10,18 +10,6 @@ public class StimTest1Manager : MemTest1Manager {
 
 	float[] arrowDirections = new float[]{-35f,35f,145f,215f};
 
-	
-	public StimTest1Event CurrentEvent{
-		get{
-			//If were still practicing, return the latest practice
-			if(practice.Count<=currentPractice) 
-				return (StimTest1Event)events[currentEventNum]; 
-			//Otherwise return the latest real event
-			else 
-				return (StimTest1Event)practice[currentPractice];
-		}
-	}
-
 	void Awake () {
 		base.Setup(GameManager.SessionType.StimTest1);
 		
@@ -132,7 +120,7 @@ public class StimTest1Manager : MemTest1Manager {
 				
 				border.SetActive(false);
 				
-				yield return StartCoroutine(showTitle("Study",3));
+				yield return StartCoroutine(showTitle("Test",3));
 				
 				practicing = false;
 
@@ -150,7 +138,7 @@ public class StimTest1Manager : MemTest1Manager {
 		Debug.Log("GAME OVER, Returning to menu");
 		
 		//Return to menu
-		Application.LoadLevel(2);
+		Application.LoadLevel(1);
 	}
 
 }

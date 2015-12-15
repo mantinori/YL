@@ -13,6 +13,8 @@ public class MenuGroupABController : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 
+		if(CsvManager.groupLetter != null) Application.LoadLevel(2);
+
 		if(PlayerPrefs.HasKey("-language"))
 			language = PlayerPrefs.GetString("-language");
 
@@ -27,9 +29,9 @@ public class MenuGroupABController : MonoBehaviour {
 
 	private void groupButtonPressed(GameObject o){
 
-		string group = o.name.Replace("Group","");
+		CsvManager.groupLetter = o.name.Replace("Group","");
 
-		CsvManager.sessionFilesName = "session_files" + group;
+		CsvManager.sessionFilesName = "session_files" + CsvManager.groupLetter;
 
 		Application.LoadLevel(2);
 

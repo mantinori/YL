@@ -786,7 +786,7 @@ public class StarManager : GameManager {
 		NeuroLog.Log("GAME OVER, Returning to menu");
 		
 		//Return to the menu
-		Application.LoadLevel("menu");
+		Application.LoadLevel(1);
 	}
 	
 	// Constantly check for player input

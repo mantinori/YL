@@ -447,7 +447,7 @@ public class SpatialManager : GameManager {
 		Debug.Log("GAME OVER, Returning to menu");
 		
 		//Return to the menu
-		Application.LoadLevel("menu");
+		Application.LoadLevel(1);
 	}
 	
 	// Update is called once per frame

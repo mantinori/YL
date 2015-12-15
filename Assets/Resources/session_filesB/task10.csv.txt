@@ -1,4 +1,4 @@
-ValidLoc, TargetLoc, Loc1, Loc2, Loc3, Loc4, MemTest1
+CuedLoc, TargetLoc, Loc1, Loc2, Loc3, Loc4, MemTest1
 1,1,star,L,burst,o
 3,4,L,arrow,bolt,plus
 3,3,flag,sun,plus,triangle

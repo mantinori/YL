@@ -395,7 +395,7 @@ public class ImplicitManager : GameManager {
 		Debug.Log("GAME OVER, Returning to menu");
 		
 		//Return to menu
-		Application.LoadLevel("menu");
+		Application.LoadLevel(1);
 	}
 	
 	// Constantly check for player input

@@ -152,7 +152,7 @@ public class MemTest1Manager : GameManager {
 				
 				border.SetActive(false);
 				
-				yield return StartCoroutine(showTitle("Study",3));
+				yield return StartCoroutine(showTitle("Test",3));
 				
 				practicing = false;
 
@@ -170,7 +170,7 @@ public class MemTest1Manager : GameManager {
 		Debug.Log("GAME OVER, Returning to menu");
 		
 		//Return to menu
-		Application.LoadLevel(2);
+		Application.LoadLevel(1);
 	}
 	
 	// Constantly check for player input
@@ -207,10 +207,11 @@ public class MemTest1Manager : GameManager {
 			float time = Time.time - startTime;
 
 			// stimulus position
-			Vector2 targPos = stimPositions[CurrentEvent.ValidLoc - 1];
+			Vector2 targPos = stimPositions[CurrentEvent.TargetLoc - 1];
+			Vector2 cuePos = stimPositions[CurrentEvent.CuedLoc - 1];
 
 			//Create the respones
-			Response r = new Response(targPos, time, touchPos, screenIndex);
+			Response r = new Response(targPos, cuePos, time, touchPos, screenIndex);
 
 			// finger/dot indicator position
 			Vector3 worldPos = Camera.main.ScreenToWorldPoint(touchPos);

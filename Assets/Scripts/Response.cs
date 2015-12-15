@@ -28,6 +28,12 @@ public class Response{
 		get{ return stimulusLocation;}
 	}
 
+	//Where on the screen was the cue
+	private Vector2 cuedLocation;
+	public Vector2 CuedLocation{
+		get{ return cuedLocation;}
+	}
+
 	//Distance from dot's center
 	private float distanceFromCenter;
 	public float DistanceFromCenter{
@@ -155,6 +161,27 @@ public class Response{
 
 		screenIndex = screen;
 
+	}
+
+	// response for mem and stim test
+	public Response(Vector2 objPos, Vector2 cuePos, float rTime, Vector2 tL, int screen){
+		responseTime = rTime;
+		touchLocation = tL;
+		stimulusLocation = objPos;
+		cuedLocation = cuePos;
+		
+		// calc quadrant touched
+		quadrantTouched = 1;
+		if(touchLocation.x > Screen.width / 2f && touchLocation.y < Screen.height / 2f) {
+			quadrantTouched = 2;
+		} else if(touchLocation.x < Screen.width / 2f && touchLocation.y < Screen.height / 2f) {
+			quadrantTouched = 3;
+		} else if(touchLocation.x < Screen.width / 2f && touchLocation.y > Screen.height / 2f) {
+			quadrantTouched = 4;
+		}
+		
+		screenIndex = screen;
+		
 	}
 
 	//Constructor for associate

@@ -11,10 +11,10 @@ public class MemTest1Event: EventStats {
 		get{return targetLoc;}
 	}
 
-	// which quadrant is correct
-	protected int validLoc;
-	public int ValidLoc{
-		get{return validLoc;}
+	// which quadrant is encoded or cued
+	protected int cuedLoc;
+	public int CuedLoc{
+		get{return cuedLoc;}
 	}
 	
 	// stimulus in location1
@@ -36,7 +36,7 @@ public class MemTest1Event: EventStats {
 	public override bool respondedCorrectly(){
 		foreach(Response r in responses ) {
 			//Debug.Log(quadrant +" == " + r.QuadrantTouched);
-			if(validLoc == r.QuadrantTouched) {
+			if(targetLoc == r.QuadrantTouched) {
 				return true;
 			}
 		}
@@ -46,8 +46,8 @@ public class MemTest1Event: EventStats {
 	
 	//Constructor
 	//d(int): dot that will appear in this trial
-	public MemTest1Event(int v, int t, string[] s){
-		validLoc = v;
+	public MemTest1Event(int c, int t, string[] s){
+		cuedLoc = c;
 		targetLoc = t;
 		stimuli = s;
 		responses = new List<Response>();

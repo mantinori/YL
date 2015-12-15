@@ -152,7 +152,7 @@ public class StimEncoding1Manager : GameManager {
 		Debug.Log("GAME OVER, Returning to menu");
 		
 		//Return to menu
-		Application.LoadLevel(2);
+		Application.LoadLevel(1);
 	}
 
 }

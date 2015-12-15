@@ -302,7 +302,7 @@ public class GameManager : MonoBehaviour {
 									csv.WriteOut(false);
 									
 								//Go back to the menu
-									Application.LoadLevel("menu");
+									Application.LoadLevel(1);
 								}
 							}
 						}

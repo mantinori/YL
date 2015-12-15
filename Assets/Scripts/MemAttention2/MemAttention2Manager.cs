@@ -124,7 +124,7 @@ public class MemAttention2Manager : MemAttention1Manager {
 		Debug.Log("GAME OVER, Returning to menu");
 		
 		//Return to menu
-		Application.LoadLevel(2);
+		Application.LoadLevel(1);
 	}
 	
 	// Constantly check for player input
