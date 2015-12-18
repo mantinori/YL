@@ -330,7 +330,7 @@ public class ImplicitManager : GameManager {
 			
 			state = GameState.Probe;
 			//Wait for either the player's response or the time limit
-			while(CurrentEvent.Response == null && currentTime < 1f){
+			while(CurrentEvent.Response == null && currentTime < 1.4f){
 				currentTime+= Time.deltaTime;
 				yield return new WaitForFixedUpdate();
 			}

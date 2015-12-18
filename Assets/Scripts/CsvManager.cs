@@ -169,28 +169,30 @@ public class CsvManager {
 		}
 		
 		//Set the user and session file
-		sessionXML = "task"+tNum.ToString();
+		sessionXML = "task"+tNum.ToString() + ".csv";
 		mUserName = PlayerPrefs.GetString("-childID").Replace(" ","");
 		
 		//Add an xml extension
 		string fn = sessionXML;
-		if (!fn.EndsWith(".xml")) fn += ".csv";
+		//if (!fn.EndsWith(".xml")) fn += ".csv";
 
 		TextReader reader;
 		
 		//Try to load the file. If it fails, exit out
 		try{
-			if(File.Exists(Path.Combine(CsvManager.SessionFilesPath, fn))){
-				NeuroLog.Log("Attempting to Load " + Path.Combine(CsvManager.SessionFilesPath, fn));
-				reader = new StreamReader(Path.Combine(CsvManager.SessionFilesPath, fn));
-			}
-			else{
+			// ONLY USE RESOURCE TASK DATA FILE -- MA 12/17/15
+
+//			if(File.Exists(Path.Combine(CsvManager.SessionFilesPath, fn))){
+//				NeuroLog.Log("Attempting to Load " + Path.Combine(CsvManager.SessionFilesPath, fn));
+//				reader = new StreamReader(Path.Combine(CsvManager.SessionFilesPath, fn));
+//			}
+//			else{
 				NeuroLog.Log("Attempting to read from local Resources: " + sessionFilesName + "/" + fn);
 					
 				TextAsset sessionData = Resources.Load(sessionFilesName + "/" + fn) as TextAsset;
 				
 				reader = new StringReader(sessionData.text);
-			}
+		//	}
 		}
 		catch(Exception e){
 			NeuroLog.Log("Unable to find sessionFile! Error: " + e);
@@ -1970,6 +1972,7 @@ public class CsvManager {
 
 					if(eS.Responses.Count == 0) {
 						newLine = " , " + index.ToString() + ", No Touch, " + eS.Stimulus + ", No Touch, No Touch, No Touch, No Touch, No Touch, No Touch, No Touch, No Touch";
+						writer.WriteLine(newLine);
 					} else {
 
 						foreach(Response r in eS.Responses){
@@ -1994,9 +1997,10 @@ public class CsvManager {
 
 							newLine += r.QuadrantTouched == eS.Quadrant ? "Correct" : "Incorrect";
 
+							writer.WriteLine(newLine);
 						}
 					}
-					writer.WriteLine(newLine);
+
 				}
 				index++;
 			}
@@ -2011,6 +2015,7 @@ public class CsvManager {
 				if(eS.Completed){
 					if(eS.Responses.Count == 0) {
 						newLine = " , " + index.ToString() + ", No Touch, " + eS.Stimulus + ", No Touch, No Touch, No Touch, No Touch, No Touch, No Touch, No Touch, No Touch";
+						writer.WriteLine(newLine);
 					} else {
 						foreach(Response r in eS.Responses){
 						
@@ -2034,10 +2039,9 @@ public class CsvManager {
 							
 							newLine += r.QuadrantTouched == eS.Quadrant ? "Correct" : "Incorrect";
 
+							writer.WriteLine(newLine);
 						}
 					}
-
-					writer.WriteLine(newLine);
 
 				}
 				index++;
@@ -2076,6 +2080,7 @@ public class CsvManager {
 				if(eS.Completed){
 					if(eS.Responses.Count == 0) {
 						newLine = " , " + index.ToString() + ", No Touch, " + eS.Stimuli[eS.TargetLoc - 1] + ", No Touch, No Touch, No Touch, No Touch, No Touch, No Touch, No Touch, No Touch, No Touch, No Touch, No Touch";
+						writer.WriteLine(newLine);
 					} else {
 
 						foreach(Response r in eS.Responses){
@@ -2104,9 +2109,9 @@ public class CsvManager {
 							
 							newLine += r.QuadrantTouched == eS.TargetLoc ? "Correct" : "Incorrect";
 
+							writer.WriteLine(newLine);
 						}
 					}
-					writer.WriteLine(newLine);
 
 				}
 				index++;
@@ -2122,6 +2127,7 @@ public class CsvManager {
 				if(eS.Completed){
 					if(eS.Responses.Count == 0) {
 						newLine = " , " + index.ToString() + ", No Touch, " + eS.Stimuli[eS.TargetLoc - 1] + ", No Touch, No Touch, No Touch, No Touch, No Touch, No Touch, No Touch, No Touch, No Touch, No Touch, No Touch";
+						writer.WriteLine(newLine);
 					} else {
 						foreach(Response r in eS.Responses){
 						
@@ -2149,11 +2155,10 @@ public class CsvManager {
 							
 							newLine += r.QuadrantTouched == eS.TargetLoc ? "Correct" : "Incorrect";
 
+							writer.WriteLine(newLine);
 						}
 					}
-					
-					writer.WriteLine(newLine);
-
+				
 				}
 				index++;
 			}

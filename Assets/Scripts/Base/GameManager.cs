@@ -301,7 +301,7 @@ public class GameManager : MonoBehaviour {
 									//Write out the incompleted csv
 									csv.WriteOut(false);
 									
-								//Go back to the menu
+									//Go back to the menu
 									Application.LoadLevel(1);
 								}
 							}
