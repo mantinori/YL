@@ -39,10 +39,7 @@ public class GameManager : MonoBehaviour {
 	
 	//The fading black circle, showing where the player pressed
 	public FadingFingerprint spot;
-	
-	//The XmlManager class of the scene
-	//protected XmlManager xml;
-	
+
 	//The CsvManager class of the scene
 	protected CsvManager csv;
 	
@@ -82,7 +79,7 @@ public class GameManager : MonoBehaviour {
 	private List<Vector3> dragPoints;
 
 	//Which gametype is running
-	public enum SessionType{Spatial, Inhibition, Star, Implicit, Associate, Stopping, MemAttentEnc1, MemAttentEnc2, StimEncoding1, MemTest1, StimTest1};
+	public enum SessionType{None, Spatial, Inhibition, Star, Implicit, Associate, Stopping, MemAttentEnc1, MemAttentEnc2, StimEncoding1, MemTest1, StimTest1};
 	protected SessionType sType;
 	public SessionType SType{
 		get{return sType;}
@@ -114,7 +111,11 @@ public class GameManager : MonoBehaviour {
 	private float activeSlope;
 	
 	protected bool gameOver;
-	
+
+	protected bool isPaused = false;
+
+	public GameObject menu;
+
 	// Use this for initialization
 	protected void Setup (SessionType s) {
 		main = this;
@@ -164,14 +165,41 @@ public class GameManager : MonoBehaviour {
 		border.GetComponent<Renderer>().material.mainTexture = simpleBorderImage;
 		
 		border.SetActive(true);
+
+		// pause pinch recognizer
+		//var recognizer = new TKPinchRecognizer();
+		//recognizer.gestureRecognizedEvent += HandlePinch;
+		//TouchKit.addGestureRecognizer( recognizer );
 	}
-	
+
+	protected void HandlePinch(TKPinchRecognizer r) {
+		Debug.Log( "pinch recognizer fired: " + r.deltaScale );
+
+		// if over certain threshold do pause
+
+		// otherwise it's an N
+		isPaused = !isPaused;
+
+		text.text = "PAUSED: " + r.deltaScale;
+
+		screen.enabled = isPaused;
+
+		text.GetComponent<Renderer>().enabled = isPaused;
+
+	}
+
 	//Generate the main events
 	protected virtual void generateEvents() {}
 
 	//Generate practice pitches
 	protected virtual void generatePractice() {}
-	
+
+	//Reset practice
+	protected virtual void resetPractice(){
+		currentPractice = 0;
+		practicing = true;
+	}
+
 	//Run the tutorial
 	protected virtual IEnumerator runTutorial(){yield return null;}
 	
@@ -189,7 +217,21 @@ public class GameManager : MonoBehaviour {
 		audioSource.Play();
 		*/
 	}
-	
+
+	public IEnumerator showMenu(bool showPracticeBtn){
+
+		if(menu == null) yield return null;
+
+		// show menu
+		menu.SetActive(true);
+
+		menu.SendMessage("Show", showPracticeBtn);
+
+		while(menu.activeSelf) {
+			yield return new WaitForEndOfFrame();
+		}
+	}
+
 	//Show the title card before a new section
 	public IEnumerator showTitle(string t, float duration){
 		
@@ -221,6 +263,8 @@ public class GameManager : MonoBehaviour {
 	
 	//Used to read in
 	void LateUpdate () {	
+		//Debug.Log("checking touches" + gameOver + "," + touching);
+
 		if(Input.GetKeyDown(KeyCode.Escape)){
 			if(Screen.fullScreen){
 				int width= Screen.currentResolution.width-200;
@@ -239,12 +283,14 @@ public class GameManager : MonoBehaviour {
 		}
 		
 		if(!gameOver && touching){
+
 			if(dragPoints.Count == 0){
 				dragPoints.Add(touchPos);
 			}
 			else{
 				if(Vector3.Distance(dragPoints[dragPoints.Count-1], touchPos)>50){
-					
+					//Debug.Log("dragPoints.Count="+dragPoints.Count);
+
 					if(dragPoints.Count==1){
 						dragPoints.Add(touchPos);
 						activeSlope =  Vector3.Angle(new Vector3(1,0,0),
@@ -271,7 +317,8 @@ public class GameManager : MonoBehaviour {
 														(dragPoints[dragPoints.Count-1].y - dragPoints[dragPoints.Count-2].y),0));
 							}
 						}
-						
+
+
 						//If there are 4 points
 						if(dragPoints.Count==4){
 							//Make sure the first and last line have about the same length (Margin of 100 pixels)
@@ -289,20 +336,39 @@ public class GameManager : MonoBehaviour {
 								float angSlash = Vector3.Angle(new Vector3(1,0,0), new Vector3((dragPoints[1].x - dragPoints[2].x),(dragPoints[1].y - dragPoints[2].y),0));
 								if((dragPoints[1].y - dragPoints[2].y)/(dragPoints[1].x - dragPoints[2].x) <0)
 									angSlash *= -1;
-								
+
+								if(angOne < 0) angOne += 360;
+								if(angTwo < 0) angTwo += 360;
+								if(angSlash < 0) angSlash += 360;
+
+								Debug.Log("ANGLE="+angOne +","+ angTwo);
+
 								//Make sure the first and last line are draw at about the same angle(margin of 30'),
 								//and if the first and middle line are not given the sameish angle(margin of 10'), then its a Z
 								if(Mathf.Abs(angOne - angTwo)<30 && Mathf.Abs(angOne - angSlash)>10){
-									//Delete the current task
-									PlayerPrefs.DeleteKey("-currentTask");
-									
-									NeuroLog.Debug("READ 'Z' SWIPE, HALTING TASK");
-									
-									//Write out the incompleted csv
-									csv.WriteOut(false);
-									
-									//Go back to the menu
-									Application.LoadLevel(1);
+
+									// if lines 1 and 2 are horizontals, it's a Z
+									if(Mathf.Abs(dragPoints[0].x - dragPoints[1].x) > 200) {
+										//Delete the current task
+										PlayerPrefs.DeleteKey("-currentTask");
+										
+										NeuroLog.Debug("READ 'Z' SWIPE, HALTING TASK");
+										
+										//Write out the incompleted csv
+										csv.WriteOut(false);
+										
+										//Go back to the menu
+										Application.LoadLevel(1);
+
+									} else {
+//										// otherwise it's an N
+//										isPaused = !isPaused;
+//
+//										NeuroLog.Debug("READ 'N' SWIPE, TOGGLING PAUSE");
+//
+//										dragPoints.Clear();
+
+									}
 								}
 							}
 						}

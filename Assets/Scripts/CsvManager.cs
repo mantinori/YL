@@ -1960,7 +1960,7 @@ public class CsvManager {
 			newLine = "Quadrant4, " + leftX.ToString() + ";" + topY.ToString();
 			writer.WriteLine(newLine);
 
-			newLine = "Practice, TrialNum, Screen, TargetObject, TouchTime, TouchPositionX, TouchPositionY, CorrectPositionX, CorrectPositionY, TouchedQuadrant, CorrectQuadrant, Correct/Incorrect";
+			newLine = "Practice, TrialNum, Screen, TargetObject, OnsetTime, TouchTime, TouchPositionX, TouchPositionY, CorrectPositionX, CorrectPositionY, TouchedQuadrant, CorrectQuadrant, Correct/Incorrect";
 			
 			writer.WriteLine(newLine);
 			
@@ -1971,7 +1971,7 @@ public class CsvManager {
 				if(eS.Completed){
 
 					if(eS.Responses.Count == 0) {
-						newLine = " , " + index.ToString() + ", No Touch, " + eS.Stimulus + ", No Touch, No Touch, No Touch, No Touch, No Touch, No Touch, No Touch, No Touch";
+						newLine = " , " + index.ToString() + ", No Touch, " + eS.Stimulus + ", No Touch, No Touch, No Touch, No Touch, No Touch, No Touch, No Touch, No Touch, No Touch";
 						writer.WriteLine(newLine);
 					} else {
 
@@ -1984,6 +1984,8 @@ public class CsvManager {
 							newLine += r.ScreenIndex.ToString()+",";
 
 							newLine += eS.Stimulus + ",";
+
+							newLine += RoundFloat(eS.OnsetTime, 3).ToString()+",";
 
 							newLine += RoundFloat(r.ResponseTime, 3).ToString()+",";
 
@@ -2005,7 +2007,7 @@ public class CsvManager {
 				index++;
 			}
 			
-			newLine = "Study, TrialNum, Screen, TargetObject, TouchTime, TouchPositionX, TouchPositionY, CorrectPositionX, CorrectPositionY, TouchedQuadrant, CorrectQuadrant, Correct/Incorrect";
+			newLine = "Study, TrialNum, Screen, TargetObject, OnsetTime, TouchTime, TouchPositionX, TouchPositionY, CorrectPositionX, CorrectPositionY, TouchedQuadrant, CorrectQuadrant, Correct/Incorrect";
 			
 			writer.WriteLine(newLine);
 			
@@ -2014,7 +2016,7 @@ public class CsvManager {
 			foreach(MemAttentionEvent eS in gm.Events){
 				if(eS.Completed){
 					if(eS.Responses.Count == 0) {
-						newLine = " , " + index.ToString() + ", No Touch, " + eS.Stimulus + ", No Touch, No Touch, No Touch, No Touch, No Touch, No Touch, No Touch, No Touch";
+						newLine = " , " + index.ToString() + ", No Touch, " + eS.Stimulus + ", No Touch, No Touch, No Touch, No Touch, No Touch, No Touch, No Touch, No Touch, No Touch";
 						writer.WriteLine(newLine);
 					} else {
 						foreach(Response r in eS.Responses){
@@ -2026,6 +2028,8 @@ public class CsvManager {
 							newLine += r.ScreenIndex.ToString()+",";
 
 							newLine += eS.Stimulus + ",";
+
+							newLine += RoundFloat(eS.OnsetTime, 3).ToString()+",";
 
 							newLine += RoundFloat(r.ResponseTime, 3).ToString()+",";
 
@@ -2051,6 +2055,11 @@ public class CsvManager {
 
 	private void WriteOutMemTest1(string filePath){
 		using(StreamWriter writer = new StreamWriter(filePath)){
+
+			Vector2[] stimPositions = new Vector2[4]{new Vector2(Screen.width * .75f, Screen.height * .75f), 
+				new Vector2(Screen.width * .75f, Screen.height / 4f), 
+				new Vector2(Screen.width / 4f, Screen.height / 4f), 
+				new Vector2(Screen.width / 4f, Screen.height * .75f)};
 			
 			int leftX = Mathf.RoundToInt(Screen.width / 4f);
 			int rightX = Mathf.RoundToInt(Screen.width * .75f);
@@ -2069,7 +2078,7 @@ public class CsvManager {
 			newLine = "Quadrant4, " + leftX.ToString() + ";" + topY.ToString();
 			writer.WriteLine(newLine);
 			
-			newLine = "Practice, TrialNum, Screen, TargetObject, TouchTime, CuedPositionX, CuedPositionY, TouchPositionX, TouchPositionY, CorrectPositionX, CorrectPositionY, CuedQuadrant, TouchedQuadrant, CorrectQuadrant, Correct/Incorrect";
+			newLine = "Practice, TrialNum, Screen, TargetObject, OnsetTime, TouchTime, CuedPositionX, CuedPositionY, TouchPositionX, TouchPositionY, CorrectPositionX, CorrectPositionY, CuedQuadrant, TouchedQuadrant, CorrectQuadrant, Correct/Incorrect, Valid/Invalid";
 			
 			writer.WriteLine(newLine);
 			
@@ -2079,7 +2088,40 @@ public class CsvManager {
 				
 				if(eS.Completed){
 					if(eS.Responses.Count == 0) {
-						newLine = " , " + index.ToString() + ", No Touch, " + eS.Stimuli[eS.TargetLoc - 1] + ", No Touch, No Touch, No Touch, No Touch, No Touch, No Touch, No Touch, No Touch, No Touch, No Touch, No Touch";
+
+						Vector2 targPos = stimPositions[eS.TargetLoc - 1];
+						Vector2 cuePos = stimPositions[eS.CuedLoc - 1];
+
+						//newLine = " , " + index.ToString() + ", No Touch, " + eS.Stimuli[eS.TargetLoc - 1] + ", No Touch, No Touch, No Touch, No Touch, No Touch, No Touch, No Touch, No Touch, No Touch, No Touch, No Touch, No Touch, No Touch";
+
+						newLine = " , ";
+
+						newLine += index.ToString();
+
+						newLine += ", No Touch,";
+
+						newLine += eS.Stimuli[eS.TargetLoc - 1] + ",";
+
+						newLine += RoundFloat(eS.OnsetTime, 3).ToString()+",";
+
+						newLine += " No Touch,";
+
+						newLine += Mathf.RoundToInt(cuePos.x).ToString()+ ","+ Mathf.RoundToInt(cuePos.y).ToString()+",";
+
+						newLine += " No Touch, No Touch,";
+
+						newLine += Mathf.RoundToInt(targPos.x).ToString()+ ","+ Mathf.RoundToInt(targPos.y).ToString() + ",";
+
+						newLine += eS.CuedLoc.ToString() + ",";
+
+						newLine += " No Touch,";
+
+						newLine += eS.TargetLoc.ToString() + ",";
+
+						newLine += " No Touch, ";
+
+						newLine += eS.CuedLoc == eS.TargetLoc ? "Valid" : "Invalid";
+
 						writer.WriteLine(newLine);
 					} else {
 
@@ -2092,6 +2134,8 @@ public class CsvManager {
 							newLine += r.ScreenIndex.ToString()+",";
 
 							newLine += eS.Stimuli[eS.TargetLoc - 1] + ",";
+
+							newLine += RoundFloat(eS.OnsetTime, 3).ToString()+",";
 							
 							newLine += RoundFloat(r.ResponseTime, 3).ToString()+",";
 							
@@ -2109,6 +2153,10 @@ public class CsvManager {
 							
 							newLine += r.QuadrantTouched == eS.TargetLoc ? "Correct" : "Incorrect";
 
+							newLine += ",";
+
+							newLine += r.CuedLocation == r.StimulusLocation ? "Valid" : "Invalid";
+
 							writer.WriteLine(newLine);
 						}
 					}
@@ -2117,7 +2165,7 @@ public class CsvManager {
 				index++;
 			}
 			
-			newLine = "Test, TrialNum, Screen, TargetObject, TouchTime, CuedPositionX, CuedPositionY, TouchPositionX, TouchPositionY, CorrectPositionX, CorrectPositionY, CuedQuadrant, TouchedQuadrant, CorrectQuadrant, Correct/Incorrect";
+			newLine = "Test, TrialNum, Screen, TargetObject, OnsetTime, TouchTime, CuedPositionX, CuedPositionY, TouchPositionX, TouchPositionY, CorrectPositionX, CorrectPositionY, CuedQuadrant, TouchedQuadrant, CorrectQuadrant, Correct/Incorrect, Valid/Invalid";
 			
 			writer.WriteLine(newLine);
 			
@@ -2126,7 +2174,39 @@ public class CsvManager {
 			foreach(MemTest1Event eS in gm.Events){
 				if(eS.Completed){
 					if(eS.Responses.Count == 0) {
-						newLine = " , " + index.ToString() + ", No Touch, " + eS.Stimuli[eS.TargetLoc - 1] + ", No Touch, No Touch, No Touch, No Touch, No Touch, No Touch, No Touch, No Touch, No Touch, No Touch, No Touch";
+						//newLine = " , " + index.ToString() + ", No Touch, " + eS.Stimuli[eS.TargetLoc - 1] + ", No Touch, No Touch, No Touch, No Touch, No Touch, No Touch, No Touch, No Touch, No Touch, No Touch, No Touch, No Touch, No Touch";
+
+						Vector2 targPos = stimPositions[eS.TargetLoc - 1];
+						Vector2 cuePos = stimPositions[eS.CuedLoc - 1];
+
+						newLine = " , ";
+
+						newLine += index.ToString();
+
+						newLine += ", No Touch,";
+
+						newLine += eS.Stimuli[eS.TargetLoc - 1] + ",";
+
+						newLine += RoundFloat(eS.OnsetTime, 3).ToString()+",";
+
+						newLine += " No Touch,";
+
+						newLine += Mathf.RoundToInt(cuePos.x).ToString()+ ","+ Mathf.RoundToInt(cuePos.y).ToString()+",";
+
+						newLine += " No Touch, No Touch,";
+
+						newLine += Mathf.RoundToInt(targPos.x).ToString()+ ","+ Mathf.RoundToInt(targPos.y).ToString() + ",";
+
+						newLine += eS.CuedLoc.ToString() + ",";
+
+						newLine += " No Touch,";
+
+						newLine += eS.TargetLoc.ToString() + ",";
+
+						newLine += " No Touch, ";
+
+						newLine += eS.CuedLoc == eS.TargetLoc ? "Valid" : "Invalid";
+
 						writer.WriteLine(newLine);
 					} else {
 						foreach(Response r in eS.Responses){
@@ -2139,6 +2219,8 @@ public class CsvManager {
 
 							newLine += eS.Stimuli[eS.TargetLoc - 1] + ",";
 
+							newLine += RoundFloat(eS.OnsetTime, 3).ToString()+",";
+
 							newLine += RoundFloat(r.ResponseTime, 3).ToString()+",";
 							
 							newLine += Mathf.RoundToInt(r.CuedLocation.x).ToString()+ ","+ Mathf.RoundToInt(r.CuedLocation.y).ToString()+",";
@@ -2154,6 +2236,10 @@ public class CsvManager {
 							newLine += eS.TargetLoc.ToString() + ",";
 							
 							newLine += r.QuadrantTouched == eS.TargetLoc ? "Correct" : "Incorrect";
+
+							newLine += ",";
+
+							newLine += r.CuedLocation == r.StimulusLocation ? "Valid" : "Invalid";
 
 							writer.WriteLine(newLine);
 						}

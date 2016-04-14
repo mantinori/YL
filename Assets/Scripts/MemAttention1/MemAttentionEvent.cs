@@ -25,7 +25,12 @@ public class MemAttentionEvent: EventStats{
 		set{responses = value;}
 	}
 
-	
+	protected float onsetTime;
+	public float OnsetTime {
+		get{return onsetTime;}
+		set{onsetTime = value;}
+	}
+
 	//Method used to see if the player responded correctly in the trial
 	public override bool respondedCorrectly(){
 		foreach(Response r in responses ) {

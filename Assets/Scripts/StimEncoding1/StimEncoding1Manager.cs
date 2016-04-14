@@ -74,9 +74,9 @@ public class StimEncoding1Manager : GameManager {
 	//Main method of the game
 	protected override IEnumerator runSession(){
 		
-		//Show the tutorial
-		yield return StartCoroutine(runTutorial());
-	
+		//Show the menu
+		yield return StartCoroutine(showMenu(false));
+
 		//Show Practice screen
 		yield return StartCoroutine(showTitle("Practice",3));
 		
@@ -127,16 +127,26 @@ public class StimEncoding1Manager : GameManager {
 			//If we reached the end of the practice list, check to see if the player passed
 			if(practicing && currentPractice >= practice.Count){
 				
-				//Count the nummber of correct responses
 				practiceSessionCount++;
-
-				NeuroLog.Log("Continuing to MainSession");
-				
-				border.SetActive(false);
-				
-				yield return StartCoroutine(showTitle("Study",3));
 				
 				practicing = false;
+				
+				screen.enabled = true;
+				
+				//Show the menu
+				yield return StartCoroutine(showMenu(true));
+				
+				if(!practicing) {
+					NeuroLog.Log("Continuing to MainSession");
+					
+					border.SetActive(false);
+					
+					yield return StartCoroutine(showTitle("Study",3));
+					
+				} else {
+					
+					yield return StartCoroutine(showTitle("Practice",3));
+				}
 
 			}
 		}
@@ -154,5 +164,39 @@ public class StimEncoding1Manager : GameManager {
 		//Return to menu
 		Application.LoadLevel(1);
 	}
+
+	void Update () {	
+		
+		bool currentTouch;
+		
+		//Get the touch location based on the platform
+		if(Application.platform == RuntimePlatform.IPhonePlayer){
+			if(Input.touchCount>0){
+				touchPos = Input.touches[0].position;
+				
+				currentTouch = true;
+			}
+			else currentTouch =false;		
+		}
+		else{
+			if(Input.GetMouseButton(0)){
+				touchPos = Input.mousePosition;
+				
+				currentTouch = true;
+			}
+			else currentTouch =false;
+		}
+		
+		//Not Touching
+		if(!currentTouch)
+			touching = false;
+		//If a player has touched the screen, not holding
+		else if(!touching && currentTouch){	
+			
+			touching = true;
+			
+		}
+	}
+
 
 }

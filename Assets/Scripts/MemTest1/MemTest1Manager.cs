@@ -11,7 +11,10 @@ public class MemTest1Manager : GameManager {
 	//The stimulus images
 	[SerializeField]
 	protected GameObject[] stimuli;
-	
+
+	[SerializeField]
+	protected bool kidsMode = false;
+
 	protected int screenIndex = 0;
 	
 	//Positions of the game's stimuli
@@ -51,12 +54,55 @@ public class MemTest1Manager : GameManager {
 			NeuroLog.Log("Failed to load list of events");
 		} else {
 			// randomize
-			events.Shuffle();
+			ShuffleEventsNonRepeat(2);
 
 			//Start the game
 			StartCoroutine("runSession");
 		}
 		
+	}
+
+	protected void ShuffleEventsNonRepeat(int maxRepeats) {
+		events.Shuffle();
+
+		if(events.Count < maxRepeats) return;
+
+		// go through and make sure no more than 2 in a row
+
+		int index = 0;
+		while(index < events.Count - 1) {
+			MemTest1Event evt = events[index] as MemTest1Event;
+			MemTest1Event nextEvt = events[index + 1] as MemTest1Event;
+
+			int numRepeats = 0;
+			int totalAttempts = 0;
+			while(totalAttempts < 100 && evt.Stimuli[evt.TargetLoc - 1] == nextEvt.Stimuli[nextEvt.TargetLoc - 1]) {
+				// it's a repeated event, increment total so far
+				numRepeats++;
+				if(numRepeats > maxRepeats) {
+					// if more than X repeats, move item to the end
+					events.Remove(nextEvt);
+					events.Add(nextEvt);
+
+					numRepeats--;
+
+					totalAttempts++;
+				}
+
+				nextEvt = events[index + 1] as MemTest1Event;
+			} 
+
+			index++;
+
+		}
+
+		// DEBUG
+//		string listString = "";
+//		foreach(EventStats e in events) {
+//			MemTest1Event evt = e as MemTest1Event;
+//			listString += evt.Stimuli[evt.TargetLoc - 1] + "\n";
+//		}
+//		Debug.Log(listString);
 	}
 
 	//Generate practice pitches
@@ -77,9 +123,9 @@ public class MemTest1Manager : GameManager {
 	//Main method of the game
 	protected override IEnumerator runSession(){
 		
-		//Show the tutorial
-		yield return StartCoroutine(runTutorial());
-	
+		//Show the menu
+		yield return StartCoroutine(showMenu(false));
+
 		//Show Practice screen
 		yield return StartCoroutine(showTitle("Practice",3));
 		
@@ -119,6 +165,10 @@ public class MemTest1Manager : GameManager {
 
 			state = GameState.Probe;
 
+			float onsetTime = Time.time - startTime;
+
+			CurrentEvent.OnsetTime = onsetTime;
+
 			// put all four stimuli on screen
 			for(int i = 0; i < CurrentEvent.Stimuli.Length; i++) {
 				Texture2D tex = Resources.Load<Texture2D>("stimuli/" + CurrentEvent.Stimuli[i]);
@@ -130,14 +180,26 @@ public class MemTest1Manager : GameManager {
 
 			}
 		
-			yield return new WaitForSeconds(.5f);
+			if(kidsMode) {
+				yield return new WaitForSeconds(1f);
+			} else {
+				yield return new WaitForSeconds(.5f);
+			}
 
 			for(int i = 0; i < CurrentEvent.Stimuli.Length; i++) {
 				GameObject stimulus = stimuli[i];
 				stimulus.GetComponent<Renderer>().enabled = false;
 			}
 
-			yield return new WaitForSeconds(1f);
+			if(kidsMode) {
+				yield return new WaitForSeconds(.5f);
+			} else {
+				yield return new WaitForSeconds(1f);
+			}
+
+			while(isPaused) {
+				yield return new WaitForEndOfFrame();
+			}
 
 			//Get the next event
 			nextEvent();
@@ -145,16 +207,26 @@ public class MemTest1Manager : GameManager {
 			//If we reached the end of the practice list, check to see if the player passed
 			if(practicing && currentPractice>=practice.Count){
 				
-				//Count the nummber of correct responses
 				practiceSessionCount++;
-
-				NeuroLog.Log("Continuing to MainSession");
-				
-				border.SetActive(false);
-				
-				yield return StartCoroutine(showTitle("Test",3));
 				
 				practicing = false;
+				
+				screen.enabled = true;
+				
+				//Show the menu
+				yield return StartCoroutine(showMenu(true));
+				
+				if(!practicing) {
+					NeuroLog.Log("Continuing to MainSession");
+					
+					border.SetActive(false);
+					
+					yield return StartCoroutine(showTitle("Test",3));
+					
+				} else {
+					
+					yield return StartCoroutine(showTitle("Practice",3));
+				}
 
 			}
 		}
@@ -180,23 +252,27 @@ public class MemTest1Manager : GameManager {
 
 		bool currentTouch = false;
 		
-		//Get the touch location based on the platform
 		if(Application.platform == RuntimePlatform.IPhonePlayer){
 			if(Input.touchCount>0){
 				touchPos = Input.touches[0].position;
+				
 				currentTouch = true;
 			}
-		} else {
-			if(Input.GetMouseButtonDown(0)){
-				touchPos = Input.mousePosition;			
+			else currentTouch =false;		
+		}
+		else{
+			if(Input.GetMouseButton(0)){
+				touchPos = Input.mousePosition;
+				
 				currentTouch = true;
 			}
+			else currentTouch =false;
 		}
 		
 		//Not Touching
 		if(!currentTouch) {
 			touching = false;
-		} else if(!touching) {	
+		} else if(!touching && currentTouch){	
 			//If a player has touched the screen and released
 
 			//Debug.Log("touchPos="+touchPos);
@@ -219,7 +295,10 @@ public class MemTest1Manager : GameManager {
 
 			//Start the fade spot
 			StartCoroutine(spot.fadeFinger(fingerPos, -1));
-			
+
+			// don't store any responses if pause
+			if(isPaused) return;
+
 			//Add the response
 			CurrentEvent.Responses.Add(r);
 				

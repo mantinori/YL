@@ -1,0 +1,25 @@
+Stimulus,Quadrant
+plus,3
+star,1
+star,1
+plus,3
+plus,3
+star,1
+plus ,3
+star,1
+truck,2
+kite,1
+flower,4
+paint,3
+truck,2
+paint,3
+kite,1
+flower,4
+paint,3
+flower,4
+truck,2
+kite,1
+paint,3
+kite,1
+truck,2
+flower,4

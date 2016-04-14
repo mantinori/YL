@@ -10,7 +10,9 @@ public class MenuController : MonoBehaviour {
 	
 	//List of the task button in the scene
 	public List<UIButton> taskButtons;
-	
+
+	public UIButton trainingButton;
+
 	public UIPanel menu;
 	public UIPanel brightness;
 	
@@ -49,7 +51,10 @@ public class MenuController : MonoBehaviour {
 	private int latestTask=0;
 	
 	private string selectedTask;
-	
+
+	[SerializeField]
+	bool enableAllGames = false;
+
 	// Use this for initialization
 	void Start () {
 
@@ -108,7 +113,9 @@ public class MenuController : MonoBehaviour {
 		
 		warning.gameObject.SetActive(false);
 
-		
+		// MA 04/14/16 added training button mode
+		trainingButton.GetComponent<ButtonResponder>().response = trainingButtonPressed;
+
 		//Set up the scene
 		setupScene();
 	}
@@ -167,11 +174,16 @@ public class MenuController : MonoBehaviour {
 			}
 		}
 		*/
-		
-		for(int i = 1;i<taskButtons.Count+1;i++){
-			if(PlayerPrefs.GetString("-t" + i.ToString())=="true")
-				latestTask++;
-			else break;
+
+
+		for(int i = 0; i < taskButtons.Count; i++){
+					
+			int btnTask = int.Parse(taskButtons[i].name.Replace("task",""));
+
+			if(PlayerPrefs.GetString("-t" + btnTask) == "true")
+				latestTask = btnTask;
+
+			//else break;
 		}
 		
 		//Update the list of task buttons
@@ -185,7 +197,7 @@ public class MenuController : MonoBehaviour {
 				taskButtons[i].isEnabled = true;
 			}
 			//If the player's latest task is equal to i, keep it gray and active
-			else if(i==latestTask){
+			else if(i==latestTask || enableAllGames){
 				
 				taskButtons[i].isEnabled = true;
 				
@@ -218,10 +230,14 @@ public class MenuController : MonoBehaviour {
 			//abortButton.transform.localPosition = new Vector3(-250,-310,0);
 		}
 	}
-	
+
+	private void trainingButtonPressed(GameObject o){
+		Application.LoadLevel("Training");
+	}
+
 	private void taskButtonPressed(GameObject o){
 
-		Debug.Log("btn pressed: " + o);
+		//Debug.Log("btn pressed: " + o);
 
 		int num = int.Parse(o.name.Replace("task",""));
 		

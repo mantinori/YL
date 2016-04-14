@@ -37,9 +37,9 @@ public class MemAttention2Manager : MemAttention1Manager {
 	//Main method of the game
 	protected override IEnumerator runSession(){
 		
-		//Show the tutorial
-		yield return StartCoroutine(runTutorial());
-	
+		//Show the menu
+		yield return StartCoroutine(showMenu(false));
+
 		//Show Practice screen
 		yield return StartCoroutine(showTitle("Practice",3));
 		
@@ -81,6 +81,10 @@ public class MemAttention2Manager : MemAttention1Manager {
 
 			state = GameState.Probe;
 
+			float onsetTime = Time.time - startTime;
+
+			CurrentEvent.OnsetTime = onsetTime;
+
 			stimulus.GetComponent<Renderer>().material.mainTexture = tex;
 			Vector3 worldPos = Camera.main.ScreenToWorldPoint(stimPositions[CurrentEvent.Quadrant-1]);
 			stimulus.transform.position = new Vector3(worldPos.x, -3.5f, worldPos.z);
@@ -99,16 +103,26 @@ public class MemAttention2Manager : MemAttention1Manager {
 			//If we reached the end of the practice list, check to see if the player passed
 			if(practicing && currentPractice>=practice.Count){
 				
-				//Count the nummber of correct responses
 				practiceSessionCount++;
-
-				NeuroLog.Log("Continuing to MainSession");
-				
-				border.SetActive(false);
-				
-				yield return StartCoroutine(showTitle("Study",3));
 				
 				practicing = false;
+				
+				screen.enabled = true;
+				
+				//Show the menu
+				yield return StartCoroutine(showMenu(true));
+				
+				if(!practicing) {
+					NeuroLog.Log("Continuing to MainSession");
+					
+					border.SetActive(false);
+					
+					yield return StartCoroutine(showTitle("Study",3));
+					
+				} else {
+					
+					yield return StartCoroutine(showTitle("Practice",3));
+				}
 
 			}
 		}
@@ -138,19 +152,24 @@ public class MemAttention2Manager : MemAttention1Manager {
 		if(Application.platform == RuntimePlatform.IPhonePlayer){
 			if(Input.touchCount>0){
 				touchPos = Input.touches[0].position;
+				
 				currentTouch = true;
 			}
-		} else {
-			if(Input.GetMouseButtonDown(0)){
-				touchPos = Input.mousePosition;			
+			else currentTouch =false;		
+		}
+		else{
+			if(Input.GetMouseButton(0)){
+				touchPos = Input.mousePosition;
+				
 				currentTouch = true;
 			}
+			else currentTouch =false;
 		}
 		
 		//Not Touching
 		if(!currentTouch) {
 			touching = false;
-		} else if(!touching) {	
+		} else if(!touching && currentTouch){	
 			//If a player has touched the screen and released
 
 			//Debug.Log("touchPos="+touchPos);

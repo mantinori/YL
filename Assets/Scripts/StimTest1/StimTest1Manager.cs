@@ -29,7 +29,7 @@ public class StimTest1Manager : MemTest1Manager {
 			NeuroLog.Log("Failed to load list of events");
 		} else {
 			// randomize
-			events.Shuffle();
+			ShuffleEventsNonRepeat(2);
 			
 			//Start the game
 			StartCoroutine("runSession");
@@ -39,9 +39,9 @@ public class StimTest1Manager : MemTest1Manager {
 
 	protected override IEnumerator runSession(){
 		
-		//Show the tutorial
-		yield return StartCoroutine(runTutorial());
-	
+		//Show the menu
+		yield return StartCoroutine(showMenu(false));
+
 		//Show Practice screen
 		yield return StartCoroutine(showTitle("Practice",3));
 		
@@ -87,6 +87,10 @@ public class StimTest1Manager : MemTest1Manager {
 
 			state = GameState.Probe;
 
+			float onsetTime = Time.time - startTime;
+
+			CurrentEvent.OnsetTime = onsetTime;
+
 			// put all four stimuli on screen
 			for(int i = 0; i < CurrentEvent.Stimuli.Length; i++) {
 				Texture2D tex = Resources.Load<Texture2D>("stimuli/" + CurrentEvent.Stimuli[i]);
@@ -98,14 +102,26 @@ public class StimTest1Manager : MemTest1Manager {
 
 			}
 		
-			yield return new WaitForSeconds(.5f);
+			if(kidsMode) {
+				yield return new WaitForSeconds(1f);
+			} else {
+				yield return new WaitForSeconds(.5f);
+			}
 
 			for(int i = 0; i < CurrentEvent.Stimuli.Length; i++) {
 				GameObject stimulus = stimuli[i];
 				stimulus.GetComponent<Renderer>().enabled = false;
 			}
 
-			yield return new WaitForSeconds(1f);
+			if(kidsMode) {
+				yield return new WaitForSeconds(.5f);
+			} else {
+				yield return new WaitForSeconds(1f);
+			}
+
+			while(isPaused) {
+				yield return new WaitForEndOfFrame();
+			}
 
 			//Get the next event
 			nextEvent();
@@ -113,16 +129,26 @@ public class StimTest1Manager : MemTest1Manager {
 			//If we reached the end of the practice list, check to see if the player passed
 			if(practicing && currentPractice>=practice.Count){
 				
-				//Count the nummber of correct responses
 				practiceSessionCount++;
-
-				NeuroLog.Log("Continuing to MainSession");
-				
-				border.SetActive(false);
-				
-				yield return StartCoroutine(showTitle("Test",3));
 				
 				practicing = false;
+				
+				screen.enabled = true;
+				
+				//Show the menu
+				yield return StartCoroutine(showMenu(true));
+				
+				if(!practicing) {
+					NeuroLog.Log("Continuing to MainSession");
+					
+					border.SetActive(false);
+					
+					yield return StartCoroutine(showTitle("Test",3));
+					
+				} else {
+					
+					yield return StartCoroutine(showTitle("Practice",3));
+				}
 
 			}
 		}
@@ -140,5 +166,6 @@ public class StimTest1Manager : MemTest1Manager {
 		//Return to menu
 		Application.LoadLevel(1);
 	}
+
 
 }
