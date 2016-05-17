@@ -490,26 +490,32 @@ public class SpatialManager : GameManager {
 				fixedPos.y = Screen.height - fixedPos.y;
 						
 				float time = Time.time - startTime;
-				
+
+				//Vector2 screenPos = Vector2.zero;
+				//screenPos.x = ((fixedPos.x/Screen.width) * 53.4f) - 26.7f;
+				//screenPos.y = ((fixedPos.y/Screen.height) * -30) +15;
+
+				// finger/dot indicator position
+				Vector3 worldPos = Camera.main.ScreenToWorldPoint(touchPos);
+				Vector2 fingerPos = new Vector2(worldPos.x, worldPos.z);
+
 				//Good Response
 				if(state == GameState.Probe){
 					
 					Response r = new Response(sType,time,new Vector2(fixedPos.x,fixedPos.y),0);	
-					
-					Vector2 screenPos = Vector2.zero;
-					
-					screenPos.x = ((fixedPos.x/Screen.width) * 53.4f) - 26.7f;
-					screenPos.y = ((fixedPos.y/Screen.height) * -30) +15;
-					
+
 					//Start fading circle
-					StartCoroutine(spot.fadeFinger(screenPos, r.DotPressed));
+					StartCoroutine(spot.fadeFinger(fingerPos, r.DotPressed));
 				
 					CurrentEvent.AddResponse(r, true);
 				}
 				//Bad Response, too early
 				else{
 					Response r = new Response(sType,time,new Vector2(fixedPos.x,fixedPos.y),1);
-					
+
+					//Start fading circle
+					StartCoroutine(spot.fadeFinger(fingerPos, r.DotPressed));
+
 					CurrentEvent.AddResponse(r, false);
 				}
 			}

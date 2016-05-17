@@ -445,7 +445,7 @@ public class ImplicitManager : GameManager {
 						//Calculate the response time
 						float time = Time.time - startTime;
 						
-						if(time<=1f){
+						//if(time<=1f){
 							
 							float x = ((implicitStimulus.transform.position.x + 26.7f)/53.4f) * Screen.width;
 							
@@ -455,18 +455,21 @@ public class ImplicitManager : GameManager {
 							
 							//Create the respones
 							Response r = new Response(targPos, time,new Vector2(fixedPos.x,fixedPos.y));
-									
-							Vector2 screenPos = Vector2.zero;
 							
-							screenPos.x = ((fixedPos.x/Screen.width) * 53.4f) - 26.7f;
-							screenPos.y = ((fixedPos.y/Screen.height) * -30) +15;
+							//Vector2 screenPos = Vector2.zero;
+							//screenPos.x = ((fixedPos.x/Screen.width) * 53.4f) - 26.7f;
+							//screenPos.y = ((fixedPos.y/Screen.height) * -30) +15;
 							
+							// finger/dot indicator position
+							Vector3 worldPos = Camera.main.ScreenToWorldPoint(touchPos);
+							Vector2 fingerPos = new Vector2(worldPos.x, worldPos.z);
+
 							//Start the fade spot
-							StartCoroutine(spot.fadeFinger(screenPos, -1));
-							
+							StartCoroutine(spot.fadeFinger(fingerPos, -1));
+
 							//Add the response
 							CurrentEvent.Response =r;
-						}
+						//}
 					}
 				}
 			}
