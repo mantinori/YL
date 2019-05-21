@@ -540,12 +540,15 @@ public class StarManager : GameManager {
 			else if(sO.Type == 2) d.Add(sO);
 			else if(sO.Type == 3) t.Add(sO);
 		}
-		
+
+		// MA 7/11/16 adjustment for screen
+		float multiple = 1.25f;
+
 		//Set up the little Stars
 		for(int i =0;i<littleStars.Count;i++){
 			if(i<ls.Count){
 				littleStars[i].transform.rotation = Quaternion.Euler(new Vector3(0, ls[i].Rotation,0));
-				littleStars[i].transform.position = new Vector3(ls[i].Position.x,0,ls[i].Position.y);
+				littleStars[i].transform.position = new Vector3(ls[i].Position.x,0,ls[i].Position.y * multiple);
 				if(i<ls.Count/2) littleStars[i].GetComponent<Renderer>().material = materials[1];
 				else littleStars[i].GetComponent<Renderer>().material = materials[2];
 				littleStars[i].GetComponent<Renderer>().enabled = true;
@@ -560,7 +563,7 @@ public class StarManager : GameManager {
 		for(int i =0;i<bigStars.Count;i++){
 			if(i<bs.Count){
 				bigStars[i].transform.rotation = Quaternion.Euler(new Vector3(0, bs[i].Rotation,0));
-				bigStars[i].transform.position = new Vector3(bs[i].Position.x,0,bs[i].Position.y);
+				bigStars[i].transform.position = new Vector3(bs[i].Position.x,0,bs[i].Position.y * multiple);
 				bigStars[i].GetComponent<Renderer>().enabled = true;
 			}
 			else{
@@ -573,7 +576,7 @@ public class StarManager : GameManager {
 		for(int i =0;i<dots.Count;i++){
 			if(i<d.Count){
 				dots[i].transform.rotation = Quaternion.Euler(new Vector3(0, d[i].Rotation,0));
-				dots[i].transform.position = new Vector3(d[i].Position.x,0,d[i].Position.y);
+				dots[i].transform.position = new Vector3(d[i].Position.x,0,d[i].Position.y * multiple);
 				dots[i].GetComponent<Renderer>().enabled = true;
 			}
 			else{
@@ -586,7 +589,7 @@ public class StarManager : GameManager {
 		for(int i =0;i<triangles.Count;i++){
 			if(i<t.Count){
 				triangles[i].transform.rotation = Quaternion.Euler(new Vector3(0, t[i].Rotation,0));
-				triangles[i].transform.position = new Vector3(t[i].Position.x,0,t[i].Position.y);
+				triangles[i].transform.position = new Vector3(t[i].Position.x,0,t[i].Position.y * multiple);
 				triangles[i].GetComponent<Renderer>().enabled = true;
 			}
 			else{

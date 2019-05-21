@@ -114,7 +114,7 @@ public class MenuController : MonoBehaviour {
 		warning.gameObject.SetActive(false);
 
 		// MA 04/14/16 added training button mode
-		trainingButton.GetComponent<ButtonResponder>().response = trainingButtonPressed;
+		if(trainingButton != null) trainingButton.GetComponent<ButtonResponder>().response = trainingButtonPressed;
 
 		//Set up the scene
 		setupScene();
